@@ -74,7 +74,6 @@
   .hidden { display: none !important; }
   .btn-red { background: #ff4d4d; color: #fff; padding: 10px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
   .btn-green { background: var(--green); color: #fff; padding: 10px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
-  
   .chat-list-item { display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--card); border-bottom: 1px solid var(--border); cursor: pointer; position: relative; }
   .chat-list-item:hover { background: #1a1a26; }
   .chat-list-item.unread { background: rgba(249, 115, 22, 0.15); border-left: 4px solid var(--orange); }
@@ -87,7 +86,6 @@
   .chat-actions { display: flex; align-items: center; gap: 10px; margin-left: auto; }
   .unread-badge { background: var(--accent); color: #fff; font-size: 13px; font-weight: bold; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .unread-badge.orange { background: var(--orange); }
-  
   .chat-box { background: var(--bg); border-radius: 12px; padding: 15px; margin-bottom: 15px; max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
   .chat-msg { max-width: 80%; padding: 10px 15px; border-radius: 12px; font-size: 14px; line-height: 1.4; }
   .chat-msg.my-msg { background: var(--primary); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
@@ -308,7 +306,6 @@
   let currentUser = null;
   let currentTicketId = null;
   let isAdminView = false;
-  let blockedTicketId = null;
 
   const isAdmin = () => !!(currentUser && (currentUser.is_admin === true || currentUser.nickname === 'KupiGame'));
 
@@ -350,6 +347,9 @@
       <button class="admin-tab" onclick="switchAdminTab('reviews', this)">Отзывы</button>
       <button class="admin-tab" onclick="switchAdminTab('settings', this)">Настройки</button>
     `;
+    
+    // Сразу обновляем счётчики при открытии вкладки
+    checkBlockCounts();
     switchAdminTab('games', tabsContainer.firstElementChild);
   }
 
@@ -382,7 +382,7 @@
     const uEl = document.getElementById('unblock-count');
     if(uEl) uEl.textContent = reqCount || 0;
     
-    if(currentUser) {
+    if(currentUser && !isAdmin()) {
         const { data: unread } = await supabase.from('orders')
             .select('id')
             .eq('buyer_id', currentUser.id)
@@ -459,13 +459,23 @@
   window.register = async () => {
     const nick = document.getElementById('reg-nick').value.trim();
     const pass = document.getElementById('reg-pass').value;
-    if(!nick || !pass) return;
+    if(!nick || !pass) return alert('Заполните все поля');
+    
     const dummyEmail = `${nick.toLowerCase()}@kupigame.local`;
     const { data, error } = await supabase.auth.signUp({ email: dummyEmail, password: pass });
-    if (error) return alert(error.message);
+    
+    if (error) return alert('Ошибка: ' + error.message);
     
     if (data.user) {
-      await supabase.from('profiles').insert([{ id: data.user.id, nickname: nick }]);
+      // Если Supabase требует подтверждение почты, data.session будет null
+      if (!data.session) {
+          alert('Аккаунт создан, но требуется подтверждение Email. Попросите админа отключить "Confirm email" в настройках Supabase.');
+          return;
+      }
+      
+      const { error: profError } = await supabase.from('profiles').insert([{ id: data.user.id, nickname: nick }]);
+      if (profError) return alert('Ошибка профиля: ' + profError.message);
+      
       const { data: profile } = await supabase.from('profiles').select('*').eq('id', data.user.id).single();
       if(profile) { currentUser = profile; updateAuthUI(); show('home'); }
     }
@@ -474,8 +484,11 @@
   window.login = async () => {
     const nick = document.getElementById('login-nick').value.trim();
     const pass = document.getElementById('login-pass').value;
+    if(!nick || !pass) return alert('Заполните все поля');
+
     const dummyEmail = `${nick.toLowerCase()}@kupigame.local`;
     const { data, error } = await supabase.auth.signInWithPassword({ email: dummyEmail, password: pass });
+    
     if (error) { alert('Неверный ник или пароль'); return; }
     
     const { data: profile } = await supabase.from('profiles').select('*').eq('id', data.user.id).single();
@@ -660,7 +673,7 @@
     window.open(link, '_blank'); 
   }
 
-  // --- АДМИНКА: ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ---
+  // --- АДМИНКА ---
   async function loadAdminGames(container) {
     const { data } = await supabase.from('games').select('*');
     container.innerHTML = `
@@ -813,7 +826,6 @@
     switchAdminTab('products', document.querySelectorAll('.admin-tab')[1]);
   }
 
-  // --- АДМИНКА: ЛЮДИ ---
   async function loadAdminPeople(container) {
     container.innerHTML = `
       <div class="admin-block">
@@ -905,7 +917,6 @@
     searchUser(); checkBlockCounts();
   }
 
-  // --- АДМИНКА: БЛОКИРОВКИ ---
   async function loadBlockedUsers(container) {
     const { data } = await supabase.from('profiles').select('*').eq('is_blocked', true);
     container.innerHTML = (data || []).map(u => `
@@ -919,7 +930,6 @@
     `).join('');
   }
 
-  // --- АДМИНКА: ЗАЯВКИ (Обычные обращения) ---
   async function loadAdminTickets(container) {
     const { data } = await supabase.from('orders').select('*').eq('status', 'open');
     container.innerHTML = (data || []).map(t => `
@@ -936,7 +946,6 @@
     `).join('');
   }
 
-  // --- АДМИНКА: АДМИН-ЧАТЫ (Новая вкладка) ---
   async function loadAdminChats(container) {
     const { data } = await supabase.from('orders').select('*').eq('status', 'admin_chat');
     container.innerHTML = (data || []).map(t => `
@@ -957,9 +966,6 @@
     currentTicketId = id;
     isAdminView = true;
     const { data: ticket } = await supabase.from('orders').select('*').eq('id', id).single();
-    
-    // Помечаем как прочитанное для админа (чтобы не светилось)
-    // В данном случае мы просто открываем, но для админа это не влияет на его бейджи в шапке (они для юзера)
     
     const { data: buyer } = await supabase.from('profiles').select('nickname, avatar').eq('id', ticket.buyer_id).single();
     const { data: msgs } = await supabase.from('ticket_messages').select('*').eq('ticket_id', id).order('created_at');
@@ -1007,7 +1013,6 @@
     renderAdminTabs();
   }
 
-  // --- ЧАТЫ (ДЛЯ ПОЛЬЗОВАТЕЛЯ) ---
   async function loadChats() {
     const { data } = await supabase.from('orders').select('*').eq('buyer_id', currentUser.id).order('created_at', { ascending: false });
     const list = document.getElementById('chats-list');
@@ -1053,7 +1058,6 @@
     currentTicketId = id;
     isAdminView = false;
     
-    // Помечаем как прочитанное
     await supabase.from('orders').update({ is_read_by_buyer: true }).eq('id', id);
     checkBlockCounts();
     
@@ -1100,11 +1104,9 @@
     if(!text) return;
     await supabase.from('ticket_messages').insert([{ ticket_id: currentTicketId, sender_id: currentUser.id, message: text }]);
     
-    // Если пишет админ в ответ, помечаем, что юзеру нужно прочитать
     if (isAdminView) {
         await supabase.from('orders').update({ is_read_by_buyer: false }).eq('id', currentTicketId);
     } else {
-        // Если пишет юзер, помечаем, что админу нужно прочитать (можно опустить, но на будущее)
         await supabase.from('orders').update({ is_read_by_buyer: true }).eq('id', currentTicketId);
     }
 
@@ -1138,141 +1140,42 @@
     show('blocked');
   }
 
-  // --- ОБЛОЖКА ---
-  window.uploadHero = async () => {
-    const input = document.getElementById('hero-upload');
-    const width = document.getElementById('hero-width').value || '100%';
-    const height = document.getElementById('hero-height').value || 'auto';
-    const fit = document.getElementById('hero-fit').value || 'contain';
-
-    if(!input.files[0]) return;
-
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const base64 = e.target.result;
-      
-      const { error } = await supabase.from('profiles').update({
-        hero_url: base64,
-        hero_width: width,
-        hero_height: height,
-        hero_fit: fit
-      }).eq('id', currentUser.id);
-
-      if(error) { alert('Ошибка: ' + error.message); return; }
-      
-      applyHero();
-      alert('Обложка и настройки сохранены!');
-    };
-    reader.readAsDataURL(input.files[0]);
-  }
-
-  async function applyHero() {
-    const { data } = await supabase.from('profiles').select('hero_url, hero_width, hero_height, hero_fit').eq('nickname', 'KupiGame').single();
-    const el = document.getElementById('main-hero-img');
-    
-    if(data && data.hero_url) {
-      el.src = data.hero_url; 
-      el.style.display = 'block'; 
-      el.style.width = data.hero_width || '100%';
-      el.style.height = data.hero_height || 'auto';
-      el.style.objectFit = data.hero_fit || 'contain';
-    }
-  }
-
-  async function loadHeroSettings(container) {
-    const { data } = await supabase.from('profiles').select('hero_width, hero_height, hero_fit').eq('nickname', 'KupiGame').single();
-    
-    container.innerHTML = `
-      <div class="admin-block">
-        <h3 style="margin-bottom:15px;">Обложка на главную</h3>
-        <input type="file" id="hero-upload" accept="image/*">
-        <label style="color:var(--text-muted); font-size:12px; margin-top:10px; display:block;">Ширина (например: 100%, 500px)</label>
-        <input type="text" id="hero-width" value="${esc(data?.hero_width || '100%')}">
-        <label style="color:var(--text-muted); font-size:12px; display:block;">Высота (например: auto, 300px)</label>
-        <input type="text" id="hero-height" value="${esc(data?.hero_height || 'auto')}">
-        <label style="color:var(--text-muted); font-size:12px; display:block;">Заполнение (contain - вписать, cover - обрезать)</label>
-        <input type="text" id="hero-fit" value="${esc(data?.hero_fit || 'contain')}">
-        <button class="btn-primary" onclick="uploadHero()" style="width:100%; margin-top:15px;">Сохранить обложку</button>
-      </div>
-    `;
-  }
-
-  // --- АДМИНКА: РАЗБЛОКИРОВКА ---
-  async function loadUnblockRequests(container) {
-    const { data } = await supabase.from('orders').select('*').eq('status', 'unblock_request');
-    container.innerHTML = (data || []).map(t => `
-      <div class="admin-block">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <strong>Заявка на разблокировку</strong>
-          <div style="display:flex; gap:10px;">
-            <button onclick="openAdminTicket(${t.id})" class="btn-small primary">Открыть</button>
-            <button onclick="deleteTicketAdmin(${t.id})" class="btn-small red">Удалить</button>
-          </div>
-        </div>
-        <p style="font-size:13px; margin-top:5px;">${esc((t.message || '').substring(0, 80))}...</p>
-      </div>
-    `).join('');
-  }
-
-  // --- АДМИНКА: ОТЗЫВЫ ---
-  async function loadAdminReviews(container) {
-    const { data } = await supabase.from('reviews').select('*').order('created_at', { ascending: false });
-    container.innerHTML = `
-      <div class="admin-block">
-        <h3 style="margin-bottom:15px;">Добавить отзыв</h3>
-        <input type="text" id="review-nick" placeholder="Ник покупателя">
-        <input type="file" id="review-avatar" accept="image/*" style="margin-bottom:10px;">
-        <select id="review-stars">
-          <option value="5">5 ★</option>
-          <option value="4">4 ★</option>
-          <option value="3">3 ★</option>
-          <option value="2">2 ★</option>
-          <option value="1">1 ★</option>
-        </select>
-        <textarea id="review-text" placeholder="Текст отзыва" style="height:100px;"></textarea>
-        <button class="btn-primary" onclick="addReview()" style="width:100%;">Добавить отзыв</button>
-      </div>
-      <h3>Существующие отзывы</h3>
-      ${(data || []).map(r => `
-        <div class="admin-block" style="display:flex; justify-content:space-between; align-items:center;">
-          <div>
-            <strong>${esc(r.nick)}</strong> · ${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}
-            <p style="font-size:13px; color:var(--text-muted);">${esc((r.text || '').substring(0, 80))}...</p>
-          </div>
-          <button onclick="deleteReviewAdmin(${r.id})" style="color:red; background:none; border:none;">Удалить</button>
-        </div>
-      `).join('')}
-    `;
-  }
-
-  window.addReview = async () => {
-    const nick = document.getElementById('review-nick').value;
-    const stars = Number(document.getElementById('review-stars').value);
-    const text = document.getElementById('review-text').value;
-    const file = document.getElementById('review-avatar').files[0];
-    if(!nick || !text) return alert('Заполните ник и текст');
-    let avatar = null;
-    if(file) avatar = await new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = (e) => resolve(e.target.result);
-      reader.readAsDataURL(file);
-    });
-    const { error } = await supabase.from('reviews').insert([{ nick, avatar, rating: stars, text }]);
-    if(error) alert('Ошибка: ' + error.message); else { alert('Отзыв добавлен!'); switchAdminTab('reviews', document.querySelectorAll('.admin-tab')[7]); }
-  }
-
-  window.deleteReviewAdmin = async (id) => {
-    if(!confirm('Удалить отзыв?')) return;
-    await supabase.from('reviews').delete().eq('id', id);
-    switchAdminTab('reviews', document.querySelectorAll('.admin-tab')[7]);
-  }
-
-  // --- ЗАГЛУШКИ ---
+  // --- БЛОКИРОВАННЫЕ: МОИ ЗАЯВКИ ---
   window.openBlockedTickets = async () => {
     const list = document.getElementById('blocked-tickets-list');
-    if(list) list.innerHTML = '<p style="color:var(--text-muted);">Заявок нет.</p>';
+    if (!currentUser) return;
+    
+    // Запрашиваем заявки на разблокировку от этого юзера
+    const { data, error } = await supabase.from('orders')
+        .select('*')
+        .eq('buyer_id', currentUser.id)
+        .eq('status', 'unblock_request')
+        .order('created_at', { ascending: false });
+        
+    if (error) {
+        list.innerHTML = '<p style="color:red;">Ошибка загрузки: ' + error.message + '</p>';
+        return;
+    }
+    
+    if (!data || data.length === 0) {
+        list.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:20px;">У вас нет активных заявок на разблокировку.</p>';
+        show('blocked-tickets');
+        return;
+    }
+    
+    list.innerHTML = data.map(t => `
+      <div class="admin-block">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <strong>Заявка #${t.id}</strong>
+          <span style="color:var(--orange); font-weight:bold;">${t.status === 'unblock_request' ? 'На рассмотрении' : t.status}</span>
+        </div>
+        <p style="font-size:13px; margin-top:5px;">${esc(t.message)}</p>
+      </div>
+    `).join('');
+    
     show('blocked-tickets');
   };
+
   window.sendBlockedChatReply = async () => {
     alert('Функция временно недоступна.');
   };
