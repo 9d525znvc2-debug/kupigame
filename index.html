@@ -6,7 +6,7 @@
 <title>KupiGame — игровой магазин</title>
 <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%238b5cf6%22/><text y=%2270%22 x=%2250%22 font-size=%2260%22 text-anchor=%22middle%22 fill=%22white%22>K</text></svg>">
 <style>
-  :root { --primary: #8b5cf6; --primary-hover: #7c3aed; --bg: #090910; --card: #12121a; --text: #e8e8f0; --text-muted: #9898b0; --border: #2a2a3a; --accent: #38bdf8; --green: #10b981; }
+  :root { --primary: #8b5cf6; --primary-hover: #7c3aed; --bg: #090910; --card: #12121a; --text: #e8e8f0; --text-muted: #9898b0; --border: #2a2a3a; --accent: #38bdf8; --green: #10b981; --orange: #f97316; }
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
   body { background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 80px; }
   header { background: var(--bg); padding: 15px 20px; display: flex; align-items: flex-start; justify-content: space-between; border-bottom: 1px solid var(--border); width: 100%; }
@@ -15,11 +15,12 @@
   .user-pill { background: var(--card); border: 1px solid var(--border); border-radius: 30px; padding: 5px 15px 5px 5px; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; }
   .btn-logout { background: var(--card); border: 1px solid var(--border); color: #fff; padding: 8px 15px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; width: 100%; }
   .nav-menu { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; font-size: 15px; font-weight: 600; }
-  .nav-menu button { background: none; border: 1px solid transparent; color: var(--text-muted); cursor: pointer; font-size: 15px; font-weight: 600; padding: 6px 15px; border-radius: 8px; width: 100%; text-align: right; }
+  .nav-menu button { background: none; border: 1px solid transparent; color: var(--text-muted); cursor: pointer; font-size: 15px; font-weight: 600; padding: 6px 15px; border-radius: 8px; width: 100%; text-align: right; position: relative; }
   .nav-menu button:hover { color: #fff; }
   .nav-menu button.active { color: #fff; background: var(--card); border-color: var(--border); }
   .nav-menu button.admin { color: #fbbf24; }
   #logout-btn { margin-top: 0; width: 100%; text-align: center; }
+  .nav-badge { background: var(--accent); color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 10px; margin-left: 5px; font-weight: bold; display: inline-block; vertical-align: middle; }
   main { max-width: 800px; margin: 0 auto; padding: 20px; }
   .screen { display: none; }
   .screen.active { display: block; }
@@ -66,20 +67,27 @@
   input, textarea, select { width: 100%; padding: 14px; margin-bottom: 15px; background: var(--bg); border: 1px solid var(--border); color: #fff; border-radius: 10px; font-size: 15px; }
   .error-msg { color: #ff4d4d; font-size: 14px; margin-bottom: 15px; text-align: center; display: none; }
   .admin-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
-  .admin-tab { background: var(--card); border: 1px solid var(--border); color: var(--text-muted); padding: 8px 16px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; }
+  .admin-tab { background: var(--card); border: 1px solid var(--border); color: var(--text-muted); padding: 8px 16px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; position: relative; }
   .admin-tab.active { background: var(--primary); border-color: var(--primary); color: #fff; }
   footer { padding: 30px 20px; border-top: 1px solid var(--border); text-align: center; font-size: 13px; color: var(--text-muted); }
   footer a { display: block; color: var(--accent); margin-bottom: 10px; font-weight: 600; cursor: pointer; }
   .hidden { display: none !important; }
   .btn-red { background: #ff4d4d; color: #fff; padding: 10px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
   .btn-green { background: var(--green); color: #fff; padding: 10px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
-  .chat-list-item { display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--card); border-bottom: 1px solid var(--border); cursor: pointer; }
+  
+  .chat-list-item { display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--card); border-bottom: 1px solid var(--border); cursor: pointer; position: relative; }
   .chat-list-item:hover { background: #1a1a26; }
+  .chat-list-item.unread { background: rgba(249, 115, 22, 0.15); border-left: 4px solid var(--orange); }
+  .chat-list-item.unread .chat-name { color: var(--orange); }
   .chat-avatar { width: 50px; height: 50px; border-radius: 50%; background: #1a1a26; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: bold; color: #fff; flex-shrink: 0; overflow: hidden; }
   .chat-avatar img { width: 100%; height: 100%; object-fit: cover; }
   .chat-info { flex: 1; overflow: hidden; }
   .chat-name { font-weight: bold; font-size: 16px; color: #fff; display: flex; align-items: center; gap: 5px; }
   .chat-last-msg { font-size: 14px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 3px; }
+  .chat-actions { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+  .unread-badge { background: var(--accent); color: #fff; font-size: 13px; font-weight: bold; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .unread-badge.orange { background: var(--orange); }
+  
   .chat-box { background: var(--bg); border-radius: 12px; padding: 15px; margin-bottom: 15px; max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
   .chat-msg { max-width: 80%; padding: 10px 15px; border-radius: 12px; font-size: 14px; line-height: 1.4; }
   .chat-msg.my-msg { background: var(--primary); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
@@ -87,6 +95,9 @@
   .msg-sender { font-size: 11px; margin-bottom: 4px; font-weight: bold; opacity: 0.9; display: flex; align-items: center; gap: 5px; color: #c8c8d8; }
   .msg-sender.my-msg-text { color: #e8e8f0; }
   .admin-tag { background: var(--green); color: #fff; font-size: 9px; padding: 1px 4px; border-radius: 3px; font-weight: bold; }
+  .btn-small { padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: bold; border: none; cursor: pointer; }
+  .btn-small.red { background: #ff4d4d; color: #fff; }
+  .btn-small.primary { background: var(--primary); color: #fff; }
 </style>
 </head>
 <body>
@@ -105,7 +116,7 @@
   <div class="nav-menu">
     <button onclick="show('home')" id="nav-home" class="active">Главная</button>
     <button onclick="show('catalog')" id="nav-catalog">Каталог</button>
-    <button onclick="show('chats')" id="nav-chats" class="hidden">Чаты</button>
+    <button onclick="show('chats')" id="nav-chats" class="hidden">Чаты <span id="nav-chats-badge" class="nav-badge hidden">0</span></button>
     <button onclick="show('profile')" id="nav-profile" class="hidden">Профиль</button>
     <button onclick="show('admin')" id="nav-admin" class="admin hidden">Админ</button>
     <button id="logout-btn" onclick="logout()" class="btn-logout hidden">Выйти</button>
@@ -117,21 +128,17 @@
 </header>
 
 <main>
-  <!-- БЛОКИРОВКА -->
   <section class="screen" id="screen-blocked">
     <div class="auth-box" style="text-align:center; margin-top:50px; border-color:#ff4d4d;">
       <h2 style="color:#ff4d4d; margin-bottom:15px;">Вы заблокированы</h2>
       <p style="margin-bottom:20px;">Причина: <span id="block-reason" style="font-weight:bold;"></span></p>
       <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px;">Обратитесь к владельцу магазина.</p>
-      
       <button class="btn-primary" onclick="show('unblock-form')" style="max-width:100%; margin-bottom:10px;">Написать в поддержку</button>
       <button class="btn-primary" onclick="openBlockedTickets()" style="max-width:100%; margin-bottom:10px; background:var(--card); border:1px solid var(--border); color:#fff;">Мои заявки</button>
-      
       <button class="btn-logout" onclick="logout()" style="background:transparent; border:1px solid var(--border);">Выйти</button>
     </div>
   </section>
 
-  <!-- ЗАЯВКИ ЗАБЛОКИРОВАННОГО -->
   <section class="screen" id="screen-blocked-tickets">
     <div class="auth-box">
       <h2 style="margin-bottom:15px; text-align:center;">Мои заявки</h2>
@@ -140,7 +147,6 @@
     </div>
   </section>
 
-  <!-- ЧАТ ЗАБЛОКИРОВАННОГО -->
   <section class="screen" id="screen-blocked-chat">
     <div class="auth-box">
       <div class="chat-box" id="blocked-chat-box"></div>
@@ -152,7 +158,6 @@
     </div>
   </section>
 
-  <!-- ФОРМА РАЗБЛОКИРОВКИ -->
   <section class="screen" id="screen-unblock-form">
     <div class="auth-box">
       <h2 style="margin-bottom:15px; text-align:center;">Заявка на разблокировку</h2>
@@ -163,7 +168,6 @@
     </div>
   </section>
 
-  <!-- ГЛАВНАЯ -->
   <section class="screen active" id="screen-home">
     <div class="hero-card">
       <img id="main-hero-img" class="hero-image">
@@ -178,33 +182,28 @@
     </div>
   </section>
 
-  <!-- КАТАЛОГ -->
   <section class="screen" id="screen-catalog">
     <button class="back-btn" onclick="show('home')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
     <h1 class="catalog-title" style="font-size: 24px; margin-bottom: 15px;">Каталог игр</h1>
     <div id="games-list"></div>
   </section>
 
-  <!-- ТОВАРЫ ИГРЫ -->
   <section class="screen" id="screen-products">
     <button class="back-btn" onclick="show('catalog')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
     <h1 class="catalog-title" id="products-title" style="font-size: 24px; margin-bottom:15px;"></h1>
     <div id="products-list"></div>
   </section>
 
-  <!-- КАРТОЧКА ТОВАРА -->
   <section class="screen" id="screen-product-detail">
     <button class="back-btn" onclick="goBackFromProduct()" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
     <div id="product-detail-content"></div>
   </section>
 
-  <!-- ПРОФИЛЬ ПРОДАВЦА -->
   <section class="screen" id="screen-seller">
     <button class="back-btn" onclick="goBackFromSeller()" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
     <div id="seller-profile-content"></div>
   </section>
 
-  <!-- ВХОД -->
   <section class="screen" id="screen-login">
     <button class="back-btn" onclick="show('home')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
     <div class="auth-box">
@@ -216,7 +215,6 @@
     </div>
   </section>
 
-  <!-- РЕГИСТРАЦИЯ -->
   <section class="screen" id="screen-register">
     <button class="back-btn" onclick="show('home')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
     <div class="auth-box">
@@ -228,7 +226,6 @@
     </div>
   </section>
 
-  <!-- ПРОФИЛЬ -->
   <section class="screen" id="screen-profile">
     <button class="back-btn" onclick="show('home')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
     <h1 class="catalog-title" style="font-size: 24px;">Мой профиль</h1>
@@ -246,14 +243,12 @@
     </div>
   </section>
 
-  <!-- ЧАТЫ -->
   <section class="screen" id="screen-chats">
     <button class="back-btn" onclick="show('home')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
     <h1 class="catalog-title" style="font-size: 24px;">Мои чаты</h1>
     <div id="chats-list" style="background:var(--card); border-radius:16px; overflow:hidden;"></div>
   </section>
 
-  <!-- ПРОСМОТР ЧАТА -->
   <section class="screen" id="screen-ticket-view">
     <button class="back-btn" onclick="goBackFromTicket()" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
     <div class="admin-block">
@@ -266,7 +261,6 @@
     </div>
   </section>
 
-  <!-- ПОДДЕРЖКА -->
   <section class="screen" id="screen-support">
     <button class="back-btn" onclick="show('profile')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
     <div class="auth-box">
@@ -277,7 +271,6 @@
     </div>
   </section>
 
-  <!-- ДОКУМЕНТЫ -->
   <section class="screen" id="screen-doc">
     <button class="back-btn" onclick="show('home')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
     <div class="doc-box">
@@ -286,11 +279,9 @@
     </div>
   </section>
 
-  <!-- АДМИНКА -->
   <section class="screen" id="screen-admin">
     <button class="back-btn" onclick="show('home')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
     <h1 class="catalog-title" style="font-size: 24px;">Админ-панель 👑</h1>
-    
     <div class="admin-tabs" id="admin-tabs"></div>
     <div id="admin-content"></div>
   </section>
@@ -390,6 +381,20 @@
     const { count: reqCount } = await supabase.from('orders').select('*', { count: 'exact', head: true }).eq('status', 'unblock_request');
     const uEl = document.getElementById('unblock-count');
     if(uEl) uEl.textContent = reqCount || 0;
+    
+    if(currentUser) {
+        const { data: unread } = await supabase.from('orders')
+            .select('id')
+            .eq('buyer_id', currentUser.id)
+            .eq('is_read_by_buyer', false);
+        const badge = document.getElementById('nav-chats-badge');
+        if (unread && unread.length > 0) {
+            badge.textContent = unread.length;
+            badge.classList.remove('hidden');
+        } else {
+            badge.classList.add('hidden');
+        }
+    }
   }
 
   async function checkBlock() {
@@ -444,6 +449,7 @@
       document.getElementById('nav-admin').classList.add('hidden');
       document.getElementById('nav-profile').classList.add('hidden');
       document.getElementById('nav-chats').classList.add('hidden');
+      document.getElementById('nav-chats-badge').classList.add('hidden');
       document.getElementById('login-nick').value = '';
       document.getElementById('login-pass').value = '';
     }
@@ -853,7 +859,6 @@
     const text = document.getElementById('admin-chat-text').value;
     if(!text) return;
 
-    // Ищем, есть ли уже открытый АДМИН-чат с этим пользователем
     const { data: existingChats } = await supabase.from('orders').select('*').eq('buyer_id', userId).eq('status', 'admin_chat');
     
     let orderId;
@@ -863,7 +868,8 @@
       const { data: newOrder, error } = await supabase.from('orders').insert([{ 
         buyer_id: userId, 
         status: 'admin_chat', 
-        message: 'Чат открыт администратором' 
+        message: 'Чат открыт администратором',
+        is_read_by_buyer: false
       }]).select();
       if(error) { alert('Ошибка: ' + error.message); return; }
       orderId = newOrder[0].id;
@@ -921,8 +927,8 @@
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <strong>Обращение</strong>
           <div style="display:flex; gap:10px;">
-            <button onclick="openAdminTicket(${t.id})" class="btn-primary" style="width:auto; padding:6px 12px;">Открыть</button>
-            <button onclick="deleteTicketAdmin(${t.id})" class="btn-red" style="width:auto; padding:6px 12px; margin-top:0;">Удалить</button>
+            <button onclick="openAdminTicket(${t.id})" class="btn-small primary">Открыть</button>
+            <button onclick="deleteTicketAdmin(${t.id})" class="btn-small red">Удалить</button>
           </div>
         </div>
         <p style="font-size:13px; margin-top:5px;">${esc((t.message || '').substring(0, 50))}...</p>
@@ -938,8 +944,8 @@
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <strong>Диалог с пользователем</strong>
           <div style="display:flex; gap:10px;">
-            <button onclick="openAdminTicket(${t.id})" class="btn-primary" style="width:auto; padding:6px 12px;">Открыть</button>
-            <button onclick="deleteTicketAdmin(${t.id})" class="btn-red" style="width:auto; padding:6px 12px; margin-top:0;">Удалить</button>
+            <button onclick="openAdminTicket(${t.id})" class="btn-small primary">Открыть</button>
+            <button onclick="deleteTicketAdmin(${t.id})" class="btn-small red">Удалить</button>
           </div>
         </div>
         <p style="font-size:13px; margin-top:5px;">${esc((t.message || '').substring(0, 50))}...</p>
@@ -951,6 +957,10 @@
     currentTicketId = id;
     isAdminView = true;
     const { data: ticket } = await supabase.from('orders').select('*').eq('id', id).single();
+    
+    // Помечаем как прочитанное для админа (чтобы не светилось)
+    // В данном случае мы просто открываем, но для админа это не влияет на его бейджи в шапке (они для юзера)
+    
     const { data: buyer } = await supabase.from('profiles').select('nickname, avatar').eq('id', ticket.buyer_id).single();
     const { data: msgs } = await supabase.from('ticket_messages').select('*').eq('ticket_id', id).order('created_at');
     
@@ -985,17 +995,16 @@
     await supabase.from('orders').update({ status: 'closed' }).eq('id', currentTicketId);
     alert('Заявка закрыта!');
     show('admin');
+    renderAdminTabs();
   }
 
   window.deleteTicketAdmin = async (id) => {
     if(!confirm('Удалить этот чат полностью?')) return;
-    // Удаляем сообщения
     await supabase.from('ticket_messages').delete().eq('ticket_id', id);
-    // Удаляем саму заявку
     await supabase.from('orders').delete().eq('id', id);
     alert('Чат удален!');
     show('admin');
-    renderAdminTabs(); // Перерисовываем, чтобы обновить список
+    renderAdminTabs();
   }
 
   // --- ЧАТЫ (ДЛЯ ПОЛЬЗОВАТЕЛЯ) ---
@@ -1014,24 +1023,41 @@
       const avatar = adminAvatar;
       const rawMsg = t.message || '';
       const lastMsg = rawMsg.length > 40 ? rawMsg.substring(0, 40) + '...' : rawMsg;
+      const isUnread = t.is_read_by_buyer === false;
       
       return `
-        <div class="chat-list-item" onclick="openTicketView(${t.id})">
+        <div class="chat-list-item ${isUnread ? 'unread' : ''}" onclick="openTicketView(${t.id})">
           <div class="chat-avatar">${avatar}</div>
           <div class="chat-info">
-            <div class="chat-name">${name}</div>
+            <div class="chat-name">${name} ${isUnread ? '<span class="unread-badge orange">1</span>' : ''}</div>
             <div class="chat-last-msg">${esc(lastMsg)}</div>
+          </div>
+          <div class="chat-actions">
+             <button class="btn-small red" onclick="event.stopPropagation(); deleteUserChat(${t.id})">Удалить</button>
           </div>
         </div>
       `;
     }).join('');
   }
 
+  window.deleteUserChat = async (id) => {
+    if(!confirm('Удалить этот чат?')) return;
+    await supabase.from('ticket_messages').delete().eq('ticket_id', id);
+    await supabase.from('orders').delete().eq('id', id);
+    alert('Чат удален!');
+    loadChats();
+    checkBlockCounts();
+  }
+
   window.openTicketView = async (id) => {
     currentTicketId = id;
     isAdminView = false;
-    const { data: ticket } = await supabase.from('orders').select('*').eq('id', id).single();
     
+    // Помечаем как прочитанное
+    await supabase.from('orders').update({ is_read_by_buyer: true }).eq('id', id);
+    checkBlockCounts();
+    
+    const { data: ticket } = await supabase.from('orders').select('*').eq('id', id).single();
     const { data: msgs } = await supabase.from('ticket_messages').select('*').eq('ticket_id', id).order('created_at');
     
     const chatBox = document.getElementById('ticket-chat-box');
@@ -1073,6 +1099,15 @@
     const text = document.getElementById('ticket-reply-text').value;
     if(!text) return;
     await supabase.from('ticket_messages').insert([{ ticket_id: currentTicketId, sender_id: currentUser.id, message: text }]);
+    
+    // Если пишет админ в ответ, помечаем, что юзеру нужно прочитать
+    if (isAdminView) {
+        await supabase.from('orders').update({ is_read_by_buyer: false }).eq('id', currentTicketId);
+    } else {
+        // Если пишет юзер, помечаем, что админу нужно прочитать (можно опустить, но на будущее)
+        await supabase.from('orders').update({ is_read_by_buyer: true }).eq('id', currentTicketId);
+    }
+
     document.getElementById('ticket-reply-text').value = '';
     if(isAdminView) openAdminTicket(currentTicketId); else openTicketView(currentTicketId);
   }
@@ -1170,8 +1205,8 @@
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <strong>Заявка на разблокировку</strong>
           <div style="display:flex; gap:10px;">
-            <button onclick="openAdminTicket(${t.id})" class="btn-primary" style="width:auto; padding:6px 12px;">Открыть</button>
-            <button onclick="deleteTicketAdmin(${t.id})" class="btn-red" style="width:auto; padding:6px 12px; margin-top:0;">Удалить</button>
+            <button onclick="openAdminTicket(${t.id})" class="btn-small primary">Открыть</button>
+            <button onclick="deleteTicketAdmin(${t.id})" class="btn-small red">Удалить</button>
           </div>
         </div>
         <p style="font-size:13px; margin-top:5px;">${esc((t.message || '').substring(0, 80))}...</p>
