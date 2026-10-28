@@ -361,15 +361,19 @@
     const content = document.getElementById('admin-content');
     content.innerHTML = '<p>Загрузка...</p>';
 
-    if(tab === 'games') loadAdminGames(content);
-    if(tab === 'products') loadAdminProducts(content);
-    if(tab === 'people') loadAdminPeople(content);
-    if(tab === 'tickets') loadAdminTickets(content); 
-    if(tab === 'admin-chats') loadAdminChats(content);
-    if(tab === 'blocked') loadBlockedUsers(content);
-    if(tab === 'unblock-requests') loadUnblockRequests(content);
-    if(tab === 'reviews') loadAdminReviews(content);
-    if(tab === 'settings') loadHeroSettings(content);
+    try {
+        if(tab === 'games') await loadAdminGames(content);
+        else if(tab === 'products') await loadAdminProducts(content);
+        else if(tab === 'people') await loadAdminPeople(content);
+        else if(tab === 'tickets') await loadAdminTickets(content); 
+        else if(tab === 'admin-chats') await loadAdminChats(content);
+        else if(tab === 'blocked') await loadBlockedUsers(content);
+        else if(tab === 'unblock-requests') await loadUnblockRequests(content);
+        else if(tab === 'reviews') await loadAdminReviews(content);
+        else if(tab === 'settings') await loadHeroSettings(content);
+    } catch(e) {
+        content.innerHTML = '<p style="color:red;">Ошибка загрузки: ' + e.message + '</p>';
+    }
   }
 
   async function checkBlockCounts() {
@@ -1191,8 +1195,59 @@
     show('doc');
   }
 
+  async function loadAdminReviews(container) {
+    const { data } = await supabase.from('reviews').select('*').order('created_at', { ascending: false });
+    container.innerHTML = `
+      <div class="admin-block">
+        <h3 style="margin-bottom:15px;">Добавить отзыв</h3>
+        <input type="text" id="review-nick" placeholder="Ник покупателя">
+        <input type="file" id="review-avatar" accept="image/*" style="margin-bottom:10px;">
+        <select id="review-stars">
+          <option value="5">5 ★</option>
+          <option value="4">4 ★</option>
+          <option value="3">3 ★</option>
+          <option value="2">2 ★</option>
+          <option value="1">1 ★</option>
+        </select>
+        <textarea id="review-text" placeholder="Текст отзыва" style="height:100px;"></textarea>
+        <button class="btn-primary" onclick="addReview()" style="width:100%;">Добавить отзыв</button>
+      </div>
+      <h3>Существующие отзывы</h3>
+      ${(data || []).map(r => `
+        <div class="admin-block" style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <strong>${esc(r.nick)}</strong> · ${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}
+            <p style="font-size:13px; color:var(--text-muted);">${esc((r.text || '').substring(0, 80))}...</p>
+          </div>
+          <button onclick="deleteReviewAdmin(${r.id})" style="color:red; background:none; border:none;">Удалить</button>
+        </div>
+      `).join('')}
+    `;
+  }
+
+  window.addReview = async () => {
+    const nick = document.getElementById('review-nick').value;
+    const stars = Number(document.getElementById('review-stars').value);
+    const text = document.getElementById('review-text').value;
+    const file = document.getElementById('review-avatar').files[0];
+    if(!nick || !text) return alert('Заполните ник и текст');
+    let avatar = null;
+    if(file) avatar = await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result);
+      reader.readAsDataURL(file);
+    });
+    const { error } = await supabase.from('reviews').insert([{ nick, avatar, rating: stars, text }]);
+    if(error) alert('Ошибка: ' + error.message); else { alert('Отзыв добавлен!'); switchAdminTab('reviews', document.querySelectorAll('.admin-tab')[7]); }
+  }
+
+  window.deleteReviewAdmin = async (id) => {
+    if(!confirm('Удалить отзыв?')) return;
+    await supabase.from('reviews').delete().eq('id', id);
+    switchAdminTab('reviews', document.querySelectorAll('.admin-tab')[7]);
+  }
+
   async function init() {
-    // Восстановление сессии при перезагрузке
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
       const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
@@ -1201,8 +1256,6 @@
         updateAuthUI(); 
       }
     }
-    
-    // Загрузка баннера
     await applyHero();
   }
   
