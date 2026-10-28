@@ -10,10 +10,13 @@
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
   body { background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 80px; }
   
-  header { background: var(--bg); padding: 15px 20px; display: flex; align-items: flex-start; justify-content: space-between; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+  /* Шапка растянута на всю ширину */
+  header { background: var(--bg); padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; width: 100%; }
+  .logo-area { display: flex; flex-direction: column; gap: 10px; }
   .logo { font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 8px; cursor: pointer; color: #fff; }
   .logo-icon { width: 20px; height: 20px; background: var(--primary); transform: rotate(45deg); border-radius: 4px; }
-  .user-pill { background: var(--card); border: 1px solid var(--border); border-radius: 30px; padding: 5px 15px 5px 5px; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+  
+  .user-pill { background: var(--card); border: 1px solid var(--border); border-radius: 30px; padding: 5px 15px 5px 5px; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; cursor: pointer; width: fit-content; }
   .btn-logout { background: var(--card); border: 1px solid var(--border); color: #fff; padding: 8px 15px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; width: 100%; }
 
   .nav-menu { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; font-size: 15px; font-weight: 600; }
@@ -36,11 +39,7 @@
   .game-row { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 15px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; cursor: pointer; }
   .game-img { width: 50px; height: 50px; border-radius: 12px; object-fit: contain; background: #1a1a26; display: flex; align-items: center; justify-content: center; font-size: 24px; overflow: hidden; }
   .game-img img { width: 100%; height: 100%; border-radius: 12px; object-fit: cover; }
-  .product-item { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 15px; margin-bottom: 12px; cursor: pointer; }
-  .product-item .p-title { font-weight: bold; font-size: 16px; margin-bottom: 5px; }
-  .product-item .p-price { font-size: 20px; font-weight: 800; color: var(--accent); }
   
-  /* Каталог (как на FunPay) */
   .catalog-item { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 15px; margin-bottom: 12px; cursor: pointer; display: flex; flex-direction: column; gap: 10px; }
   .catalog-item .cat-title { font-weight: bold; font-size: 18px; }
   .catalog-item .cat-shortdesc { font-size: 14px; color: var(--text-muted); }
@@ -56,7 +55,6 @@
 
   .product-title-big { font-size: 22px; font-weight: bold; margin-bottom: 10px; }
   
-  /* Поля описаний в рамках */
   .desc-container { background: #1a1a26; border: 1px solid var(--border); border-radius: 12px; padding: 15px; margin-bottom: 15px; }
   .desc-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; font-weight: bold; }
   .desc-text { font-size: 14px; line-height: 1.6; color: #c8c8d8; white-space: pre-wrap; }
@@ -64,12 +62,10 @@
   .product-images { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; margin-top: 15px; }
   .product-images img { width: 100px; height: 100px; border-radius: 8px; object-fit: cover; cursor: pointer; }
 
-  /* Блок цены и кнопки */
   .action-block { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 20px; }
   .price-display { font-size: 22px; font-weight: bold; color: #fff; }
   .action-block .btn-primary { margin: 0; }
 
-  /* Отзывы в профиле */
   .review-item { background: #1a1a26; border-radius: 12px; padding: 15px; margin-bottom: 10px; }
   .review-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
   .review-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; overflow: hidden; font-weight: bold; }
@@ -95,7 +91,6 @@
   .btn-red { background: #ff4d4d; color: #fff; padding: 10px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
   .btn-green { background: var(--green); color: #fff; padding: 10px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
 
-  /* ЧАТЫ */
   .chat-list-item { display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--card); border-bottom: 1px solid var(--border); cursor: pointer; }
   .chat-list-item:hover { background: #1a1a26; }
   .chat-avatar { width: 50px; height: 50px; border-radius: 50%; background: #1a1a26; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: bold; color: #fff; flex-shrink: 0; overflow: hidden; }
@@ -295,6 +290,8 @@
       <button class="admin-tab active" onclick="switchAdminTab('games', this)">Игры</button>
       <button class="admin-tab" onclick="switchAdminTab('products', this)">Товары</button>
       <button class="admin-tab" onclick="switchAdminTab('people', this)">Люди</button>
+      <button class="admin-tab" onclick="switchAdminTab('blocked', this)">Заблокированные (<span id="blocked-count">0</span>)</button>
+      <button class="admin-tab" onclick="switchAdminTab('unblock-requests', this)">Разблокировка (<span id="unblock-count">0</span>)</button>
       <button class="admin-tab" onclick="switchAdminTab('tickets', this)">Заявки</button>
       <button class="admin-tab" onclick="switchAdminTab('reviews', this)">Отзывы</button>
       <button class="admin-tab" onclick="switchAdminTab('settings', this)">Настройки</button>
@@ -329,6 +326,14 @@
         <button class="btn-primary" onclick="searchUser()" style="width:100%;">Найти</button>
       </div>
       <div id="user-search-result"></div>
+    </div>
+
+    <div id="admin-tab-blocked" class="admin-content hidden">
+      <div id="blocked-list"></div>
+    </div>
+
+    <div id="admin-tab-unblock-requests" class="admin-content hidden">
+      <div id="unblock-requests-list"></div>
     </div>
 
     <div id="admin-tab-tickets" class="admin-content hidden">
@@ -404,7 +409,17 @@
     if(tab === 'games') loadAdminGames();
     if(tab === 'products') loadAdminProducts();
     if(tab === 'tickets') loadAdminTickets();
-    if(tab === 'reviews') loadAdminReviews(); // Для загрузки отзывов, если нужно
+    if(tab === 'blocked') loadBlockedUsers();
+    if(tab === 'unblock-requests') loadUnblockRequests();
+    if(tab === 'reviews') loadAdminReviews();
+    if(tab === 'settings') checkBlockCounts();
+  }
+
+  async function checkBlockCounts() {
+    const { count: blockedCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('is_blocked', true);
+    document.getElementById('blocked-count').textContent = blockedCount || 0;
+    const { count: reqCount } = await supabase.from('orders').select('*', { count: 'exact', head: true }).eq('status', 'unblock_request');
+    document.getElementById('unblock-count').textContent = reqCount || 0;
   }
 
   async function checkBlock() {
@@ -446,6 +461,7 @@
       document.getElementById('profile-avatar').innerHTML = avatarHtml;
       
       checkBlock();
+      checkBlockCounts();
     } else {
       document.getElementById('auth-links').classList.remove('hidden');
       document.getElementById('user-area').classList.add('hidden');
@@ -850,31 +866,25 @@
     `;
   }
 
-  // НОВАЯ ЛОГИКА ДЛЯ ЧАТОВ ИЗ АДМИНКИ
   window.adminSendChat = async (userId) => {
     const text = document.getElementById('admin-chat-text').value;
     if(!text) return;
 
-    // Ищем существующий открытый диалог
     const { data: existingOrders } = await supabase.from('orders').select('*').eq('buyer_id', userId).eq('status', 'open');
     
     let orderId;
-
     if (existingOrders && existingOrders.length > 0) {
-      orderId = existingOrders[0].id; // Берем первый открытый диалог
+      orderId = existingOrders[0].id;
     } else {
-      // Создаем новый диалог (заказ с типом open)
       const { data: newOrder, error } = await supabase.from('orders').insert([{ 
         buyer_id: userId, 
         status: 'open', 
         message: 'Чат открыт администратором' 
       }]).select();
-      
       if(error) { alert('Ошибка: ' + error.message); return; }
       orderId = newOrder[0].id;
     }
 
-    // Отправляем сообщение в этот диалог
     const { error: msgError } = await supabase.from('ticket_messages').insert([{ 
       ticket_id: orderId, 
       sender_id: currentUser.id, 
@@ -885,7 +895,7 @@
     
     alert('Сообщение отправлено в Чаты!');
     document.getElementById('admin-chat-text').value = '';
-    loadAdminTickets(); // Обновляем список, если нужно
+    loadAdminTickets();
   }
 
   window.blockUser = async (userId, nick) => {
@@ -895,7 +905,7 @@
     if(error) { alert('Ошибка: ' + error.message); return; }
     alert('Пользователь заблокирован!');
     document.getElementById('search-nick').value = nick;
-    searchUser();
+    searchUser(); checkBlockCounts();
   }
 
   window.unblockUser = async (id, nick) => {
@@ -903,7 +913,20 @@
     if(error) { alert('Ошибка: ' + error.message); return; }
     alert('Пользователь разблокирован!');
     document.getElementById('search-nick').value = nick;
-    searchUser();
+    searchUser(); checkBlockCounts(); loadBlockedUsers();
+  }
+
+  async function loadBlockedUsers() {
+    const { data } = await supabase.from('profiles').select('*').eq('is_blocked', true);
+    document.getElementById('blocked-list').innerHTML = (data || []).map(u => `
+      <div class="admin-block" style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <h3>${u.nickname}</h3>
+          <p style="color:var(--text-muted); font-size:13px;">Причина: ${u.block_reason}</p>
+        </div>
+        <button class="btn-green" style="width:auto; padding:8px 15px;" onclick="unblockUser('${u.id}', '${u.nickname}')">Разблокировать</button>
+      </div>
+    `).join('');
   }
 
   // --- АДМИНКА: ЗАЯВКИ ---
@@ -1071,7 +1094,11 @@
     show('blocked');
   }
 
-  // --- ОТЗЫВЫ ---
+  // --- АДМИНКА: ОТЗЫВЫ ---
+  async function loadAdminReviews() {
+    // Просто заглушка, чтобы не было ошибки при переключении
+  }
+
   window.addReview = async () => {
     const nick = document.getElementById('review-nick').value;
     const stars = document.getElementById('review-stars').value;
