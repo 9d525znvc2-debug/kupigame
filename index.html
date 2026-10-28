@@ -348,7 +348,6 @@
       <button class="admin-tab" onclick="switchAdminTab('settings', this)">Настройки</button>
     `;
     
-    // Сразу обновляем счётчики при открытии вкладки
     checkBlockCounts();
     switchAdminTab('games', tabsContainer.firstElementChild);
   }
@@ -467,7 +466,6 @@
     if (error) return alert('Ошибка: ' + error.message);
     
     if (data.user) {
-      // Если Supabase требует подтверждение почты, data.session будет null
       if (!data.session) {
           alert('Аккаунт создан, но требуется подтверждение Email. Попросите админа отключить "Confirm email" в настройках Supabase.');
           return;
@@ -1145,7 +1143,6 @@
     const list = document.getElementById('blocked-tickets-list');
     if (!currentUser) return;
     
-    // Запрашиваем заявки на разблокировку от этого юзера
     const { data, error } = await supabase.from('orders')
         .select('*')
         .eq('buyer_id', currentUser.id)
@@ -1195,14 +1192,20 @@
   }
 
   async function init() {
-    applyHero();
-    
+    // Восстановление сессии при перезагрузке
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
       const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
-      if(profile) { currentUser = profile; updateAuthUI(); }
+      if(profile) { 
+        currentUser = profile; 
+        updateAuthUI(); 
+      }
     }
+    
+    // Загрузка баннера
+    await applyHero();
   }
+  
   init();
 </script>
 </body>
