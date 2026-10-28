@@ -46,7 +46,8 @@
   .seller-avatar img { width: 100%; height: 100%; object-fit: cover; }
   .seller-info h3 { font-size: 16px; color: #fff; margin-bottom: 3px; }
   .seller-stars { color: #fbbf24; font-size: 16px; letter-spacing: 2px; }
-  
+  .seller-stars.empty { color: #4a4a5a; }
+
   .product-title-big { font-size: 22px; font-weight: bold; margin-bottom: 15px; }
   .product-desc-block { background: #1a1a26; border-radius: 12px; padding: 15px; margin-bottom: 20px; font-size: 14px; line-height: 1.6; color: #c8c8d8; white-space: pre-wrap; }
   
@@ -275,10 +276,12 @@
       <button class="admin-tab active" onclick="switchAdminTab('games', this)">Игры</button>
       <button class="admin-tab" onclick="switchAdminTab('products', this)">Товары</button>
       <button class="admin-tab" onclick="switchAdminTab('people', this)">Люди</button>
+      <button class="admin-tab" onclick="switchAdminTab('tickets', this)">Заявки</button>
       <button class="admin-tab" onclick="switchAdminTab('settings', this)">Настройки</button>
     </div>
 
     <div id="admin-tab-games" class="admin-content"></div>
+    
     <div id="admin-tab-products" class="admin-content hidden">
       <div class="admin-block">
         <h3 id="product-form-title" style="margin-bottom:15px;">Добавить товар</h3>
@@ -304,6 +307,10 @@
         <button class="btn-primary" onclick="searchUser()" style="width:100%;">Найти</button>
       </div>
       <div id="user-search-result"></div>
+    </div>
+
+    <div id="admin-tab-tickets" class="admin-content hidden">
+      <div id="admin-tickets-list"></div>
     </div>
 
     <div id="admin-tab-settings" class="admin-content hidden">
@@ -357,6 +364,7 @@
     
     if(tab === 'games') loadAdminGames();
     if(tab === 'products') loadAdminProducts();
+    if(tab === 'tickets') loadAdminTickets();
   }
 
   async function checkBlock() {
@@ -514,7 +522,7 @@
         <div class="seller-avatar">K</div>
         <div class="seller-info">
           <h3>KupiGame</h3>
-          <div class="seller-stars">★★★★★</div>
+          <div class="seller-stars empty">★★★★★</div>
         </div>
         <div style="margin-left:auto; color:var(--text-muted);">→</div>
       </div>
@@ -555,7 +563,7 @@
         <h2 style="margin-bottom:5px;">${nickname}</h2>
         <p style="color:var(--text-muted); font-size:14px; margin-bottom:15px;">Владелец магазина · проверенный продавец</p>
         
-        <div class="seller-stars" style="font-size:24px; margin-bottom:10px;">★★★★★</div>
+        <div class="seller-stars empty" style="font-size:24px; margin-bottom:10px;">★★★★★</div>
         <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px;">Пока без отзывов · товаров: ${products ? products.length : 0}</p>
         
         <div style="text-align:left; max-width:300px; margin:0 auto;">
@@ -622,16 +630,21 @@
     if(error) alert('Ошибка: ' + error.message); else loadAdminGames(); 
   }
 
-  // --- АДМИНКА: ТОВАРЫ (ДОБАВЛЕНИЕ И РЕДАКТИРОВАНИЕ) ---
+  // --- АДМИНКА: ТОВАРЫ ---
   async function loadAdminProducts() {
     const { data: games } = await supabase.from('games').select('*');
-    document.getElementById('admin-game-select').innerHTML = (games || []).map(g => `<option value="${g.name}">${g.name}</option>`).join('');
+    const select = document.getElementById('admin-game-select');
+    if(select) {
+        select.innerHTML = (games || []).map(g => `<option value="${g.name}">${g.name}</option>`).join('');
+    }
     
     const { data: products } = await supabase.from('products').select('*');
     document.getElementById('admin-tab-products').innerHTML = `
       <div class="admin-block">
         <h3 id="product-form-title" style="margin-bottom:15px;">Добавить товар</h3>
-        <select id="admin-game-select"></select>
+        <select id="admin-game-select">
+            ${(games || []).map(g => `<option value="${g.name}">${g.name}</option>`).join('')}
+        </select>
         <input type="text" id="admin-title" placeholder="Название (например: Аккаунт•Brawl Stars)">
         <input type="color" id="admin-color" value="#fbbf24" style="height:50px; padding:5px;">
         <textarea id="admin-desc" placeholder="Описание" style="height:120px;"></textarea>
@@ -760,16 +773,12 @@
     `;
   }
 
-  window.adminChangeUserPass = async (userId) => {
-    alert('В реальном проекте нужен серверный ключ. Здесь смена пароля другого пользователя не сработает.');
-  }
-
   window.adminSendChat = async (userId) => {
     const text = document.getElementById('admin-chat-text').value;
     if(!text) return;
-    await supabase.from('orders').insert([{ buyer_id: userId, status: 'open', message: 'Админ: ' + text }]);
-    alert('Сообщение отправлено!');
-    document.getElementById('admin-chat-text').value = '';
+    const { error } = await supabase.from('orders').insert([{ buyer_id: userId, status: 'open', message: 'Админ: ' + text }]);
+    if(error) alert('Ошибка: ' + error.message);
+    else { alert('Сообщение отправлено!'); document.getElementById('admin-chat-text').value = ''; }
   }
 
   window.blockUser = async (userId, nick) => {
@@ -788,6 +797,67 @@
     alert('Пользователь разблокирован!');
     document.getElementById('search-nick').value = nick;
     searchUser();
+  }
+
+  // --- АДМИНКА: ЗАЯВКИ ---
+  async function loadAdminTickets() {
+    const { data } = await supabase.from('orders').select('*').eq('status', 'open');
+    document.getElementById('admin-tickets-list').innerHTML = (data || []).map(t => `
+      <div class="admin-block">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <strong>Обращение</strong>
+          <button onclick="openAdminTicket(${t.id})" class="btn-primary" style="width:auto; padding:6px 12px;">Открыть</button>
+        </div>
+        <p style="font-size:13px; margin-top:5px;">${t.message.substring(0, 50)}...</p>
+      </div>
+    `).join('');
+  }
+
+  window.openAdminTicket = async (id) => {
+    currentTicketId = id;
+    isAdminView = true;
+    const { data: ticket } = await supabase.from('orders').select('*').eq('id', id).single();
+    const { data: buyer } = await supabase.from('profiles').select('nickname, avatar').eq('id', ticket.buyer_id).single();
+    const { data: msgs } = await supabase.from('ticket_messages').select('*').eq('ticket_id', id).order('created_at');
+    
+    const chatBox = document.getElementById('ticket-chat-box');
+    let chatHtml = `<div class="chat-msg their-msg">
+      <div class="msg-sender">${buyer ? buyer.nickname : 'Покупатель'}</div>
+      ${ticket.message}
+    </div>`;
+
+    if(msgs) msgs.forEach(m => {
+      const isAdmin = m.sender_id === currentUser.id;
+      const senderName = isAdmin ? 'KupiGame <span class="admin-tag">Админ</span>' : (buyer ? buyer.nickname : 'Покупатель');
+      
+      chatHtml += `<div class="chat-msg ${isAdmin ? 'my-msg' : 'their-msg'}">
+        <div class="msg-sender ${isAdmin ? 'my-msg-text' : ''}">${senderName}</div>
+        ${m.message}
+      </div>`;
+    });
+    
+    chatBox.innerHTML = chatHtml;
+    document.getElementById('ticket-reply-area').style.display = 'block';
+    document.getElementById('ticket-actions').style.display = 'flex';
+    document.getElementById('ticket-actions').innerHTML = `
+      <button class="btn-red" onclick="closeTicket()">Закрыть</button>
+      <button class="btn-red" onclick="deleteTicketAdmin()" style="background:#333;">Удалить</button>
+    `;
+    show('ticket-view');
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  window.closeTicket = async () => {
+    await supabase.from('orders').update({ status: 'closed' }).eq('id', currentTicketId);
+    alert('Заявка закрыта!');
+    if(isAdminView) { show('admin'); loadAdminTickets(); } else show('profile');
+  }
+
+  window.deleteTicketAdmin = async () => {
+    await supabase.from('orders').delete().eq('id', currentTicketId);
+    alert('Заявка удалена!');
+    show('admin');
+    loadAdminTickets();
   }
 
   // --- ЧАТЫ ---
