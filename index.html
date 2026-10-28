@@ -27,17 +27,12 @@
   .screen { display: none; }
   .screen.active { display: block; }
 
-  /* ИЗМЕНЕНО: Убрана рамка у главного блока, обложка прижата к краям */
   .hero-card { background: transparent; border: none; border-radius: 0; padding: 0; text-align: center; margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; width: 100%; }
-  
-  /* Обложка теперь на всю ширину, без отступов */
   .hero-image { width: 100%; max-height: 400px; border-radius: 0; margin-bottom: 20px; display: none; object-fit: cover; }
-  
   .hero-card h1 { font-size: 26px; margin-bottom: 10px; }
   .hero-card h1 span { color: var(--primary); }
   .btn-primary { background: var(--primary); color: #fff; padding: 12px 24px; border: none; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; text-align: center; text-decoration: none; display: inline-block; width: 100%; max-width: 300px; }
   
-  /* Разделительная полоска, о которой ты говорил */
   .divider { width: 100%; height: 1px; background: var(--border); margin-bottom: 20px; }
 
   .game-row { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 15px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; cursor: pointer; }
@@ -131,6 +126,8 @@
     <button onclick="show('catalog')" id="nav-catalog">Каталог</button>
     <button onclick="show('chats')" id="nav-chats" class="hidden">Чаты</button>
     <button onclick="show('profile')" id="nav-profile" class="hidden">Профиль</button>
+    
+    <!-- Вкладка Админ будет скрыта, если не админ, но мы также скроем ее через JS -->
     <button onclick="show('admin')" id="nav-admin" class="admin hidden">Админ</button>
     
     <button id="logout-btn" onclick="logout()" class="btn-logout hidden">Выйти</button>
@@ -192,9 +189,7 @@
   <!-- ГЛАВНАЯ -->
   <section class="screen active" id="screen-home">
     <div class="hero-card">
-      <!-- Обложка теперь без рамки -->
       <img id="main-hero-img" class="hero-image">
-      <!-- Разделительная полоска -->
       <div class="divider"></div>
       <h1>Аккаунты <span>и товары</span> для игр</h1>
       <p style="color:var(--text-muted); margin-bottom:20px;">Сделки ведёт продавец, владелец магазина KupiGame.</p>
@@ -256,7 +251,7 @@
     </div>
   </section>
 
-  <!-- ПРОФИЛЬ -->
+  <!-- ПРОФИЛЬ (БЕЗ СМЕНЫ ПАРОЛЯ ДРУГИМ, только свой) -->
   <section class="screen" id="screen-profile">
     <button class="back-btn" onclick="show('home')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
     <h1 class="catalog-title" style="font-size: 24px;">Мой профиль</h1>
@@ -314,98 +309,18 @@
     </div>
   </section>
 
-  <!-- АДМИНКА -->
+  <!-- АДМИНКА (сюда попадут только те, у кого is_admin = true и ник KupiGame) -->
   <section class="screen" id="screen-admin">
     <button class="back-btn" onclick="show('home')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
     <h1 class="catalog-title" style="font-size: 24px;">Админ-панель 👑</h1>
     
-    <div class="admin-tabs">
-      <button class="admin-tab active" onclick="switchAdminTab('games', this)">Игры</button>
-      <button class="admin-tab" onclick="switchAdminTab('products', this)">Товары</button>
-      <button class="admin-tab" onclick="switchAdminTab('people', this)">Люди</button>
-      <button class="admin-tab" onclick="switchAdminTab('blocked', this)">Заблокированные (<span id="blocked-count">0</span>)</button>
-      <button class="admin-tab" onclick="switchAdminTab('unblock-requests', this)">Разблокировка (<span id="unblock-count">0</span>)</button>
-      <button class="admin-tab" onclick="switchAdminTab('tickets', this)">Заявки</button>
-      <button class="admin-tab" onclick="switchAdminTab('reviews', this)">Отзывы</button>
-      <button class="admin-tab" onclick="switchAdminTab('settings', this)">Настройки</button>
+    <!-- Вкладки будут отрисованы в JS, только если это владелец -->
+    <div class="admin-tabs" id="admin-tabs">
+      <!-- Здесь будут кнопки -->
     </div>
 
-    <div id="admin-tab-games" class="admin-content"></div>
-    
-    <div id="admin-tab-products" class="admin-content hidden">
-      <div class="admin-block">
-        <h3 id="product-form-title" style="margin-bottom:15px;">Добавить товар</h3>
-        <select id="admin-game-select"></select>
-        <input type="text" id="admin-title" placeholder="Название (например: Аккаунт•Brawl Stars)">
-        <input type="color" id="admin-color" value="#fbbf24" style="height:50px; padding:5px;">
-        <input type="number" id="admin-price" placeholder="Цена ₽">
-        <textarea id="admin-shortdesc" placeholder="Краткое описание" style="height:80px;"></textarea>
-        <textarea id="admin-desc" placeholder="Подробное описание" style="height:120px;"></textarea>
-        <input type="text" id="admin-paylink" placeholder="Ссылка на оплату">
-        <label style="color:var(--text-muted); font-size:12px;">Скриншоты (до 10 фото):</label>
-        <input type="file" id="product-img-upload" accept="image/*" multiple>
-        
-        <input type="hidden" id="edit-product-id" value="">
-        
-        <button class="btn-primary" id="product-submit-btn" onclick="saveProduct()" style="width:100%; margin-top:15px;">Опубликовать</button>
-        <button class="btn-red hidden" id="product-cancel-btn" onclick="resetProductForm()">Отмена</button>
-      </div>
-    </div>
-
-    <div id="admin-tab-people" class="admin-content hidden">
-      <div class="admin-block">
-        <h3 style="margin-bottom:15px;">Поиск пользователя</h3>
-        <input type="text" id="search-nick" placeholder="Введите ник">
-        <button class="btn-primary" onclick="searchUser()" style="width:100%;">Найти</button>
-      </div>
-      <div id="user-search-result"></div>
-    </div>
-
-    <div id="admin-tab-blocked" class="admin-content hidden">
-      <div id="blocked-list"></div>
-    </div>
-
-    <div id="admin-tab-unblock-requests" class="admin-content hidden">
-      <div id="unblock-requests-list"></div>
-    </div>
-
-    <div id="admin-tab-tickets" class="admin-content hidden">
-      <div id="admin-tickets-list"></div>
-    </div>
-
-    <div id="admin-tab-reviews" class="admin-content hidden">
-      <div class="admin-block">
-        <h3 style="margin-bottom:15px;">Добавить отзыв</h3>
-        <input type="text" id="review-nick" placeholder="Ник покупателя">
-        <input type="file" id="review-avatar" accept="image/*" style="margin-bottom:10px;">
-        <select id="review-stars">
-          <option value="5">5 ★</option>
-          <option value="4">4 ★</option>
-          <option value="3">3 ★</option>
-          <option value="2">2 ★</option>
-          <option value="1">1 ★</option>
-        </select>
-        <textarea id="review-text" placeholder="Текст отзыва" style="height:100px;"></textarea>
-        <button class="btn-primary" onclick="addReview()" style="width:100%;">Добавить отзыв</button>
-      </div>
-    </div>
-
-    <div id="admin-tab-settings" class="admin-content hidden">
-      <div class="admin-block">
-        <h3 style="margin-bottom:15px;">Обложка на главную</h3>
-        <input type="file" id="hero-upload" accept="image/*">
-        
-        <label style="color:var(--text-muted); font-size:12px; margin-top:10px; display:block;">Ширина (например: 100%, 500px)</label>
-        <input type="text" id="hero-width" placeholder="100%">
-        
-        <label style="color:var(--text-muted); font-size:12px; display:block;">Высота (например: auto, 300px)</label>
-        <input type="text" id="hero-height" placeholder="auto">
-        
-        <label style="color:var(--text-muted); font-size:12px; display:block;">Заполнение (contain - вписать, cover - обрезать)</label>
-        <input type="text" id="hero-fit" placeholder="contain">
-        
-        <button class="btn-primary" onclick="uploadHero()" style="width:100%; margin-top:15px;">Сохранить обложку</button>
-      </div>
+    <div id="admin-content">
+      <!-- Контент будет меняться через JS -->
     </div>
   </section>
 </main>
@@ -444,26 +359,54 @@
     window.scrollTo(0, 0);
   }
 
+  // Отрисовка админки (только для KupiGame)
+  function renderAdminTabs() {
+    const tabsContainer = document.getElementById('admin-tabs');
+    if (!currentUser || currentUser.nickname !== 'KupiGame') {
+        tabsContainer.innerHTML = ''; // Никаких вкладок для обычных
+        document.getElementById('admin-content').innerHTML = '<p style="color:red; text-align:center; padding:20px;">Доступ запрещен.</p>';
+        return;
+    }
+
+    tabsContainer.innerHTML = `
+      <button class="admin-tab active" onclick="switchAdminTab('games', this)">Игры</button>
+      <button class="admin-tab" onclick="switchAdminTab('products', this)">Товары</button>
+      <button class="admin-tab" onclick="switchAdminTab('people', this)">Люди</button>
+      <button class="admin-tab" onclick="switchAdminTab('blocked', this)">Заблокированные (<span id="blocked-count">0</span>)</button>
+      <button class="admin-tab" onclick="switchAdminTab('unblock-requests', this)">Разблокировка (<span id="unblock-count">0</span>)</button>
+      <button class="admin-tab" onclick="switchAdminTab('tickets', this)">Заявки</button>
+      <button class="admin-tab" onclick="switchAdminTab('reviews', this)">Отзывы</button>
+      <button class="admin-tab" onclick="switchAdminTab('settings', this)">Настройки</button>
+    `;
+    switchAdminTab('games', tabsContainer.firstElementChild);
+  }
+
   window.switchAdminTab = async (tab, btn) => {
+    if (!currentUser || currentUser.nickname !== 'KupiGame') return;
+
     document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.admin-content').forEach(c => c.classList.add('hidden'));
-    document.getElementById('admin-tab-' + tab).classList.remove('hidden');
+    if(btn) btn.classList.add('active');
     
-    if(tab === 'games') loadAdminGames();
-    if(tab === 'products') loadAdminProducts();
-    if(tab === 'tickets') loadAdminTickets(); 
-    if(tab === 'blocked') loadBlockedUsers();
-    if(tab === 'unblock-requests') loadUnblockRequests();
-    if(tab === 'reviews') loadAdminReviews();
-    if(tab === 'settings') loadHeroSettings();
+    const content = document.getElementById('admin-content');
+    content.innerHTML = '<p>Загрузка...</p>';
+
+    if(tab === 'games') loadAdminGames(content);
+    if(tab === 'products') loadAdminProducts(content);
+    if(tab === 'tickets') loadAdminTickets(content); 
+    if(tab === 'blocked') loadBlockedUsers(content);
+    if(tab === 'unblock-requests') loadUnblockRequests(content);
+    if(tab === 'reviews') loadAdminReviews(content);
+    if(tab === 'settings') loadHeroSettings(content);
   }
 
   async function checkBlockCounts() {
     const { count: blockedCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('is_blocked', true);
-    document.getElementById('blocked-count').textContent = blockedCount || 0;
+    const bEl = document.getElementById('blocked-count');
+    if(bEl) bEl.textContent = blockedCount || 0;
+
     const { count: reqCount } = await supabase.from('orders').select('*', { count: 'exact', head: true }).eq('status', 'unblock_request');
-    document.getElementById('unblock-count').textContent = reqCount || 0;
+    const uEl = document.getElementById('unblock-count');
+    if(uEl) uEl.textContent = reqCount || 0;
   }
 
   async function checkBlock() {
@@ -486,7 +429,6 @@
     document.getElementById('nav-profile').classList.remove('hidden');
     document.getElementById('nav-chats').classList.remove('hidden');
     document.getElementById('logout-btn').classList.remove('hidden');
-    if(currentUser.is_admin) document.getElementById('nav-admin').classList.remove('hidden');
     return false;
   }
 
@@ -504,6 +446,13 @@
       document.getElementById('profile-nick').textContent = currentUser.nickname;
       document.getElementById('profile-avatar').innerHTML = avatarHtml;
       
+      // Если это владелец, показываем кнопку Админ
+      if(currentUser.nickname === 'KupiGame') {
+          document.getElementById('nav-admin').classList.remove('hidden');
+      } else {
+          document.getElementById('nav-admin').classList.add('hidden');
+      }
+
       checkBlock();
       checkBlockCounts();
     } else {
@@ -719,10 +668,10 @@
 
   window.pay = (link) => { if(link) window.open(link, '_blank'); else alert('Ссылка не указана.'); }
 
-  // --- АДМИНКА: ИГРЫ ---
-  async function loadAdminGames() {
+  // --- АДМИНКА: ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ (ВЫЗЫВАЮТСЯ ИЗ HTML) ---
+  async function loadAdminGames(container) {
     const { data } = await supabase.from('games').select('*');
-    document.getElementById('admin-tab-games').innerHTML = `
+    container.innerHTML = `
       <div class="admin-block">
         <h3 style="margin-bottom:15px;">Добавить игру</h3>
         <input type="text" id="new-game-name" placeholder="Название игры">
@@ -751,30 +700,25 @@
       reader.readAsDataURL(file);
     });
     const { error } = await supabase.from('games').insert([{ name, img: imgBase64 }]);
-    if(error) alert('Ошибка: ' + error.message); else { alert('Игра добавлена!'); loadAdminGames(); }
+    if(error) alert('Ошибка: ' + error.message); else { alert('Игра добавлена!'); switchAdminTab('games', document.querySelector('.admin-tab')); }
   }
 
   window.deleteGame = async (id) => { 
     const { error } = await supabase.from('games').delete().eq('id', id); 
-    if(error) alert('Ошибка: ' + error.message); else loadAdminGames(); 
+    if(error) alert('Ошибка: ' + error.message); else switchAdminTab('games', document.querySelector('.admin-tab'));
   }
 
-  // --- АДМИНКА: ТОВАРЫ ---
-  async function loadAdminProducts() {
+  async function loadAdminProducts(container) {
     const { data: games } = await supabase.from('games').select('*');
-    const select = document.getElementById('admin-game-select');
-    if(select) {
-        select.innerHTML = (games || []).map(g => `<option value="${g.name}">${g.name}</option>`).join('');
-    }
-    
     const { data: products } = await supabase.from('products').select('*');
-    document.getElementById('admin-tab-products').innerHTML = `
+    
+    container.innerHTML = `
       <div class="admin-block">
         <h3 id="product-form-title" style="margin-bottom:15px;">Добавить товар</h3>
         <select id="admin-game-select">
             ${(games || []).map(g => `<option value="${g.name}">${g.name}</option>`).join('')}
         </select>
-        <input type="text" id="admin-title" placeholder="Название (например: Аккаунт•Brawl Stars)">
+        <input type="text" id="admin-title" placeholder="Название">
         <input type="color" id="admin-color" value="#fbbf24" style="height:50px; padding:5px;">
         <input type="number" id="admin-price" placeholder="Цена ₽">
         <textarea id="admin-shortdesc" placeholder="Краткое описание" style="height:80px;"></textarea>
@@ -782,9 +726,7 @@
         <input type="text" id="admin-paylink" placeholder="Ссылка на оплату">
         <label style="color:var(--text-muted); font-size:12px;">Скриншоты (до 10 фото):</label>
         <input type="file" id="product-img-upload" accept="image/*" multiple>
-        
         <input type="hidden" id="edit-product-id" value="">
-        
         <button class="btn-primary" id="product-submit-btn" onclick="saveProduct()" style="width:100%; margin-top:15px;">Опубликовать</button>
         <button class="btn-red hidden" id="product-cancel-btn" onclick="resetProductForm()">Отмена</button>
       </div>
@@ -834,12 +776,12 @@
       const updateData = { title, title_color: color, price: Number(price), shortdesc, description: desc, paylink };
       if(imagesBase64.length > 0) updateData.images = imagesBase64;
       const { error } = await supabase.from('products').update(updateData).eq('id', id);
-      if(error) alert('Ошибка: ' + error.message); else { alert('Товар обновлен!'); resetProductForm(); loadAdminProducts(); }
+      if(error) alert('Ошибка: ' + error.message); else { alert('Товар обновлен!'); switchAdminTab('products', document.querySelectorAll('.admin-tab')[1]); }
     } else {
       const { error } = await supabase.from('products').insert([{ 
         game, title, title_color: color, price: Number(price), shortdesc, description: desc, paylink, images: imagesBase64 
       }]);
-      if(error) alert('Ошибка: ' + error.message); else { alert('Товар добавлен!'); resetProductForm(); loadAdminProducts(); }
+      if(error) alert('Ошибка: ' + error.message); else { alert('Товар добавлен!'); switchAdminTab('products', document.querySelectorAll('.admin-tab')[1]); }
     }
   }
 
@@ -876,10 +818,21 @@
   window.deleteProductAdmin = async (id) => {
     if(!confirm('Удалить товар?')) return;
     await supabase.from('products').delete().eq('id', id);
-    loadAdminProducts();
+    switchAdminTab('products', document.querySelectorAll('.admin-tab')[1]);
   }
 
   // --- АДМИНКА: ЛЮДИ ---
+  async function loadAdminPeople(container) {
+    container.innerHTML = `
+      <div class="admin-block">
+        <h3 style="margin-bottom:15px;">Поиск пользователя</h3>
+        <input type="text" id="search-nick" placeholder="Введите ник">
+        <button class="btn-primary" onclick="searchUser()" style="width:100%;">Найти</button>
+      </div>
+      <div id="user-search-result"></div>
+    `;
+  }
+
   window.searchUser = async () => {
     const nick = document.getElementById('search-nick').value;
     const { data } = await supabase.from('profiles').select('*').eq('nickname', nick).single();
@@ -939,7 +892,6 @@
     
     alert('Сообщение отправлено в Чаты!');
     document.getElementById('admin-chat-text').value = '';
-    loadAdminTickets();
   }
 
   window.blockUser = async (userId, nick) => {
@@ -957,12 +909,13 @@
     if(error) { alert('Ошибка: ' + error.message); return; }
     alert('Пользователь разблокирован!');
     document.getElementById('search-nick').value = nick;
-    searchUser(); checkBlockCounts(); loadBlockedUsers();
+    searchUser(); checkBlockCounts();
   }
 
-  async function loadBlockedUsers() {
+  // --- АДМИНКА: БЛОКИРОВКИ ---
+  async function loadBlockedUsers(container) {
     const { data } = await supabase.from('profiles').select('*').eq('is_blocked', true);
-    document.getElementById('blocked-list').innerHTML = (data || []).map(u => `
+    container.innerHTML = (data || []).map(u => `
       <div class="admin-block" style="display:flex; justify-content:space-between; align-items:center;">
         <div>
           <h3>${u.nickname}</h3>
@@ -974,9 +927,9 @@
   }
 
   // --- АДМИНКА: ЗАЯВКИ ---
-  async function loadAdminTickets() {
+  async function loadAdminTickets(container) {
     const { data } = await supabase.from('orders').select('*').eq('status', 'open');
-    document.getElementById('admin-tickets-list').innerHTML = (data || []).map(t => `
+    container.innerHTML = (data || []).map(t => `
       <div class="admin-block">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <strong>Обращение</strong>
@@ -1024,14 +977,13 @@
   window.closeTicket = async () => {
     await supabase.from('orders').update({ status: 'closed' }).eq('id', currentTicketId);
     alert('Заявка закрыта!');
-    if(isAdminView) { show('admin'); loadAdminTickets(); } else show('profile');
+    show('admin');
   }
 
   window.deleteTicketAdmin = async () => {
     await supabase.from('orders').delete().eq('id', currentTicketId);
     alert('Заявка удалена!');
     show('admin');
-    loadAdminTickets();
   }
 
   // --- ЧАТЫ (ДЛЯ ПОЛЬЗОВАТЕЛЯ) ---
@@ -1138,7 +1090,7 @@
     show('blocked');
   }
 
-  // --- ОБЛОЖКА (СОХРАНЕНИЕ В БАЗУ) ---
+  // --- ОБЛОЖКА ---
   window.uploadHero = async () => {
     const input = document.getElementById('hero-upload');
     const width = document.getElementById('hero-width').value || '100%';
@@ -1179,16 +1131,22 @@
     }
   }
 
-  async function loadHeroSettings() {
+  async function loadHeroSettings(container) {
     const { data } = await supabase.from('profiles').select('hero_width, hero_height, hero_fit').eq('nickname', 'KupiGame').single();
     
-    const wInput = document.getElementById('hero-width');
-    const hInput = document.getElementById('hero-height');
-    const fInput = document.getElementById('hero-fit');
-    
-    if(wInput) wInput.value = data?.hero_width || '100%';
-    if(hInput) hInput.value = data?.hero_height || 'auto';
-    if(fInput) fInput.value = data?.hero_fit || 'contain';
+    container.innerHTML = `
+      <div class="admin-block">
+        <h3 style="margin-bottom:15px;">Обложка на главную</h3>
+        <input type="file" id="hero-upload" accept="image/*">
+        <label style="color:var(--text-muted); font-size:12px; margin-top:10px; display:block;">Ширина (например: 100%, 500px)</label>
+        <input type="text" id="hero-width" value="${data?.hero_width || '100%'}">
+        <label style="color:var(--text-muted); font-size:12px; display:block;">Высота (например: auto, 300px)</label>
+        <input type="text" id="hero-height" value="${data?.hero_height || 'auto'}">
+        <label style="color:var(--text-muted); font-size:12px; display:block;">Заполнение (contain - вписать, cover - обрезать)</label>
+        <input type="text" id="hero-fit" value="${data?.hero_fit || 'contain'}">
+        <button class="btn-primary" onclick="uploadHero()" style="width:100%; margin-top:15px;">Сохранить обложку</button>
+      </div>
+    `;
   }
 
   const docs = {
