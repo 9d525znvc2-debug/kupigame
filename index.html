@@ -1247,6 +1247,64 @@
     switchAdminTab('reviews', document.querySelectorAll('.admin-tab')[7]);
   }
 
+  async function loadHeroSettings(container) {
+    const { data } = await supabase.from('profiles').select('hero_width, hero_height, hero_fit').eq('nickname', 'KupiGame').single();
+    
+    container.innerHTML = `
+      <div class="admin-block">
+        <h3 style="margin-bottom:15px;">Обложка на главную</h3>
+        <input type="file" id="hero-upload" accept="image/*">
+        <label style="color:var(--text-muted); font-size:12px; margin-top:10px; display:block;">Ширина (например: 100%, 500px)</label>
+        <input type="text" id="hero-width" value="${esc(data?.hero_width || '100%')}">
+        <label style="color:var(--text-muted); font-size:12px; display:block;">Высота (например: auto, 300px)</label>
+        <input type="text" id="hero-height" value="${esc(data?.hero_height || 'auto')}">
+        <label style="color:var(--text-muted); font-size:12px; display:block;">Заполнение (contain - вписать, cover - обрезать)</label>
+        <input type="text" id="hero-fit" value="${esc(data?.hero_fit || 'contain')}">
+        <button class="btn-primary" onclick="uploadHero()" style="width:100%; margin-top:15px;">Сохранить обложку</button>
+      </div>
+    `;
+  }
+
+  window.uploadHero = async () => {
+    const input = document.getElementById('hero-upload');
+    const width = document.getElementById('hero-width').value || '100%';
+    const height = document.getElementById('hero-height').value || 'auto';
+    const fit = document.getElementById('hero-fit').value || 'contain';
+
+    if(!input.files[0]) return;
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const base64 = e.target.result;
+      
+      const { error } = await supabase.from('profiles').update({
+        hero_url: base64,
+        hero_width: width,
+        hero_height: height,
+        hero_fit: fit
+      }).eq('id', currentUser.id);
+
+      if(error) { alert('Ошибка: ' + error.message); return; }
+      
+      applyHero();
+      alert('Обложка и настройки сохранены!');
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+
+  async function applyHero() {
+    const { data } = await supabase.from('profiles').select('hero_url, hero_width, hero_height, hero_fit').eq('nickname', 'KupiGame').single();
+    const el = document.getElementById('main-hero-img');
+    
+    if(data && data.hero_url) {
+      el.src = data.hero_url; 
+      el.style.display = 'block'; 
+      el.style.width = data.hero_width || '100%';
+      el.style.height = data.hero_height || 'auto';
+      el.style.objectFit = data.hero_fit || 'contain';
+    }
+  }
+
   async function init() {
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
