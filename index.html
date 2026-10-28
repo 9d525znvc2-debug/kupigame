@@ -27,12 +27,19 @@
   .screen { display: none; }
   .screen.active { display: block; }
 
-  .hero-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; width: 100%; overflow: hidden; }
-  .hero-image { width: 100%; height: auto; border-radius: 12px; margin-bottom: 20px; display: none; object-fit: contain; }
+  /* ИЗМЕНЕНО: Убрана рамка у главного блока, обложка прижата к краям */
+  .hero-card { background: transparent; border: none; border-radius: 0; padding: 0; text-align: center; margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; width: 100%; }
+  
+  /* Обложка теперь на всю ширину, без отступов */
+  .hero-image { width: 100%; max-height: 400px; border-radius: 0; margin-bottom: 20px; display: none; object-fit: cover; }
+  
   .hero-card h1 { font-size: 26px; margin-bottom: 10px; }
   .hero-card h1 span { color: var(--primary); }
   .btn-primary { background: var(--primary); color: #fff; padding: 12px 24px; border: none; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; text-align: center; text-decoration: none; display: inline-block; width: 100%; max-width: 300px; }
   
+  /* Разделительная полоска, о которой ты говорил */
+  .divider { width: 100%; height: 1px; background: var(--border); margin-bottom: 20px; }
+
   .game-row { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 15px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; cursor: pointer; }
   .game-img { width: 50px; height: 50px; border-radius: 12px; object-fit: contain; background: #1a1a26; display: flex; align-items: center; justify-content: center; font-size: 24px; overflow: hidden; }
   .game-img img { width: 100%; height: 100%; border-radius: 12px; object-fit: cover; }
@@ -185,7 +192,10 @@
   <!-- ГЛАВНАЯ -->
   <section class="screen active" id="screen-home">
     <div class="hero-card">
+      <!-- Обложка теперь без рамки -->
       <img id="main-hero-img" class="hero-image">
+      <!-- Разделительная полоска -->
+      <div class="divider"></div>
       <h1>Аккаунты <span>и товары</span> для игр</h1>
       <p style="color:var(--text-muted); margin-bottom:20px;">Сделки ведёт продавец, владелец магазина KupiGame.</p>
       <button class="btn-primary" onclick="show('catalog')">Перейти в каталог</button>
