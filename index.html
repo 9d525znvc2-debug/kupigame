@@ -7,114 +7,104 @@
 <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%238b5cf6%22/><text y=%2270%22 x=%2250%22 font-size=%2260%22 text-anchor=%22middle%22 fill=%22white%22>K</text></svg>">
 <style>
   :root { --primary: #8b5cf6; --primary-hover: #7c3aed; --bg: #090910; --card: #12121a; --text: #e8e8f0; --text-muted: #9898b0; --border: #2a2a3a; --accent: #38bdf8; --green: #10b981; }
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+  body { background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 80px; }
   
-  /* РАСШИРЯЕМ BODY И ВСЕ БЛОКИ */
-  body { background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 80px; width: 100%; overflow-x: hidden; }
-  
-  /* РАСШИРЕННАЯ ШАПКА НА ВСЮ ШИРИНУ */
-  header { background: var(--bg); padding: 20px 5%; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; width: 100%; }
-  .logo-area { display: flex; flex-direction: column; gap: 12px; flex: 1; }
-  .logo { font-size: 26px; font-weight: 800; display: flex; align-items: center; gap: 10px; cursor: pointer; color: #fff; }
-  .logo-icon { width: 24px; height: 24px; background: var(--primary); transform: rotate(45deg); border-radius: 4px; }
-  
-  /* РАМКА ПОЛЬЗОВАТЕЛЯ НА ВСЮ ШИРИНУ */
-  .user-pill { background: var(--card); border: 1px solid var(--border); border-radius: 30px; padding: 8px 20px 8px 8px; display: flex; align-items: center; gap: 12px; font-size: 18px; font-weight: 600; cursor: pointer; width: 100%; max-width: 400px; }
-  .btn-logout { background: var(--card); border: 1px solid var(--border); color: #fff; padding: 12px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 15px; width: 100%; max-width: 400px; font-size: 16px; }
+  /* Шапка без sticky */
+  header { background: var(--bg); padding: 15px 20px; display: flex; align-items: flex-start; justify-content: space-between; border-bottom: 1px solid var(--border); width: 100%; }
+  .logo { font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 8px; cursor: pointer; color: #fff; }
+  .logo-icon { width: 20px; height: 20px; background: var(--primary); transform: rotate(45deg); border-radius: 4px; }
+  .user-pill { background: var(--card); border: 1px solid var(--border); border-radius: 30px; padding: 5px 15px 5px 5px; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+  .btn-logout { background: var(--card); border: 1px solid var(--border); color: #fff; padding: 8px 15px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; width: 100%; }
 
-  .nav-menu { display: flex; flex-direction: column; align-items: flex-end; gap: 15px; font-size: 18px; font-weight: 600; flex: 1; }
-  .nav-menu button { background: none; border: 1px solid transparent; color: var(--text-muted); cursor: pointer; font-size: 18px; font-weight: 600; padding: 10px 20px; border-radius: 8px; width: 100%; max-width: 300px; text-align: right; }
+  .nav-menu { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; font-size: 15px; font-weight: 600; }
+  .nav-menu button { background: none; border: 1px solid transparent; color: var(--text-muted); cursor: pointer; font-size: 15px; font-weight: 600; padding: 6px 15px; border-radius: 8px; width: 100%; text-align: right; }
   .nav-menu button:hover { color: #fff; }
   .nav-menu button.active { color: #fff; background: var(--card); border-color: var(--border); }
   .nav-menu button.admin { color: #fbbf24; }
-  #logout-btn { margin-top: 0; width: 100%; max-width: 300px; text-align: center; }
+  #logout-btn { margin-top: 0; width: 100%; text-align: center; }
 
-  /* ОСНОВНОЙ КОНТЕЙНЕР РАСТЯНУТ */
-  main { max-width: 100%; padding: 20px 5%; margin: 0 auto; width: 100%; }
-  .screen { display: none; width: 100%; }
-  .screen.active { display: block; width: 100%; }
+  main { max-width: 800px; margin: 0 auto; padding: 20px; }
+  .screen { display: none; }
+  .screen.active { display: block; }
 
-  /* РАСШИРЕННЫЙ БАННЕР */
-  .hero-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 30px; text-align: center; margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; width: 100%; }
-  .hero-image { width: 100%; max-height: 500px; border-radius: 12px; margin-bottom: 25px; display: none; object-fit: contain; }
-  .hero-card h1 { font-size: 36px; margin-bottom: 15px; width: 100%; }
+  .hero-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; }
+  .hero-image { width: 100%; max-height: 400px; border-radius: 12px; margin-bottom: 20px; display: none; object-fit: contain; }
+  .hero-card h1 { font-size: 26px; margin-bottom: 10px; }
   .hero-card h1 span { color: var(--primary); }
-  .hero-card p { width: 100%; font-size: 18px; }
-  .btn-primary { background: var(--primary); color: #fff; padding: 16px 30px; border: none; border-radius: 10px; font-weight: bold; font-size: 18px; cursor: pointer; text-align: center; text-decoration: none; display: inline-block; width: 100%; max-width: 400px; }
+  .btn-primary { background: var(--primary); color: #fff; padding: 12px 24px; border: none; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; text-align: center; text-decoration: none; display: inline-block; width: 100%; max-width: 300px; }
   
-  /* РАСШИРЕННЫЕ КАРТОЧКИ */
-  .game-row { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px 30px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; cursor: pointer; width: 100%; }
-  .game-img { width: 70px; height: 70px; border-radius: 12px; object-fit: contain; background: #1a1a26; display: flex; align-items: center; justify-content: center; font-size: 32px; overflow: hidden; }
+  .game-row { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 15px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; cursor: pointer; }
+  .game-img { width: 50px; height: 50px; border-radius: 12px; object-fit: contain; background: #1a1a26; display: flex; align-items: center; justify-content: center; font-size: 24px; overflow: hidden; }
   .game-img img { width: 100%; height: 100%; border-radius: 12px; object-fit: cover; }
-  .game-row h3 { font-size: 22px; }
   
-  .catalog-item { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 25px; margin-bottom: 20px; cursor: pointer; display: flex; flex-direction: column; gap: 15px; width: 100%; }
-  .catalog-item .cat-title { font-weight: bold; font-size: 24px; }
-  .catalog-item .cat-shortdesc { font-size: 16px; color: var(--text-muted); }
-  .catalog-item .cat-image { width: 100%; border-radius: 12px; max-height: 300px; object-fit: cover; }
-  .catalog-item .p-price { font-size: 24px; font-weight: bold; color: var(--accent); }
+  .catalog-item { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 15px; margin-bottom: 12px; cursor: pointer; display: flex; flex-direction: column; gap: 10px; }
+  .catalog-item .cat-title { font-weight: bold; font-size: 18px; }
+  .catalog-item .cat-shortdesc { font-size: 14px; color: var(--text-muted); }
+  .catalog-item .cat-image { width: 100%; border-radius: 10px; max-height: 200px; object-fit: cover; }
+  .catalog-item .p-price { font-size: 20px; font-weight: 800; color: var(--accent); }
 
-  .detail-product { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 30px; margin-bottom: 25px; width: 100%; }
-  .seller-block { display: flex; align-items: center; gap: 20px; padding: 20px 25px; background: #1a1a26; border-radius: 12px; margin-bottom: 25px; cursor: pointer; width: 100%; }
-  .seller-avatar { width: 60px; height: 60px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; overflow: hidden; }
+  .detail-product { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+  .seller-block { display: flex; align-items: center; gap: 15px; padding: 15px; background: #1a1a26; border-radius: 12px; margin-bottom: 20px; cursor: pointer; }
+  .seller-avatar { width: 50px; height: 50px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; overflow: hidden; }
   .seller-avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .seller-info h3 { font-size: 20px; color: #fff; margin-bottom: 5px; }
-  .seller-stars { color: #fbbf24; font-size: 18px; letter-spacing: 2px; }
+  .seller-info h3 { font-size: 16px; color: #fff; margin-bottom: 3px; }
+  .seller-stars { color: #fbbf24; font-size: 16px; letter-spacing: 2px; }
   .seller-stars.empty { color: #4a4a5a; }
 
-  .product-title-big { font-size: 30px; font-weight: bold; margin-bottom: 20px; }
+  .product-title-big { font-size: 22px; font-weight: bold; margin-bottom: 10px; }
   
-  .desc-container { background: #1a1a26; border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; width: 100%; }
-  .desc-label { font-size: 14px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 10px; font-weight: bold; }
-  .desc-text { font-size: 16px; line-height: 1.7; color: #c8c8d8; white-space: pre-wrap; }
+  .desc-container { background: #1a1a26; border: 1px solid var(--border); border-radius: 12px; padding: 15px; margin-bottom: 15px; }
+  .desc-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; font-weight: bold; }
+  .desc-text { font-size: 14px; line-height: 1.6; color: #c8c8d8; white-space: pre-wrap; }
   
-  .product-images { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 25px; margin-top: 20px; width: 100%; }
-  .product-images img { width: 140px; height: 140px; border-radius: 10px; object-fit: cover; cursor: pointer; }
+  .product-images { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; margin-top: 15px; }
+  .product-images img { width: 100px; height: 100px; border-radius: 8px; object-fit: cover; cursor: pointer; }
 
-  .action-block { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 25px; width: 100%; }
-  .price-display { font-size: 32px; font-weight: bold; color: #fff; }
+  .action-block { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 20px; }
+  .price-display { font-size: 22px; font-weight: bold; color: #fff; }
   .action-block .btn-primary { margin: 0; }
 
-  .review-item { background: #1a1a26; border-radius: 12px; padding: 20px; margin-bottom: 15px; width: 100%; }
-  .review-header { display: flex; align-items: center; gap: 15px; margin-bottom: 12px; }
-  .review-avatar { width: 50px; height: 50px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; overflow: hidden; font-weight: bold; font-size: 20px; }
+  .review-item { background: #1a1a26; border-radius: 12px; padding: 15px; margin-bottom: 10px; }
+  .review-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .review-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; overflow: hidden; font-weight: bold; }
   .review-avatar img { width: 100%; height: 100%; object-fit: cover; }
   .review-info { flex: 1; }
-  .review-author { font-weight: bold; font-size: 18px; }
-  .review-date { font-size: 13px; color: var(--text-muted); }
-  .review-stars { color: #fbbf24; font-size: 18px; }
-  .review-text { font-size: 16px; color: #c8c8d8; line-height: 1.6; }
+  .review-author { font-weight: bold; font-size: 14px; }
+  .review-date { font-size: 11px; color: var(--text-muted); }
+  .review-stars { color: #fbbf24; font-size: 14px; }
+  .review-text { font-size: 14px; color: #c8c8d8; line-height: 1.5; }
 
-  .auth-box, .admin-block, .doc-box { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 35px; margin-bottom: 25px; width: 100%; }
-  input, textarea, select { width: 100%; padding: 16px; margin-bottom: 20px; background: var(--bg); border: 1px solid var(--border); color: #fff; border-radius: 10px; font-size: 16px; }
-  .error-msg { color: #ff4d4d; font-size: 15px; margin-bottom: 15px; text-align: center; display: none; }
+  .auth-box, .admin-block, .doc-box { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 25px; margin-bottom: 20px; }
+  input, textarea, select { width: 100%; padding: 14px; margin-bottom: 15px; background: var(--bg); border: 1px solid var(--border); color: #fff; border-radius: 10px; font-size: 15px; }
+  .error-msg { color: #ff4d4d; font-size: 14px; margin-bottom: 15px; text-align: center; display: none; }
 
-  .admin-tabs { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 30px; width: 100%; }
-  .admin-tab { background: var(--card); border: 1px solid var(--border); color: var(--text-muted); padding: 12px 24px; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: 600; }
+  .admin-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+  .admin-tab { background: var(--card); border: 1px solid var(--border); color: var(--text-muted); padding: 8px 16px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; }
   .admin-tab.active { background: var(--primary); border-color: var(--primary); color: #fff; }
 
-  footer { padding: 40px 20px; border-top: 1px solid var(--border); text-align: center; font-size: 15px; color: var(--text-muted); width: 100%; }
-  footer a { display: block; color: var(--accent); margin-bottom: 15px; font-weight: 600; cursor: pointer; font-size: 16px; }
+  footer { padding: 30px 20px; border-top: 1px solid var(--border); text-align: center; font-size: 13px; color: var(--text-muted); }
+  footer a { display: block; color: var(--accent); margin-bottom: 10px; font-weight: 600; cursor: pointer; }
   .hidden { display: none !important; }
   
-  .btn-red { background: #ff4d4d; color: #fff; padding: 14px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 15px; font-size: 16px; }
-  .btn-green { background: var(--green); color: #fff; padding: 14px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 15px; font-size: 16px; }
+  .btn-red { background: #ff4d4d; color: #fff; padding: 10px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
+  .btn-green { background: var(--green); color: #fff; padding: 10px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
 
-  .chat-list-item { display: flex; align-items: center; gap: 20px; padding: 20px 25px; background: var(--card); border-bottom: 1px solid var(--border); cursor: pointer; width: 100%; }
+  .chat-list-item { display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--card); border-bottom: 1px solid var(--border); cursor: pointer; }
   .chat-list-item:hover { background: #1a1a26; }
-  .chat-avatar { width: 60px; height: 60px; border-radius: 50%; background: #1a1a26; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: bold; color: #fff; flex-shrink: 0; overflow: hidden; }
+  .chat-avatar { width: 50px; height: 50px; border-radius: 50%; background: #1a1a26; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: bold; color: #fff; flex-shrink: 0; overflow: hidden; }
   .chat-avatar img { width: 100%; height: 100%; object-fit: cover; }
   .chat-info { flex: 1; overflow: hidden; }
-  .chat-name { font-weight: bold; font-size: 20px; color: #fff; display: flex; align-items: center; gap: 8px; }
-  .chat-last-msg { font-size: 16px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 5px; }
+  .chat-name { font-weight: bold; font-size: 16px; color: #fff; display: flex; align-items: center; gap: 5px; }
+  .chat-last-msg { font-size: 14px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 3px; }
   
-  .chat-box { background: var(--bg); border-radius: 12px; padding: 25px; margin-bottom: 25px; max-height: 450px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; width: 100%; }
-  .chat-msg { max-width: 80%; padding: 15px 20px; border-radius: 12px; font-size: 16px; line-height: 1.5; }
+  .chat-box { background: var(--bg); border-radius: 12px; padding: 15px; margin-bottom: 15px; max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+  .chat-msg { max-width: 80%; padding: 10px 15px; border-radius: 12px; font-size: 14px; line-height: 1.4; }
   .chat-msg.my-msg { background: var(--primary); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
   .chat-msg.their-msg { background: #1a1a26; border: 1px solid var(--border); align-self: flex-start; border-bottom-left-radius: 2px; }
-  .msg-sender { font-size: 13px; margin-bottom: 6px; font-weight: bold; opacity: 0.9; display: flex; align-items: center; gap: 5px; color: #c8c8d8; }
+  .msg-sender { font-size: 11px; margin-bottom: 4px; font-weight: bold; opacity: 0.9; display: flex; align-items: center; gap: 5px; color: #c8c8d8; }
   .msg-sender.my-msg-text { color: #e8e8f0; }
-  .admin-tag { background: var(--green); color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 3px; font-weight: bold; }
+  .admin-tag { background: var(--green); color: #fff; font-size: 9px; padding: 1px 4px; border-radius: 3px; font-weight: bold; }
 </style>
 </head>
 <body>
@@ -124,7 +114,7 @@
     <div class="logo" onclick="show('home')"><div class="logo-icon"></div> KupiGame</div>
     <div id="user-area" class="hidden">
       <div class="user-pill">
-        <div id="user-avatar" style="width:40px; height:40px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; font-weight:bold; overflow:hidden; font-size: 20px;">U</div>
+        <div id="user-avatar" style="width:30px; height:30px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; font-weight:bold; overflow:hidden;">U</div>
         <span id="user-nick">User</span>
       </div>
     </div>
@@ -139,33 +129,34 @@
     
     <button id="logout-btn" onclick="logout()" class="btn-logout hidden">Выйти</button>
 
-    <div id="auth-links" style="display:flex; flex-direction:column; gap:12px; align-items:flex-end; margin-top:15px; width:100%;">
-      <button onclick="show('login')" style="color:var(--accent); width:100%; text-align:right; font-size: 18px;">Войти</button>
-      <button onclick="show('register')" style="background:var(--card); padding:10px 20px; border-radius:8px; border:1px solid var(--border); width:100%; text-align:right; font-size: 18px;">Регистрация</button>
+    <div id="auth-links" style="display:flex; flex-direction:column; gap:10px; align-items:flex-end; margin-top:10px; width:100%;">
+      <button onclick="show('login')" style="color:var(--accent); width:100%; text-align:right;">Войти</button>
+      <button onclick="show('register')" style="background:var(--card); padding:6px 15px; border-radius:8px; border:1px solid var(--border); width:100%; text-align:right;">Регистрация</button>
     </div>
   </div>
 </header>
 
 <main>
-  <!-- БЛОКИРОВКА (ИСПРАВЛЕНО) -->
+  <!-- БЛОКИРОВКА -->
   <section class="screen" id="screen-blocked">
     <div class="auth-box" style="text-align:center; margin-top:50px; border-color:#ff4d4d;">
-      <h2 style="color:#ff4d4d; margin-bottom:20px; font-size: 32px;">Вы заблокированы</h2>
-      <p style="margin-bottom:20px; font-size: 18px;">Причина: <span id="block-reason" style="font-weight:bold;"></span></p>
-      <p style="color:var(--text-muted); font-size:16px; margin-bottom:30px;">Обратитесь к владельцу магазина.</p>
+      <h2 style="color:#ff4d4d; margin-bottom:15px;">Вы заблокированы</h2>
+      <p style="margin-bottom:20px;">Причина: <span id="block-reason" style="font-weight:bold;"></span></p>
+      <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px;">Обратитесь к владельцу магазина.</p>
       
-      <button class="btn-primary" onclick="show('unblock-form')" style="max-width:100%; margin-bottom:15px;">Написать в поддержку</button>
-      <button class="btn-primary" onclick="openBlockedTickets()" style="max-width:100%; margin-bottom:15px; background:var(--card); border:1px solid var(--border); color:#fff;">Мои заявки</button>
-      <button class="btn-logout" onclick="logout()" style="background:transparent; border:1px solid var(--border); padding: 15px;">Выйти</button>
+      <button class="btn-primary" onclick="show('unblock-form')" style="max-width:100%; margin-bottom:10px;">Написать в поддержку</button>
+      <button class="btn-primary" onclick="openBlockedTickets()" style="max-width:100%; margin-bottom:10px; background:var(--card); border:1px solid var(--border); color:#fff;">Мои заявки</button>
+      
+      <button class="btn-logout" onclick="logout()" style="background:transparent; border:1px solid var(--border);">Выйти</button>
     </div>
   </section>
 
   <!-- ЗАЯВКИ ЗАБЛОКИРОВАННОГО -->
   <section class="screen" id="screen-blocked-tickets">
     <div class="auth-box">
-      <h2 style="margin-bottom:20px; text-align:center;">Мои заявки</h2>
+      <h2 style="margin-bottom:15px; text-align:center;">Мои заявки</h2>
       <div id="blocked-tickets-list"></div>
-      <button class="btn-red" onclick="show('blocked')" style="margin-top:20px;">Назад</button>
+      <button class="btn-red" onclick="show('blocked')" style="margin-top:15px;">Назад</button>
     </div>
   </section>
 
@@ -174,21 +165,21 @@
     <div class="auth-box">
       <div class="chat-box" id="blocked-chat-box"></div>
       <div id="blocked-chat-reply-area">
-        <textarea id="blocked-chat-reply-text" placeholder="Написать сообщение..." style="height:100px;"></textarea>
+        <textarea id="blocked-chat-reply-text" placeholder="Написать сообщение..." style="height:80px;"></textarea>
         <button class="btn-primary" onclick="sendBlockedChatReply()" style="width:100%;">Отправить</button>
       </div>
-      <button class="btn-red" onclick="openBlockedTickets()" style="margin-top:20px;">Назад к заявкам</button>
+      <button class="btn-red" onclick="openBlockedTickets()" style="margin-top:15px;">Назад к заявкам</button>
     </div>
   </section>
 
   <!-- ФОРМА РАЗБЛОКИРОВКИ -->
   <section class="screen" id="screen-unblock-form">
     <div class="auth-box">
-      <h2 style="margin-bottom:20px; text-align:center;">Заявка на разблокировку</h2>
+      <h2 style="margin-bottom:15px; text-align:center;">Заявка на разблокировку</h2>
       <input type="text" id="unblock-nick" placeholder="Ваш ник" readonly>
-      <textarea id="unblock-reason" placeholder="Почему вы не согласны с блокировкой?" style="height:120px;"></textarea>
+      <textarea id="unblock-reason" placeholder="Почему вы не согласны с блокировкой?" style="height:100px;"></textarea>
       <button class="btn-primary" onclick="sendUnblock()" style="max-width:100%;">Отправить заявку</button>
-      <button class="btn-red" onclick="show('blocked')" style="margin-top:15px;">Назад</button>
+      <button class="btn-red" onclick="show('blocked')" style="margin-top:10px;">Назад</button>
     </div>
   </section>
 
@@ -197,46 +188,46 @@
     <div class="hero-card">
       <img id="main-hero-img" class="hero-image">
       <h1>Аккаунты <span>и товары</span> для игр</h1>
-      <p style="color:var(--text-muted); margin-bottom:30px; font-size: 18px;">Сделки ведёт продавец, владелец магазина KupiGame.</p>
+      <p style="color:var(--text-muted); margin-bottom:20px;">Сделки ведёт продавец, владелец магазина KupiGame.</p>
       <button class="btn-primary" onclick="show('catalog')">Перейти в каталог</button>
     </div>
-    <div class="tg-block" style="text-align: center; padding: 30px; background: var(--card); border-radius: 16px; border: 1px solid var(--border); margin-bottom: 20px; width: 100%;">
-      <p style="font-weight: bold; margin-bottom: 20px; font-size: 20px;">Все актуальные новости и отзывы</p>
+    <div class="tg-block" style="text-align: center; padding: 20px; background: var(--card); border-radius: 16px; border: 1px solid var(--border); margin-bottom: 20px;">
+      <p style="font-weight: bold; margin-bottom: 15px;">Все актуальные новости и отзывы</p>
       <a href="https://t.me/KupiGameOfficial" target="_blank" class="btn-primary" style="text-decoration:none; display:inline-block; width:auto;">В нашем Telegram</a>
     </div>
   </section>
 
   <!-- КАТАЛОГ -->
   <section class="screen" id="screen-catalog">
-    <button class="back-btn" onclick="show('home')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:12px 25px; border-radius:8px; cursor:pointer; margin-bottom:25px; font-size: 16px;">← Назад</button>
-    <h1 class="catalog-title" style="font-size: 32px; margin-bottom: 25px;">Каталог игр</h1>
+    <button class="back-btn" onclick="show('home')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
+    <h1 class="catalog-title" style="font-size: 24px; margin-bottom: 15px;">Каталог игр</h1>
     <div id="games-list"></div>
   </section>
 
   <!-- ТОВАРЫ ИГРЫ -->
   <section class="screen" id="screen-products">
-    <button class="back-btn" onclick="show('catalog')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:12px 25px; border-radius:8px; cursor:pointer; margin-bottom:25px; font-size: 16px;">← Назад</button>
-    <h1 class="catalog-title" id="products-title" style="font-size: 30px; margin-bottom:25px;"></h1>
+    <button class="back-btn" onclick="show('catalog')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
+    <h1 class="catalog-title" id="products-title" style="font-size: 24px; margin-bottom:15px;"></h1>
     <div id="products-list"></div>
   </section>
 
   <!-- КАРТОЧКА ТОВАРА -->
   <section class="screen" id="screen-product-detail">
-    <button class="back-btn" onclick="goBackFromProduct()" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:12px 25px; border-radius:8px; cursor:pointer; margin-bottom:25px; font-size: 16px;">← Назад</button>
+    <button class="back-btn" onclick="goBackFromProduct()" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
     <div id="product-detail-content"></div>
   </section>
 
   <!-- ПРОФИЛЬ ПРОДАВЦА -->
   <section class="screen" id="screen-seller">
-    <button class="back-btn" onclick="goBackFromSeller()" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:12px 25px; border-radius:8px; cursor:pointer; margin-bottom:25px; font-size: 16px;">← Назад</button>
+    <button class="back-btn" onclick="goBackFromSeller()" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
     <div id="seller-profile-content"></div>
   </section>
 
   <!-- ВХОД -->
   <section class="screen" id="screen-login">
-    <button class="back-btn" onclick="show('home')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:12px 25px; border-radius:8px; cursor:pointer; margin-bottom:25px; font-size: 16px;">← Назад</button>
-    <div class="auth-box" style="max-width: 500px; margin: 0 auto;">
-      <h2 style="text-align:center; margin-bottom:30px; font-size: 28px;">Вход</h2>
+    <button class="back-btn" onclick="show('home')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
+    <div class="auth-box">
+      <h2 style="text-align:center; margin-bottom:20px;">Вход</h2>
       <div class="error-msg" id="login-error"></div>
       <input type="text" id="login-nick" placeholder="Ваш ник" autocomplete="off">
       <input type="password" id="login-pass" placeholder="Пароль" autocomplete="new-password">
@@ -246,9 +237,9 @@
 
   <!-- РЕГИСТРАЦИЯ -->
   <section class="screen" id="screen-register">
-    <button class="back-btn" onclick="show('home')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:12px 25px; border-radius:8px; cursor:pointer; margin-bottom:25px; font-size: 16px;">← Назад</button>
-    <div class="auth-box" style="max-width: 500px; margin: 0 auto;">
-      <h2 style="text-align:center; margin-bottom:30px; font-size: 28px;">Регистрация</h2>
+    <button class="back-btn" onclick="show('home')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
+    <div class="auth-box">
+      <h2 style="text-align:center; margin-bottom:20px;">Регистрация</h2>
       <div class="error-msg" id="reg-error"></div>
       <input type="text" id="reg-nick" placeholder="Придумайте ник" autocomplete="off">
       <input type="password" id="reg-pass" placeholder="Придумайте пароль" autocomplete="new-password">
@@ -258,14 +249,14 @@
 
   <!-- ПРОФИЛЬ -->
   <section class="screen" id="screen-profile">
-    <button class="back-btn" onclick="show('home')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:12px 25px; border-radius:8px; cursor:pointer; margin-bottom:25px; font-size: 16px;">← Назад</button>
-    <h1 class="catalog-title" style="font-size: 32px;">Мой профиль</h1>
-    <div class="auth-box" style="max-width: 700px; margin: 0 auto;">
-      <div style="display:flex; align-items:center; gap:30px; margin-bottom:30px;">
-        <div id="profile-avatar" style="width:100px; height:100px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; font-size:40px; overflow:hidden;">U</div>
+    <button class="back-btn" onclick="show('home')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
+    <h1 class="catalog-title" style="font-size: 24px;">Мой профиль</h1>
+    <div class="auth-box">
+      <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;">
+        <div id="profile-avatar" style="width:60px; height:60px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; font-size:24px; overflow:hidden;">U</div>
         <div>
-          <h3 id="profile-nick" style="font-size: 28px; margin-bottom: 10px;">User</h3>
-          <label for="avatar-upload" style="color:var(--accent); cursor:pointer; font-size:16px; font-weight: 600;">Сменить аватар</label>
+          <h3 id="profile-nick">User</h3>
+          <label for="avatar-upload" style="color:var(--accent); cursor:pointer; font-size:14px;">Сменить аватар</label>
           <input type="file" id="avatar-upload" class="hidden" accept="image/*" onchange="uploadAvatar(this)">
         </div>
       </div>
@@ -276,48 +267,48 @@
 
   <!-- ЧАТЫ -->
   <section class="screen" id="screen-chats">
-    <button class="back-btn" onclick="show('home')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:12px 25px; border-radius:8px; cursor:pointer; margin-bottom:25px; font-size: 16px;">← Назад</button>
-    <h1 class="catalog-title" style="font-size: 32px;">Мои чаты</h1>
-    <div id="chats-list" style="background:var(--card); border-radius:16px; overflow:hidden; width:100%;"></div>
+    <button class="back-btn" onclick="show('home')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
+    <h1 class="catalog-title" style="font-size: 24px;">Мои чаты</h1>
+    <div id="chats-list" style="background:var(--card); border-radius:16px; overflow:hidden;"></div>
   </section>
 
   <!-- ПРОСМОТР ЧАТА -->
   <section class="screen" id="screen-ticket-view">
-    <button class="back-btn" onclick="goBackFromTicket()" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:12px 25px; border-radius:8px; cursor:pointer; margin-bottom:25px; font-size: 16px;">← Назад</button>
+    <button class="back-btn" onclick="goBackFromTicket()" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
     <div class="admin-block">
       <div class="chat-box" id="ticket-chat-box"></div>
       <div id="ticket-reply-area">
-        <textarea id="ticket-reply-text" placeholder="Написать сообщение..." style="height:100px;"></textarea>
+        <textarea id="ticket-reply-text" placeholder="Написать сообщение..." style="height:80px;"></textarea>
         <button class="btn-primary" onclick="sendTicketReply()" style="width:100%;">Отправить</button>
       </div>
-      <div id="ticket-actions" style="margin-top:20px; display:flex; gap:15px;"></div>
+      <div id="ticket-actions" style="margin-top:15px; display:flex; gap:10px;"></div>
     </div>
   </section>
 
   <!-- ПОДДЕРЖКА -->
   <section class="screen" id="screen-support">
-    <button class="back-btn" onclick="show('profile')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:12px 25px; border-radius:8px; cursor:pointer; margin-bottom:25px; font-size: 16px;">← Назад</button>
-    <div class="auth-box" style="max-width: 700px; margin: 0 auto;">
-      <h2 style="margin-bottom:20px; font-size: 28px;">Новая заявка</h2>
-      <p style="color:var(--text-muted); margin-bottom:25px; font-size:16px;">Отвечаем до 48 часов.</p>
-      <textarea id="support-text" placeholder="Опишите проблему..." style="height:150px;"></textarea>
+    <button class="back-btn" onclick="show('profile')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
+    <div class="auth-box">
+      <h2 style="margin-bottom:15px;">Новая заявка</h2>
+      <p style="color:var(--text-muted); margin-bottom:20px; font-size:14px;">Отвечаем до 48 часов.</p>
+      <textarea id="support-text" placeholder="Опишите проблему..." style="height:100px;"></textarea>
       <button class="btn-primary" onclick="sendTicket()" style="width:100%;">Отправить</button>
     </div>
   </section>
 
   <!-- ДОКУМЕНТЫ -->
   <section class="screen" id="screen-doc">
-    <button class="back-btn" onclick="show('home')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:12px 25px; border-radius:8px; cursor:pointer; margin-bottom:25px; font-size: 16px;">← Назад</button>
-    <div class="doc-box" style="max-width: 900px; margin: 0 auto;">
-      <h2 id="doc-title" style="margin-bottom:20px; font-size: 28px;"></h2>
-      <p id="doc-text" style="line-height:1.8; color:#c8c8d8; white-space:pre-wrap; font-size:16px;"></p>
+    <button class="back-btn" onclick="show('home')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
+    <div class="doc-box">
+      <h2 id="doc-title" style="margin-bottom:15px;"></h2>
+      <p id="doc-text" style="line-height:1.6; color:#c8c8d8; white-space:pre-wrap; font-size:14px;"></p>
     </div>
   </section>
 
   <!-- АДМИНКА -->
   <section class="screen" id="screen-admin">
-    <button class="back-btn" onclick="show('home')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:12px 25px; border-radius:8px; cursor:pointer; margin-bottom:25px; font-size: 16px;">← Назад</button>
-    <h1 class="catalog-title" style="font-size: 32px;">Админ-панель 👑</h1>
+    <button class="back-btn" onclick="show('home')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
+    <h1 class="catalog-title" style="font-size: 24px;">Админ-панель 👑</h1>
     
     <div class="admin-tabs">
       <button class="admin-tab active" onclick="switchAdminTab('games', this)">Игры</button>
@@ -334,27 +325,27 @@
     
     <div id="admin-tab-products" class="admin-content hidden">
       <div class="admin-block">
-        <h3 id="product-form-title" style="margin-bottom:20px; font-size: 24px;">Добавить товар</h3>
+        <h3 id="product-form-title" style="margin-bottom:15px;">Добавить товар</h3>
         <select id="admin-game-select"></select>
         <input type="text" id="admin-title" placeholder="Название (например: Аккаунт•Brawl Stars)">
-        <input type="color" id="admin-color" value="#fbbf24" style="height:60px; padding:5px;">
+        <input type="color" id="admin-color" value="#fbbf24" style="height:50px; padding:5px;">
         <input type="number" id="admin-price" placeholder="Цена ₽">
-        <textarea id="admin-shortdesc" placeholder="Краткое описание" style="height:100px;"></textarea>
-        <textarea id="admin-desc" placeholder="Подробное описание" style="height:150px;"></textarea>
+        <textarea id="admin-shortdesc" placeholder="Краткое описание" style="height:80px;"></textarea>
+        <textarea id="admin-desc" placeholder="Подробное описание" style="height:120px;"></textarea>
         <input type="text" id="admin-paylink" placeholder="Ссылка на оплату">
-        <label style="color:var(--text-muted); font-size:15px;">Скриншоты (до 10 фото):</label>
+        <label style="color:var(--text-muted); font-size:12px;">Скриншоты (до 10 фото):</label>
         <input type="file" id="product-img-upload" accept="image/*" multiple>
         
         <input type="hidden" id="edit-product-id" value="">
         
-        <button class="btn-primary" id="product-submit-btn" onclick="saveProduct()" style="width:100%; margin-top:25px;">Опубликовать</button>
+        <button class="btn-primary" id="product-submit-btn" onclick="saveProduct()" style="width:100%; margin-top:15px;">Опубликовать</button>
         <button class="btn-red hidden" id="product-cancel-btn" onclick="resetProductForm()">Отмена</button>
       </div>
     </div>
 
     <div id="admin-tab-people" class="admin-content hidden">
       <div class="admin-block">
-        <h3 style="margin-bottom:20px; font-size: 22px;">Поиск пользователя</h3>
+        <h3 style="margin-bottom:15px;">Поиск пользователя</h3>
         <input type="text" id="search-nick" placeholder="Введите ник">
         <button class="btn-primary" onclick="searchUser()" style="width:100%;">Найти</button>
       </div>
@@ -375,9 +366,9 @@
 
     <div id="admin-tab-reviews" class="admin-content hidden">
       <div class="admin-block">
-        <h3 style="margin-bottom:20px; font-size: 22px;">Добавить отзыв</h3>
+        <h3 style="margin-bottom:15px;">Добавить отзыв</h3>
         <input type="text" id="review-nick" placeholder="Ник покупателя">
-        <input type="file" id="review-avatar" accept="image/*" style="margin-bottom:15px;">
+        <input type="file" id="review-avatar" accept="image/*" style="margin-bottom:10px;">
         <select id="review-stars">
           <option value="5">5 ★</option>
           <option value="4">4 ★</option>
@@ -385,14 +376,14 @@
           <option value="2">2 ★</option>
           <option value="1">1 ★</option>
         </select>
-        <textarea id="review-text" placeholder="Текст отзыва" style="height:120px;"></textarea>
+        <textarea id="review-text" placeholder="Текст отзыва" style="height:100px;"></textarea>
         <button class="btn-primary" onclick="addReview()" style="width:100%;">Добавить отзыв</button>
       </div>
     </div>
 
     <div id="admin-tab-settings" class="admin-content hidden">
       <div class="admin-block">
-        <h3 style="margin-bottom:20px; font-size: 22px;">Обложка на главную</h3>
+        <h3 style="margin-bottom:15px;">Обложка на главную</h3>
         <input type="file" id="hero-upload" accept="image/*">
         <button class="btn-primary" onclick="uploadHero()" style="width:100%;">Загрузить обложку</button>
       </div>
@@ -404,7 +395,7 @@
   <a onclick="showDoc('privacy')">Политика конфиденциальности</a>
   <a onclick="showDoc('terms')">Пользовательское соглашение</a>
   <a onclick="show('support')">Поддержка</a>
-  <p style="margin-top: 25px;">© 2026 KupiGame. Все быстро, качественно и надежно.</p>
+  <p>© 2026 KupiGame. Все быстро, качественно и надежно.</p>
 </footer>
 
 <script type="module">
@@ -442,23 +433,7 @@
     
     if(tab === 'games') loadAdminGames();
     if(tab === 'products') loadAdminProducts();
-    if(tab === 'tickets') {
-        // ЖЕСТКАЯ ПРОВЕРКА ДЛЯ ЗАЯВОК
-        const { data, error } = await supabase.from('orders').select('*').eq('status', 'open');
-        if (error) {
-            document.getElementById('admin-tickets-list').innerHTML = '<p style="color:red;">Ошибка загрузки: ' + error.message + '</p>';
-        } else {
-            document.getElementById('admin-tickets-list').innerHTML = (data || []).map(t => `
-              <div class="admin-block">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                  <strong style="font-size:20px;">Обращение</strong>
-                  <button onclick="openAdminTicket(${t.id})" class="btn-primary" style="width:auto; padding:10px 20px;">Открыть</button>
-                </div>
-                <p style="font-size:16px; margin-top:10px;">${t.message.substring(0, 50)}...</p>
-              </div>
-            `).join('');
-        }
-    }
+    if(tab === 'tickets') loadAdminTickets(); 
     if(tab === 'blocked') loadBlockedUsers();
     if(tab === 'unblock-requests') loadUnblockRequests();
     if(tab === 'reviews') loadAdminReviews();
@@ -582,14 +557,14 @@
   async function loadGames() {
     const list = document.getElementById('games-list');
     const { data } = await supabase.from('games').select('*');
-    if(!data || data.length === 0) { list.innerHTML = '<p style="color:var(--text-muted); font-size: 18px;">Игр пока нет.</p>'; return; }
+    if(!data || data.length === 0) { list.innerHTML = '<p style="color:var(--text-muted);">Игр пока нет.</p>'; return; }
     list.innerHTML = data.map(g => `
       <div class="game-row" onclick="openGame('${g.name}')">
-        <div style="display:flex; align-items:center; gap:25px;">
+        <div style="display:flex; align-items:center; gap:15px;">
           <div class="game-img">${g.img ? `<img src="${g.img}">` : '🎮'}</div>
           <h3>${g.name}</h3>
         </div>
-        <div style="color:var(--text-muted); font-size: 24px;">→</div>
+        <div style="color:var(--text-muted);">→</div>
       </div>
     `).join('');
   }
@@ -598,13 +573,13 @@
     document.getElementById('products-title').textContent = gameName;
     const { data } = await supabase.from('products').select('*').eq('game', gameName);
     const list = document.getElementById('products-list');
-    if(!data || data.length === 0) list.innerHTML = '<p style="font-size: 18px;">Товаров пока нет.</p>';
+    if(!data || data.length === 0) list.innerHTML = '<p>Товаров пока нет.</p>';
     else list.innerHTML = data.map(p => {
       const firstImage = (p.images && p.images.length > 0) ? p.images[0] : null;
       return `
         <div class="catalog-item" onclick="openProductDetail(${p.id})">
           ${firstImage ? `<img src="${firstImage}" class="cat-image">` : ''}
-          <div class="cat-shortdesc" style="font-weight:bold; color:${p.title_color || '#fff'}; font-size:24px;">${p.title}</div>
+          <div class="cat-shortdesc" style="font-weight:bold; color:${p.title_color || '#fff'}; font-size:18px;">${p.title}</div>
           <div class="cat-shortdesc">${p.shortdesc || ''}</div>
           <div class="p-price">${p.price > 0 ? p.price + ' ₽' : 'Цена не указана'}</div>
         </div>
@@ -636,7 +611,7 @@
           <h3>KupiGame</h3>
           <div class="seller-stars empty">★★★★★</div>
         </div>
-        <div style="margin-left:auto; color:var(--text-muted); font-size: 24px;">→</div>
+        <div style="margin-left:auto; color:var(--text-muted);">→</div>
       </div>
       
       <div class="detail-product">
@@ -685,17 +660,17 @@
     const content = document.getElementById('seller-profile-content');
     content.innerHTML = `
       <div class="auth-box" style="text-align:center;">
-        <div style="width:120px; height:120px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; font-size:50px; margin:0 auto 25px; overflow:hidden;">${avatarHtml}</div>
-        <h2 style="margin-bottom:10px; font-size: 32px;">${nickname}</h2>
-        <p style="color:var(--text-muted); font-size:18px; margin-bottom:25px;">Владелец магазина · проверенный продавец</p>
+        <div style="width:80px; height:80px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; font-size:36px; margin:0 auto 15px; overflow:hidden;">${avatarHtml}</div>
+        <h2 style="margin-bottom:5px;">${nickname}</h2>
+        <p style="color:var(--text-muted); font-size:14px; margin-bottom:15px;">Владелец магазина · проверенный продавец</p>
         
-        <div class="seller-stars empty" style="font-size:36px; margin-bottom:15px;">★★★★★</div>
-        <p style="color:var(--text-muted); font-size:16px; margin-bottom:40px;">Пока без отзывов · товаров: ${products ? products.length : 0}</p>
+        <div class="seller-stars empty" style="font-size:24px; margin-bottom:10px;">★★★★★</div>
+        <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px;">Пока без отзывов · товаров: ${products ? products.length : 0}</p>
       </div>
       
-      <h3 style="margin-bottom:25px; font-size: 26px;">Отзывы (${reviews ? reviews.length : 0})</h3>
+      <h3 style="margin-bottom:15px;">Отзывы (${reviews ? reviews.length : 0})</h3>
       <div>
-        ${(!reviews || reviews.length === 0) ? '<p style="color:var(--text-muted); font-size:16px;">Отзывов пока нет.</p>' : reviews.map(r => `
+        ${(!reviews || reviews.length === 0) ? '<p style="color:var(--text-muted); font-size:14px;">Отзывов пока нет.</p>' : reviews.map(r => `
           <div class="review-item">
             <div class="review-header">
               <div class="review-avatar">${r.avatar ? `<img src="${r.avatar}">` : r.nick[0]}</div>
@@ -710,11 +685,11 @@
         `).join('')}
       </div>
 
-      <h3 style="margin:40px 0 25px; display:flex; justify-content:space-between; align-items:center; font-size: 26px;">Товары продавца (${products ? products.length : 0}) <button class="btn-primary" style="width:auto; padding:10px 25px; font-size:16px;" onclick="show('catalog')">Каталог</button></h3>
+      <h3 style="margin:20px 0 15px; display:flex; justify-content:space-between;">Товары продавца (${products ? products.length : 0}) <button class="btn-primary" style="width:auto; padding:5px 15px; font-size:13px;" onclick="show('catalog')">Каталог</button></h3>
       <div id="seller-products-list">
         ${(products || []).map(p => `
-          <div class="catalog-item" onclick="previousScreen = 'seller'; openProductDetail(${p.id})">
-            <div class="cat-title">${p.title}</div>
+          <div class="product-item" onclick="previousScreen = 'seller'; openProductDetail(${p.id})">
+            <div class="p-title">${p.title}</div>
             <div class="p-price">${p.price} ₽</div>
           </div>
         `).join('')}
@@ -730,16 +705,16 @@
     const { data } = await supabase.from('games').select('*');
     document.getElementById('admin-tab-games').innerHTML = `
       <div class="admin-block">
-        <h3 style="margin-bottom:20px; font-size: 22px;">Добавить игру</h3>
+        <h3 style="margin-bottom:15px;">Добавить игру</h3>
         <input type="text" id="new-game-name" placeholder="Название игры">
-        <input type="text" id="new-game-url" placeholder="Ссылка (URL) на обложку" style="margin-bottom:15px;">
-        <input type="file" id="game-img-upload" accept="image/*" style="margin-bottom:25px;">
+        <input type="text" id="new-game-url" placeholder="Ссылка (URL) на обложку" style="margin-bottom:10px;">
+        <input type="file" id="game-img-upload" accept="image/*" style="margin-bottom:15px;">
         <button class="btn-primary" onclick="addGame()" style="width:100%;">Добавить</button>
       </div>
       ${(data || []).map(g => `
-        <div style="background:var(--card); padding:20px; border-radius:10px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
-          <span style="font-size: 20px;">${g.name}</span>
-          <button onclick="deleteGame(${g.id})" style="color:red; background:none; border:none; font-size: 18px; cursor: pointer;">Удалить</button>
+        <div style="background:var(--card); padding:15px; border-radius:10px; margin-bottom:10px; display:flex; justify-content:space-between;">
+          <span>${g.name}</span>
+          <button onclick="deleteGame(${g.id})" style="color:red; background:none; border:none;">Удалить</button>
         </div>
       `).join('')}
     `;
@@ -776,32 +751,32 @@
     const { data: products } = await supabase.from('products').select('*');
     document.getElementById('admin-tab-products').innerHTML = `
       <div class="admin-block">
-        <h3 id="product-form-title" style="margin-bottom:20px; font-size: 24px;">Добавить товар</h3>
+        <h3 id="product-form-title" style="margin-bottom:15px;">Добавить товар</h3>
         <select id="admin-game-select">
             ${(games || []).map(g => `<option value="${g.name}">${g.name}</option>`).join('')}
         </select>
         <input type="text" id="admin-title" placeholder="Название (например: Аккаунт•Brawl Stars)">
-        <input type="color" id="admin-color" value="#fbbf24" style="height:60px; padding:5px;">
+        <input type="color" id="admin-color" value="#fbbf24" style="height:50px; padding:5px;">
         <input type="number" id="admin-price" placeholder="Цена ₽">
-        <textarea id="admin-shortdesc" placeholder="Краткое описание" style="height:100px;"></textarea>
-        <textarea id="admin-desc" placeholder="Подробное описание" style="height:150px;"></textarea>
+        <textarea id="admin-shortdesc" placeholder="Краткое описание" style="height:80px;"></textarea>
+        <textarea id="admin-desc" placeholder="Подробное описание" style="height:120px;"></textarea>
         <input type="text" id="admin-paylink" placeholder="Ссылка на оплату">
-        <label style="color:var(--text-muted); font-size:15px;">Скриншоты (до 10 фото):</label>
+        <label style="color:var(--text-muted); font-size:12px;">Скриншоты (до 10 фото):</label>
         <input type="file" id="product-img-upload" accept="image/*" multiple>
         
         <input type="hidden" id="edit-product-id" value="">
         
-        <button class="btn-primary" id="product-submit-btn" onclick="saveProduct()" style="width:100%; margin-top:25px;">Опубликовать</button>
+        <button class="btn-primary" id="product-submit-btn" onclick="saveProduct()" style="width:100%; margin-top:15px;">Опубликовать</button>
         <button class="btn-red hidden" id="product-cancel-btn" onclick="resetProductForm()">Отмена</button>
       </div>
-      <div style="margin-top:40px;">
-        <h3 style="font-size: 22px; margin-bottom: 20px;">Существующие товары</h3>
+      <div style="margin-top:20px;">
+        <h3>Существующие товары</h3>
         ${(products || []).map(p => `
-          <div style="background:var(--card); padding:20px; border-radius:10px; margin-top:15px; display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-size: 16px;">${p.title} — ${p.price}₽</span>
+          <div style="background:var(--card); padding:15px; border-radius:10px; margin-top:10px; display:flex; justify-content:space-between; align-items:center;">
+            <span>${p.title} — ${p.price}₽</span>
             <div>
-              <button onclick="editProduct(${p.id})" style="color:var(--accent); background:none; border:none; margin-right:15px; font-size: 16px; cursor:pointer;">Ред.</button>
-              <button onclick="deleteProductAdmin(${p.id})" style="color:red; background:none; border:none; font-size: 16px; cursor:pointer;">Удалить</button>
+              <button onclick="editProduct(${p.id})" style="color:var(--accent); background:none; border:none; margin-right:10px;">Ред.</button>
+              <button onclick="deleteProductAdmin(${p.id})" style="color:red; background:none; border:none;">Удалить</button>
             </div>
           </div>
         `).join('')}
@@ -890,24 +865,24 @@
     const nick = document.getElementById('search-nick').value;
     const { data } = await supabase.from('profiles').select('*').eq('nickname', nick).single();
     const res = document.getElementById('user-search-result');
-    if(!data) { res.innerHTML = '<p style="color:red; padding:15px; font-size:18px;">Пользователь не найден</p>'; return; }
+    if(!data) { res.innerHTML = '<p style="color:red; padding:15px;">Пользователь не найден</p>'; return; }
     
     res.innerHTML = `
       <div class="admin-block">
-        <h3 style="font-size: 26px; margin-bottom: 20px;">${data.nickname}</h3>
-        <p style="margin-bottom:20px; font-size: 16px;">Статус: ${data.is_blocked ? '<span style="color:red;">Заблокирован</span>' : 'Активен'}</p>
+        <h3>${data.nickname}</h3>
+        <p style="margin-bottom:10px;">Статус: ${data.is_blocked ? '<span style="color:red;">Заблокирован</span>' : 'Активен'}</p>
         
-        <h4 style="margin-bottom:15px; font-size: 18px;">Сменить пароль</h4>
+        <h4 style="margin-bottom:10px;">Сменить пароль</h4>
         <input type="password" id="admin-new-pass" placeholder="Новый пароль">
-        <button class="btn-primary" onclick="adminChangeUserPass('${data.id}')" style="width:auto; padding:10px 20px;">Сменить</button>
+        <button class="btn-primary" onclick="adminChangeUserPass('${data.id}')" style="width:auto; padding:6px 12px;">Сменить</button>
         
-        <h4 style="margin:25px 0 15px; font-size: 18px;">Написать в чат</h4>
-        <textarea id="admin-chat-text" placeholder="Сообщение человеку..." style="height:100px;"></textarea>
-        <button class="btn-primary" onclick="adminSendChat('${data.id}')" style="width:auto; padding:10px 20px;">Отправить</button>
+        <h4 style="margin:15px 0 10px;">Написать в чат</h4>
+        <textarea id="admin-chat-text" placeholder="Сообщение человеку..." style="height:80px;"></textarea>
+        <button class="btn-primary" onclick="adminSendChat('${data.id}')" style="width:auto; padding:6px 12px;">Отправить</button>
         
-        <h4 style="margin:25px 0 15px; font-size: 18px;">Блокировка</h4>
+        <h4 style="margin:15px 0 10px;">Блокировка</h4>
         ${data.is_blocked 
-          ? `<p style="color:red; margin-bottom:15px; font-size: 16px;">Причина: ${data.block_reason}</p>
+          ? `<p style="color:red; margin-bottom:10px;">Причина: ${data.block_reason}</p>
              <button class="btn-green" onclick="unblockUser('${data.id}', '${data.nickname}')">Разблокировать</button>`
           : `<input type="text" id="block-reason-input" placeholder="Причина блокировки">
              <button class="btn-red" onclick="blockUser('${data.id}', '${data.nickname}')">Заблокировать</button>`
@@ -971,10 +946,10 @@
     document.getElementById('blocked-list').innerHTML = (data || []).map(u => `
       <div class="admin-block" style="display:flex; justify-content:space-between; align-items:center;">
         <div>
-          <h3 style="font-size: 24px;">${u.nickname}</h3>
-          <p style="color:var(--text-muted); font-size:16px; margin-top:5px;">Причина: ${u.block_reason}</p>
+          <h3>${u.nickname}</h3>
+          <p style="color:var(--text-muted); font-size:13px;">Причина: ${u.block_reason}</p>
         </div>
-        <button class="btn-green" style="width:auto; padding:12px 25px;" onclick="unblockUser('${u.id}', '${u.nickname}')">Разблокировать</button>
+        <button class="btn-green" style="width:auto; padding:8px 15px;" onclick="unblockUser('${u.id}', '${u.nickname}')">Разблокировать</button>
       </div>
     `).join('');
   }
@@ -985,10 +960,10 @@
     document.getElementById('admin-tickets-list').innerHTML = (data || []).map(t => `
       <div class="admin-block">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-          <strong style="font-size:22px;">Обращение</strong>
-          <button onclick="openAdminTicket(${t.id})" class="btn-primary" style="width:auto; padding:10px 20px;">Открыть</button>
+          <strong>Обращение</strong>
+          <button onclick="openAdminTicket(${t.id})" class="btn-primary" style="width:auto; padding:6px 12px;">Открыть</button>
         </div>
-        <p style="font-size:16px; margin-top:15px;">${t.message.substring(0, 50)}...</p>
+        <p style="font-size:13px; margin-top:5px;">${t.message.substring(0, 50)}...</p>
       </div>
     `).join('');
   }
@@ -1044,7 +1019,7 @@
   async function loadChats() {
     const { data } = await supabase.from('orders').select('*').eq('buyer_id', currentUser.id).order('created_at', { ascending: false });
     const list = document.getElementById('chats-list');
-    if(!data || data.length === 0) { list.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:30px; font-size:18px;">У вас нет чатов</p>'; return; }
+    if(!data || data.length === 0) { list.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:20px;">У вас нет чатов</p>'; return; }
     
     const { data: adminProfile } = await supabase.from('profiles').select('nickname, avatar').eq('nickname', 'KupiGame').single();
     const adminAvatar = adminProfile && adminProfile.avatar 
@@ -1142,41 +1117,6 @@
     if(error) { alert('ОШИБКА БАЗЫ: ' + error.message); return; }
     alert('Заявка отправлена владельцу!');
     show('blocked');
-  }
-
-  // --- АДМИНКА: ОТЗЫВЫ ---
-  async function loadAdminReviews() {
-    // Просто заглушка, так как форма уже в HTML
-  }
-
-  window.addReview = async () => {
-    const nick = document.getElementById('review-nick').value;
-    const stars = document.getElementById('review-stars').value;
-    const text = document.getElementById('review-text').value;
-    const file = document.getElementById('review-avatar').files[0];
-
-    if(!nick || !text) return alert('Заполните ник и текст отзыва');
-
-    let avatarBase64 = null;
-    if(file) {
-      avatarBase64 = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = (e) => resolve(e.target.result);
-        reader.readAsDataURL(file);
-      });
-    }
-
-    const { error } = await supabase.from('reviews').insert([{
-      nick, rating: Number(stars), text, avatar: avatarBase64
-    }]);
-
-    if(error) alert('Ошибка: ' + error.message);
-    else {
-      alert('Отзыв добавлен!');
-      document.getElementById('review-nick').value = '';
-      document.getElementById('review-text').value = '';
-      document.getElementById('review-avatar').value = '';
-    }
   }
 
   // --- ОБЛОЖКА ---
