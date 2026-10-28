@@ -107,11 +107,8 @@
     <button onclick="show('catalog')" id="nav-catalog">Каталог</button>
     <button onclick="show('chats')" id="nav-chats" class="hidden">Чаты</button>
     <button onclick="show('profile')" id="nav-profile" class="hidden">Профиль</button>
-    
     <button onclick="show('admin')" id="nav-admin" class="admin hidden">Админ</button>
-    
     <button id="logout-btn" onclick="logout()" class="btn-logout hidden">Выйти</button>
-
     <div id="auth-links" style="display:flex; flex-direction:column; gap:10px; align-items:flex-end; margin-top:10px; width:100%;">
       <button onclick="show('login')" style="color:var(--accent); width:100%; text-align:right;">Войти</button>
       <button onclick="show('register')" style="background:var(--card); padding:6px 15px; border-radius:8px; border:1px solid var(--border); width:100%; text-align:right;">Регистрация</button>
@@ -295,7 +292,6 @@
     <h1 class="catalog-title" style="font-size: 24px;">Админ-панель 👑</h1>
     
     <div class="admin-tabs" id="admin-tabs"></div>
-
     <div id="admin-content"></div>
   </section>
 </main>
@@ -314,7 +310,6 @@
   const supabaseKey = 'sb_publishable_Wu1juOsDo5ckddxGnNqbQw_H6HRVjr2';
   const supabase = createClient(supabaseUrl, supabaseKey);
 
-  // ===== ЕДИНСТВЕННОЕ ДОБАВЛЕНИЕ: XSS-ЭКРАНИРОВАНИЕ =====
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({
     '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
   }[c]));
@@ -324,7 +319,6 @@
   let isAdminView = false;
   let blockedTicketId = null;
 
-  // ===== МЯГКАЯ ПРОВЕРКА АДМИНА (is_admin ИЛИ ник, чтобы работало до/после добавления колонки) =====
   const isAdmin = () => !!(currentUser && (currentUser.is_admin === true || currentUser.nickname === 'KupiGame'));
 
   window.show = (screen) => {
@@ -337,7 +331,11 @@
     if(screen === 'catalog') { document.getElementById('nav-catalog').classList.add('active'); loadGames(); }
     if(screen === 'chats') { document.getElementById('nav-chats').classList.add('active'); loadChats(); }
     if(screen === 'profile') document.getElementById('nav-profile').classList.add('active');
-    if(screen === 'admin') document.getElementById('nav-admin').classList.add('active');
+    
+    if(screen === 'admin') { 
+        document.getElementById('nav-admin').classList.add('active'); 
+        renderAdminTabs(); // <--- ТУТ ИСПРАВЛЕНИЕ, ДОБАВЛЕН ВЫЗОВ
+    }
     
     window.scrollTo(0, 0);
   }
@@ -648,7 +646,6 @@
     show('seller');
   }
 
-  // ===== ЕДИНСТВЕННОЕ ИЗМЕНЕНИЕ В pay(): проверка протокола =====
   window.pay = (link) => { 
     if(!link) return alert('Ссылка не указана.');
     if(!/^https?:\/\//i.test(link)) return alert('Некорректная ссылка.');
@@ -1204,7 +1201,7 @@
     switchAdminTab('reviews', document.querySelectorAll('.admin-tab')[6]);
   }
 
-  // --- ЗАГЛУШКИ (как было в твоём файле — функции не были реализованы) ---
+  // --- ЗАГЛУШКИ ---
   window.openBlockedTickets = async () => {
     const list = document.getElementById('blocked-tickets-list');
     if(list) list.innerHTML = '<p style="color:var(--text-muted);">Заявок нет.</p>';
