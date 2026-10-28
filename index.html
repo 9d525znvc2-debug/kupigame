@@ -334,7 +334,7 @@
     
     if(screen === 'admin') { 
         document.getElementById('nav-admin').classList.add('active'); 
-        renderAdminTabs(); // <--- ТУТ ИСПРАВЛЕНИЕ, ДОБАВЛЕН ВЫЗОВ
+        renderAdminTabs();
     }
     
     window.scrollTo(0, 0);
@@ -355,6 +355,7 @@
       <button class="admin-tab" onclick="switchAdminTab('blocked', this)">Заблокированные (<span id="blocked-count">0</span>)</button>
       <button class="admin-tab" onclick="switchAdminTab('unblock-requests', this)">Разблокировка (<span id="unblock-count">0</span>)</button>
       <button class="admin-tab" onclick="switchAdminTab('tickets', this)">Заявки</button>
+      <button class="admin-tab" onclick="switchAdminTab('admin-chats', this)">Админ-чаты</button>
       <button class="admin-tab" onclick="switchAdminTab('reviews', this)">Отзывы</button>
       <button class="admin-tab" onclick="switchAdminTab('settings', this)">Настройки</button>
     `;
@@ -374,6 +375,7 @@
     if(tab === 'products') loadAdminProducts(content);
     if(tab === 'people') loadAdminPeople(content);
     if(tab === 'tickets') loadAdminTickets(content); 
+    if(tab === 'admin-chats') loadAdminChats(content);
     if(tab === 'blocked') loadBlockedUsers(content);
     if(tab === 'unblock-requests') loadUnblockRequests(content);
     if(tab === 'reviews') loadAdminReviews(content);
@@ -851,15 +853,16 @@
     const text = document.getElementById('admin-chat-text').value;
     if(!text) return;
 
-    const { data: existingOrders } = await supabase.from('orders').select('*').eq('buyer_id', userId).eq('status', 'open');
+    // Ищем, есть ли уже открытый АДМИН-чат с этим пользователем
+    const { data: existingChats } = await supabase.from('orders').select('*').eq('buyer_id', userId).eq('status', 'admin_chat');
     
     let orderId;
-    if (existingOrders && existingOrders.length > 0) {
-      orderId = existingOrders[0].id;
+    if (existingChats && existingChats.length > 0) {
+      orderId = existingChats[0].id;
     } else {
       const { data: newOrder, error } = await supabase.from('orders').insert([{ 
         buyer_id: userId, 
-        status: 'open', 
+        status: 'admin_chat', 
         message: 'Чат открыт администратором' 
       }]).select();
       if(error) { alert('Ошибка: ' + error.message); return; }
@@ -874,7 +877,7 @@
 
     if(msgError) { alert('Ошибка: ' + msgError.message); return; }
     
-    alert('Сообщение отправлено в Чаты!');
+    alert('Сообщение отправлено в Админ-чаты!');
     document.getElementById('admin-chat-text').value = '';
   }
 
@@ -910,14 +913,34 @@
     `).join('');
   }
 
-  // --- АДМИНКА: ЗАЯВКИ ---
+  // --- АДМИНКА: ЗАЯВКИ (Обычные обращения) ---
   async function loadAdminTickets(container) {
     const { data } = await supabase.from('orders').select('*').eq('status', 'open');
     container.innerHTML = (data || []).map(t => `
       <div class="admin-block">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <strong>Обращение</strong>
-          <button onclick="openAdminTicket(${t.id})" class="btn-primary" style="width:auto; padding:6px 12px;">Открыть</button>
+          <div style="display:flex; gap:10px;">
+            <button onclick="openAdminTicket(${t.id})" class="btn-primary" style="width:auto; padding:6px 12px;">Открыть</button>
+            <button onclick="deleteTicketAdmin(${t.id})" class="btn-red" style="width:auto; padding:6px 12px; margin-top:0;">Удалить</button>
+          </div>
+        </div>
+        <p style="font-size:13px; margin-top:5px;">${esc((t.message || '').substring(0, 50))}...</p>
+      </div>
+    `).join('');
+  }
+
+  // --- АДМИНКА: АДМИН-ЧАТЫ (Новая вкладка) ---
+  async function loadAdminChats(container) {
+    const { data } = await supabase.from('orders').select('*').eq('status', 'admin_chat');
+    container.innerHTML = (data || []).map(t => `
+      <div class="admin-block">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <strong>Диалог с пользователем</strong>
+          <div style="display:flex; gap:10px;">
+            <button onclick="openAdminTicket(${t.id})" class="btn-primary" style="width:auto; padding:6px 12px;">Открыть</button>
+            <button onclick="deleteTicketAdmin(${t.id})" class="btn-red" style="width:auto; padding:6px 12px; margin-top:0;">Удалить</button>
+          </div>
         </div>
         <p style="font-size:13px; margin-top:5px;">${esc((t.message || '').substring(0, 50))}...</p>
       </div>
@@ -952,7 +975,7 @@
     document.getElementById('ticket-actions').style.display = 'flex';
     document.getElementById('ticket-actions').innerHTML = `
       <button class="btn-red" onclick="closeTicket()">Закрыть</button>
-      <button class="btn-red" onclick="deleteTicketAdmin()" style="background:#333;">Удалить</button>
+      <button class="btn-red" onclick="deleteTicketAdmin(${id})" style="background:#333;">Удалить</button>
     `;
     show('ticket-view');
     chatBox.scrollTop = chatBox.scrollHeight;
@@ -964,10 +987,15 @@
     show('admin');
   }
 
-  window.deleteTicketAdmin = async () => {
-    await supabase.from('orders').delete().eq('id', currentTicketId);
-    alert('Заявка удалена!');
+  window.deleteTicketAdmin = async (id) => {
+    if(!confirm('Удалить этот чат полностью?')) return;
+    // Удаляем сообщения
+    await supabase.from('ticket_messages').delete().eq('ticket_id', id);
+    // Удаляем саму заявку
+    await supabase.from('orders').delete().eq('id', id);
+    alert('Чат удален!');
     show('admin');
+    renderAdminTabs(); // Перерисовываем, чтобы обновить список
   }
 
   // --- ЧАТЫ (ДЛЯ ПОЛЬЗОВАТЕЛЯ) ---
@@ -1141,7 +1169,10 @@
       <div class="admin-block">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <strong>Заявка на разблокировку</strong>
-          <button onclick="openAdminTicket(${t.id})" class="btn-primary" style="width:auto; padding:6px 12px;">Открыть</button>
+          <div style="display:flex; gap:10px;">
+            <button onclick="openAdminTicket(${t.id})" class="btn-primary" style="width:auto; padding:6px 12px;">Открыть</button>
+            <button onclick="deleteTicketAdmin(${t.id})" class="btn-red" style="width:auto; padding:6px 12px; margin-top:0;">Удалить</button>
+          </div>
         </div>
         <p style="font-size:13px; margin-top:5px;">${esc((t.message || '').substring(0, 80))}...</p>
       </div>
@@ -1192,13 +1223,13 @@
       reader.readAsDataURL(file);
     });
     const { error } = await supabase.from('reviews').insert([{ nick, avatar, rating: stars, text }]);
-    if(error) alert('Ошибка: ' + error.message); else { alert('Отзыв добавлен!'); switchAdminTab('reviews', document.querySelectorAll('.admin-tab')[6]); }
+    if(error) alert('Ошибка: ' + error.message); else { alert('Отзыв добавлен!'); switchAdminTab('reviews', document.querySelectorAll('.admin-tab')[7]); }
   }
 
   window.deleteReviewAdmin = async (id) => {
     if(!confirm('Удалить отзыв?')) return;
     await supabase.from('reviews').delete().eq('id', id);
-    switchAdminTab('reviews', document.querySelectorAll('.admin-tab')[6]);
+    switchAdminTab('reviews', document.querySelectorAll('.admin-tab')[7]);
   }
 
   // --- ЗАГЛУШКИ ---
