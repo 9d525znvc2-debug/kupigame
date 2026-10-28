@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KupiGame — игровой магазин</title>
+<link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%238b5cf6%22/><text y=%2270%22 x=%2250%22 font-size=%2260%22 text-anchor=%22middle%22 fill=%22white%22>K</text></svg>">
+<style>
+  :root { --primary: #8b5cf6; --primary-hover: #7c3aed; --bg: #090910; --card: #12121a; --text: #e8e8f0; --text-muted: #9898b0; --border: #2a2a3a; --accent: #38bdf8; --green: #10b981; }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+  body { background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 80px; }
+  
+  header { background: var(--bg); padding: 15px 20px; display: flex; align-items: flex-start; justify-content: space-between; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+  .logo { font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 8px; cursor: pointer; color: #fff; }
+  .logo-icon { width: 20px; height: 20px; background: var(--primary); transform: rotate(45deg); border-radius: 4px; }
+  .user-pill { background: var(--card); border: 1px solid var(--border); border-radius: 30px; padding: 5px 15px 5px 5px; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+  .btn-logout { background: var(--card); border: 1px solid var(--border); color: #fff; padding: 8px 15px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; width: 100%; }
+
+  .nav-menu { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; font-size: 15px; font-weight: 600; }
+  .nav-menu button { background: none; border: 1px solid transparent; color: var(--text-muted); cursor: pointer; font-size: 15px; font-weight: 600; padding: 6px 15px; border-radius: 8px; width: 100%; text-align: right; }
+  .nav-menu button:hover { color: #fff; }
+  .nav-menu button.active { color: #fff; background: var(--card); border-color: var(--border); }
+  .nav-menu button.admin { color: #fbbf24; }
+  #logout-btn { margin-top: 0; width: 100%; text-align: center; }
+
+  main { max-width: 800px; margin: 0 auto; padding: 20px; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .hero-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; }
+  .hero-image { width: 100%; border-radius: 12px; margin-bottom: 20px; display: none; object-fit: cover; }
+  .hero-card h1 { font-size: 26px; margin-bottom: 10px; }
+  .hero-card h1 span { color: var(--primary); }
+  .btn-primary { background: var(--primary); color: #fff; padding: 12px 24px; border: none; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; text-align: center; text-decoration: none; display: inline-block; width: 100%; max-width: 300px; }
+  
+  .game-row { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 15px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; cursor: pointer; }
+  .game-img { width: 50px; height: 50px; border-radius: 12px; object-fit: contain; background: #1a1a26; display: flex; align-items: center; justify-content: center; font-size: 24px; overflow: hidden; }
+  .game-img img { width: 100%; height: 100%; border-radius: 12px; object-fit: cover; }
+  .product-item { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 15px; margin-bottom: 12px; cursor: pointer; }
+  .product-item .p-title { font-weight: bold; font-size: 16px; color: #fff; margin-bottom: 5px; }
+  .product-item .p-price { font-size: 20px; font-weight: 800; color: var(--accent); }
+
+  .auth-box, .admin-block, .doc-box { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 25px; margin-bottom: 20px; }
+  input, textarea, select { width: 100%; padding: 14px; margin-bottom: 15px; background: var(--bg); border: 1px solid var(--border); color: #fff; border-radius: 10px; font-size: 15px; }
+  .error-msg { color: #ff4d4d; font-size: 14px; margin-bottom: 15px; text-align: center; display: none; }
+
+  .admin-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+  .admin-tab { background: var(--card); border: 1px solid var(--border); color: var(--text-muted); padding: 8px 16px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; }
+  .admin-tab.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+  footer { padding: 30px 20px; border-top: 1px solid var(--border); text-align: center; font-size: 13px; color: var(--text-muted); }
+  footer a { display: block; color: var(--accent); margin-bottom: 10px; font-weight: 600; cursor: pointer; }
+  .hidden { display: none !important; }
+  
+  .btn-red { background: #ff4d4d; color: #fff; padding: 10px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
+  .btn-green { background: var(--green); color: #fff; padding: 10px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
+  
+  /* Стили для чатов (как на FunPay) */
+  .chat-list-item { display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--card); border-bottom: 1px solid var(--border); cursor: pointer; }
+  .chat-list-item:hover { background: #1a1a26; }
+  .chat-avatar { width: 50px; height: 50px; border-radius: 50%; background: #1a1a26; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: bold; color: #fff; flex-shrink: 0; overflow: hidden; }
+  .chat-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .chat-info { flex: 1; overflow: hidden; }
+  .chat-name { font-weight: bold; font-size: 16px; color: #fff; display: flex; align-items: center; gap: 5px; }
+  .chat-last-msg { font-size: 14px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 3px; }
+  
+  /* Стили для сообщений внутри чата */
+  .chat-box { background: var(--bg); border-radius: 12px; padding: 15px; margin-bottom: 15px; max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+  .chat-msg { max-width: 80%; padding: 10px 15px; border-radius: 12px; font-size: 14px; line-height: 1.4; }
+  .chat-msg.my-msg { background: var(--primary); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
+  .chat-msg.their-msg { background: #1a1a26; border: 1px solid var(--border); align-self: flex-start; border-bottom-left-radius: 2px; }
+  .msg-sender { font-size: 11px; margin-bottom: 4px; font-weight: bold; opacity: 0.9; display: flex; align-items: center; gap: 5px; color: #c8c8d8; }
+  .msg-sender.my-msg-text { color: #e8e8f0; }
+  .admin-tag { background: var(--green); color: #fff; font-size: 9px; padding: 1px 4px; border-radius: 3px; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-area">
+    <div class="logo" onclick="show('home')"><div class="logo-icon"></div> KupiGame</div>
+    <div id="user-area" class="hidden">
+      <div class="user-pill">
+        <div id="user-avatar" style="width:30px; height:30px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; font-weight:bold; overflow:hidden;">U</div>
+        <span id="user-nick">User</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="nav-menu">
+    <button onclick="show('home')" id="nav-home" class="active">Главная</button>
+    <button onclick="show('catalog')" id="nav-catalog">Каталог</button>
+    <button onclick="show('chats')" id="nav-chats" class="hidden">Чаты</button>
+    <button onclick="show('profile')" id="nav-profile" class="hidden">Профиль</button>
+    
+    <button id="logout-btn" onclick="logout()" class="btn-logout hidden">Выйти</button>
+    <button onclick="show('admin')" id="nav-admin" class="admin hidden">Админ</button>
+
+    <div id="auth-links" style="display:flex; flex-direction:column; gap:10px; align-items:flex-end; margin-top:10px; width:100%;">
+      <button onclick="show('login')" style="color:var(--accent); width:100%; text-align:right;">Войти</button>
+      <button onclick="show('register')" style="background:var(--card); padding:6px 15px; border-radius:8px; border:1px solid var(--border); width:100%; text-align:right;">Регистрация</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- БЛОКИРОВКА -->
+  <section class="screen" id="screen-blocked">
+    <div class="auth-box" style="text-align:center; margin-top:50px; border-color:#ff4d4d;">
+      <h2 style="color:#ff4d4d; margin-bottom:15px;">Вы заблокированы</h2>
+      <p style="margin-bottom:20px;">Причина: <span id="block-reason" style="font-weight:bold;"></span></p>
+      <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px;">Обратитесь к владельцу магазина.</p>
+      
+      <button class="btn-primary" onclick="show('unblock-form')" style="max-width:100%; margin-bottom:10px;">Написать в поддержку</button>
+      <button class="btn-primary" onclick="openBlockedTickets()" style="max-width:100%; margin-bottom:10px; background:var(--card); border:1px solid var(--border);">Мои заявки</button>
+      
+      <button class="btn-logout" onclick="logout()" style="background:transparent; border:1px solid var(--border);">Выйти</button>
+    </div>
+  </section>
+
+  <!-- ФОРМА РАЗБЛОКИРОВКИ -->
+  <section class="screen" id="screen-unblock-form">
+    <div class="auth-box">
+      <h2 style="margin-bottom:15px; text-align:center;">Заявка на разблокировку</h2>
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:15px; text-align:center;">Заполните форму, и мы рассмотрим вашу заявку.</p>
+      <input type="text" id="unblock-nick" placeholder="Ваш ник" readonly>
+      <textarea id="unblock-reason" placeholder="Почему вы не согласны с блокировкой?" style="height:100px;"></textarea>
+      <button class="btn-primary" onclick="sendUnblock()" style="max-width:100%;">Отправить заявку</button>
+      <button class="btn-red" onclick="show('blocked')" style="margin-top:10px;">Назад</button>
+    </div>
+  </section>
+
+  <!-- ЗАЯВКИ ЗАБЛОКИРОВАННОГО -->
+  <section class="screen" id="screen-blocked-tickets">
+    <div class="auth-box">
+      <h2 style="margin-bottom:15px; text-align:center;">Мои заявки</h2>
+      <div id="blocked-tickets-list"></div>
+      <button class="btn-red" onclick="show('blocked')" style="margin-top:15px;">Назад</button>
+    </div>
+  </section>
+
+  <!-- ЧАТ ЗАБЛОКИРОВАННОГО -->
+  <section class="screen" id="screen-blocked-chat">
+    <div class="auth-box">
+      <div class="chat-box" id="blocked-chat-box"></div>
+      <div id="blocked-chat-reply-area">
+        <textarea id="blocked-chat-reply-text" placeholder="Написать сообщение..." style="height:80px;"></textarea>
+        <button class="btn-primary" onclick="sendBlockedChatReply()" style="width:100%;">Отправить</button>
+      </div>
+      <button class="btn-red" onclick="openBlockedTickets()" style="margin-top:15px;">Назад к заявкам</button>
+    </div>
+  </section>
+
+  <!-- ГЛАВНАЯ -->
+  <section class="screen active" id="screen-home">
+    <div class="hero-card">
+      <img id="main-hero-img" class="hero-image">
+      <h1>Аккаунты <span>и товары</span> для игр</h1>
+      <p style="color:var(--text-muted); margin-bottom:20px;">Сделки ведёт продавец, владелец магазина KupiGame.</p>
+      <button class="btn-primary" onclick="show('catalog')">Перейти в каталог</button>
+    </div>
+    
+    <div class="tg-block" style="text-align: center; padding: 20px; background: var(--card); border-radius: 16px; border: 1px solid var(--border); margin-bottom: 20px;">
+      <p style="font-weight: bold; margin-bottom: 15px;">Все актуальные новости и отзывы</p>
+      <a href="https://t.me/KupiGameOfficial" target="_blank" class="btn-primary" style="text-decoration:none; display:inline-block; width:auto;">В нашем Telegram</a>
+    </div>
+  </section>
+
+  <!-- КАТАЛОГ -->
+  <section class="screen" id="screen-catalog">
+    <button class="back-btn" onclick="show('home')">←</button>
+    <h1 class="catalog-title">Каталог игр</h1>
+    <div id="games-list"></div>
+  </section>
+
+  <!-- ТОВАРЫ -->
+  <section class="screen" id="screen-products">
+    <button class="back-btn" onclick="show('catalog')">←</button>
+    <h1 class="catalog-title" id="products-title"></h1>
+    <div id="products-list"></div>
+  </section>
+
+  <!-- ТОВАР -->
+  <section class="screen" id="screen-product-detail">
+    <button class="back-btn" onclick="show('products')">←</button>
+    <div id="product-detail-content"></div>
+  </section>
+
+  <!-- ВХОД -->
+  <section class="screen" id="screen-login">
+    <button class="back-btn" onclick="show('home')">←</button>
+    <div class="auth-box">
+      <h2 style="text-align:center; margin-bottom:20px;">Вход</h2>
+      <div class="error-msg" id="login-error"></div>
+      <input type="text" id="login-nick" placeholder="Ваш ник" autocomplete="off">
+      <input type="password" id="login-pass" placeholder="Пароль" autocomplete="new-password">
+      <button class="btn-primary" onclick="login()" style="width:100%;">Войти</button>
+    </div>
+  </section>
+
+  <!-- РЕГИСТРАЦИЯ -->
+  <section class="screen" id="screen-register">
+    <button class="back-btn" onclick="show('home')">←</button>
+    <div class="auth-box">
+      <h2 style="text-align:center; margin-bottom:20px;">Регистрация</h2>
+      <div class="error-msg" id="reg-error"></div>
+      <input type="text" id="reg-nick" placeholder="Придумайте ник" autocomplete="off">
+      <input type="password" id="reg-pass" placeholder="Придумайте пароль" autocomplete="new-password">
+      <button class="btn-primary" onclick="register()" style="width:100%;">Создать аккаунт</button>
+    </div>
+  </section>
+
+  <!-- ПРОФИЛЬ -->
+  <section class="screen" id="screen-profile">
+    <button class="back-btn" onclick="show('home')">←</button>
+    <h1 class="catalog-title">Мой профиль</h1>
+    
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchProfileTab('settings', this)">Настройки</button>
+      <button class="admin-tab" onclick="switchProfileTab('my-tickets', this)">Мои заявки</button>
+    </div>
+
+    <div id="profile-tab-settings" class="profile-content">
+      <div class="auth-box">
+        <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;">
+          <div id="profile-avatar" style="width:60px; height:60px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; font-size:24px; overflow:hidden;">U</div>
+          <div>
+            <h3 id="profile-nick">User</h3>
+            <label for="avatar-upload" style="color:var(--accent); cursor:pointer; font-size:14px;">Сменить аватар</label>
+            <input type="file" id="avatar-upload" class="hidden" accept="image/*" onchange="uploadAvatar(this)">
+          </div>
+        </div>
+        <input type="password" id="new-password" placeholder="Новый пароль" autocomplete="new-password">
+        <button class="btn-primary" onclick="changePassword()" style="width:100%;">Обновить пароль</button>
+      </div>
+    </div>
+
+    <div id="profile-tab-my-tickets" class="profile-content hidden">
+      <div id="my-tickets-list"></div>
+    </div>
+  </section>
+
+  <!-- ЧАТЫ (СПИСОК) -->
+  <section class="screen" id="screen-chats">
+    <button class="back-btn" onclick="show('home')">←</button>
+    <h1 class="catalog-title">Мои чаты</h1>
+    <div id="chats-list" style="background:var(--card); border-radius:16px; overflow:hidden;"></div>
+  </section>
+
+  <!-- ПРОСМОТР ЧАТА -->
+  <section class="screen" id="screen-ticket-view">
+    <button class="back-btn" onclick="goBackFromTicket()">←</button>
+    <div class="admin-block">
+      <div class="chat-box" id="ticket-chat-box"></div>
+      <div id="ticket-reply-area">
+        <textarea id="ticket-reply-text" placeholder="Написать сообщение..." style="height:80px;"></textarea>
+        <button class="btn-primary" onclick="sendTicketReply()" style="width:100%;">Отправить</button>
+      </div>
+      <div id="ticket-actions" style="margin-top:15px; display:flex; gap:10px;"></div>
+    </div>
+  </section>
+
+  <!-- ПОДДЕРЖКА -->
+  <section class="screen" id="screen-support">
+    <button class="back-btn" onclick="show('profile')">←</button>
+    <div class="auth-box">
+      <h2 style="margin-bottom:15px;">Новая заявка</h2>
+      <p style="color:var(--text-muted); margin-bottom:20px; font-size:14px;">Отвечаем до 48 часов.</p>
+      <textarea id="support-text" placeholder="Опишите проблему..." style="height:100px;"></textarea>
+      <button class="btn-primary" onclick="sendTicket()" style="width:100%;">Отправить</button>
+    </div>
+  </section>
+
+  <!-- ДОКУМЕНТЫ -->
+  <section class="screen" id="screen-doc">
+    <button class="back-btn" onclick="show('home')">←</button>
+    <div class="doc-box">
+      <h2 id="doc-title" style="margin-bottom:15px;"></h2>
+      <p id="doc-text" style="line-height:1.6; color:#c8c8d8; white-space:pre-wrap; font-size:14px;"></p>
+    </div>
+  </section>
+
+  <!-- АДМИНКА -->
+  <section class="screen" id="screen-admin">
+    <button class="back-btn" onclick="show('home')">←</button>
+    <h1 class="catalog-title">Админ-панель 👑</h1>
+    
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchAdminTab('games', this)">Игры</button>
+      <button class="admin-tab" onclick="switchAdminTab('products', this)">Товары</button>
+      <button class="admin-tab" onclick="switchAdminTab('people', this)">Люди</button>
+      <button class="admin-tab" onclick="switchAdminTab('blocked', this)">Заблокированные (<span id="blocked-count">0</span>)</button>
+      <button class="admin-tab" onclick="switchAdminTab('unblock-requests', this)">Разблокировка (<span id="unblock-count">0</span>)</button>
+      <button class="admin-tab" onclick="switchAdminTab('tickets', this)">Заявки</button>
+      <button class="admin-tab" onclick="switchAdminTab('settings', this)">Настройки</button>
+    </div>
+
+    <div id="admin-tab-games" class="admin-content"></div>
+    <div id="admin-tab-products" class="admin-content hidden">
+      <div class="admin-block">
+        <h3 style="margin-bottom:15px;">Добавить товар</h3>
+        <select id="admin-game-select"></select>
+        <input type="text" id="admin-title" placeholder="Название">
+        <input type="number" id="admin-price" placeholder="Цена ₽">
+        <textarea id="admin-desc" placeholder="Описание"></textarea>
+        <input type="text" id="admin-paylink" placeholder="Ссылка на оплату">
+        <input type="file" id="product-img-upload" accept="image/*">
+        <button class="btn-primary" onclick="addProduct()" style="width:100%; margin-top:15px;">Опубликовать</button>
+      </div>
+    </div>
+
+    <div id="admin-tab-people" class="admin-content hidden">
+      <div class="admin-block">
+        <h3 style="margin-bottom:15px;">Поиск пользователя</h3>
+        <input type="text" id="search-nick" placeholder="Введите ник">
+        <button class="btn-primary" onclick="searchUser()" style="width:100%;">Найти</button>
+      </div>
+      <div id="user-search-result"></div>
+    </div>
+
+    <div id="admin-tab-blocked" class="admin-content hidden">
+      <div id="blocked-list"></div>
+    </div>
+
+    <div id="admin-tab-unblock-requests" class="admin-content hidden">
+      <div id="unblock-requests-list"></div>
+    </div>
+
+    <div id="admin-tab-tickets" class="admin-content hidden">
+      <div id="admin-tickets-list"></div>
+    </div>
+
+    <div id="admin-tab-settings" class="admin-content hidden">
+      <div class="admin-block">
+        <h3 style="margin-bottom:15px;">Обложка на главную</h3>
+        <input type="file" id="hero-upload" accept="image/*">
+        <button class="btn-primary" onclick="uploadHero()" style="width:100%;">Загрузить обложку</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <a onclick="showDoc('privacy')">Политика конфиденциальности</a>
+  <a onclick="showDoc('terms')">Пользовательское соглашение</a>
+  <a onclick="show('support')">Поддержка</a>
+  <p>© 2026 KupiGame. Все быстро, качественно и надежно.</p>
+</footer>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+
+  const supabaseUrl = 'https://nmowfdsawvrkqhrnlzth.supabase.co';
+  const supabaseKey = 'sb_publishable_Wu1juOsDo5ckddxGnNqbQw_H6HRVjr2';
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
+  let currentUser = null;
+  let currentTicketId = null;
+  let isAdminView = false;
+
+  window.show = (screen) => {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const target = document.getElementById('screen-' + screen);
+    if(target) target.classList.add('active');
+    
+    document.querySelectorAll('.nav-menu > button').forEach(b => b.classList.remove('active'));
+    if(screen === 'home') document.getElementById('nav-home').classList.add('active');
+    if(screen === 'catalog') { document.getElementById('nav-catalog').classList.add('active'); loadGames(); }
+    if(screen === 'chats') { document.getElementById('nav-chats').classList.add('active'); loadChats(); }
+    if(screen === 'profile') { document.getElementById('nav-profile').classList.add('active'); loadMyTickets(); }
+    if(screen === 'admin') document.getElementById('nav-admin').classList.add('active');
+    
+    window.scrollTo(0, 0);
+  }
+
+  window.switchProfileTab = (tab, btn) => {
+    document.querySelectorAll('#screen-profile .admin-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.profile-content').forEach(c => c.classList.add('hidden'));
+    document.getElementById('profile-tab-' + tab).classList.remove('hidden');
+  }
+
+  window.switchAdminTab = async (tab, btn) => {
+    document.querySelectorAll('#screen-admin .admin-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('#screen-admin .admin-content').forEach(c => c.classList.add('hidden'));
+    document.getElementById('admin-tab-' + tab).classList.remove('hidden');
+    
+    if(tab === 'games') loadAdminGames();
+    if(tab === 'products') loadAdminGamesSelect();
+    if(tab === 'blocked') loadBlockedUsers();
+    if(tab === 'unblock-requests') loadUnblockRequests();
+    if(tab === 'tickets') loadAdminTickets();
+    if(tab === 'settings') checkBlockCounts();
+  }
+
+  async function checkBlockCounts() {
+    const { count: blockedCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('is_blocked', true);
+    document.getElementById('blocked-count').textContent = blockedCount || 0;
+    const { count: reqCount } = await supabase.from('orders').select('*', { count: 'exact', head: true }).eq('status', 'unblock_request');
+    document.getElementById('unblock-count').textContent = reqCount || 0;
+  }
+
+  async function checkBlock() {
+    if(!currentUser) return;
+    const { data } = await supabase.from('profiles').select('is_blocked, block_reason').eq('id', currentUser.id).single();
+    if(data && data.is_blocked) {
+      document.getElementById('block-reason').textContent = data.block_reason || 'Нарушение правил';
+      document.getElementById('unblock-nick').value = currentUser.nickname;
+      document.getElementById('unblock-reason').value = ''; 
+      show('blocked');
+      
+      document.getElementById('nav-home').classList.add('hidden');
+      document.getElementById('nav-catalog').classList.add('hidden');
+      document.getElementById('nav-profile').classList.add('hidden');
+      document.getElementById('nav-chats').classList.add('hidden');
+      document.getElementById('nav-admin').classList.add('hidden');
+      document.getElementById('logout-btn').classList.add('hidden');
+      return true;
+    }
+    document.getElementById('nav-home').classList.remove('hidden');
+    document.getElementById('nav-catalog').classList.remove('hidden');
+    document.getElementById('nav-profile').classList.remove('hidden');
+    document.getElementById('nav-chats').classList.remove('hidden');
+    document.getElementById('logout-btn').classList.remove('hidden');
+    if(currentUser.is_admin) document.getElementById('nav-admin').classList.remove('hidden');
+    return false;
+  }
+
+  function updateAuthUI() {
+    if(currentUser) {
+      document.getElementById('auth-links').classList.add('hidden');
+      document.getElementById('user-area').classList.remove('hidden');
+      document.getElementById('user-nick').textContent = currentUser.nickname;
+      
+      const avatarHtml = currentUser.avatar 
+        ? `<img src="${currentUser.avatar}" style="width:100%;height:100%;object-fit:cover;">` 
+        : currentUser.nickname[0].toUpperCase();
+      
+      document.getElementById('user-avatar').innerHTML = avatarHtml;
+      document.getElementById('profile-nick').textContent = currentUser.nickname;
+      document.getElementById('profile-avatar').innerHTML = avatarHtml;
+      
+      checkBlock();
+      checkBlockCounts();
+    } else {
+      document.getElementById('auth-links').classList.remove('hidden');
+      document.getElementById('user-area').classList.add('hidden');
+      document.getElementById('logout-btn').classList.add('hidden');
+      document.getElementById('nav-admin').classList.add('hidden');
+      document.getElementById('nav-profile').classList.add('hidden');
+      document.getElementById('nav-chats').classList.add('hidden');
+      
+      document.getElementById('login-nick').value = '';
+      document.getElementById('login-pass').value = '';
+    }
+  }
+
+  // --- АВТОРИЗАЦИЯ ---
+  window.register = async () => {
+    const nick = document.getElementById('reg-nick').value.trim();
+    const pass = document.getElementById('reg-pass').value;
+    if(!nick || !pass) return;
+    const dummyEmail = `${nick.toLowerCase()}@kupigame.local`;
+    const { data, error } = await supabase.auth.signUp({ email: dummyEmail, password: pass });
+    if (error) return alert(error.message);
+    
+    if (data.user) {
+      await supabase.from('profiles').insert([{ id: data.user.id, nickname: nick }]);
+      const { data: profile } = await supabase.from('profiles').select('*').eq('id', data.user.id).single();
+      if(profile) { currentUser = profile; updateAuthUI(); show('home'); }
+    }
+  }
+
+  window.login = async () => {
+    const nick = document.getElementById('login-nick').value.trim();
+    const pass = document.getElementById('login-pass').value;
+    const dummyEmail = `${nick.toLowerCase()}@kupigame.local`;
+    const { data, error } = await supabase.auth.signInWithPassword({ email: dummyEmail, password: pass });
+    if (error) { const err = document.getElementById('login-error'); err.textContent = 'Неверный ник или пароль'; err.style.display = 'block'; return; }
+    
+    const { data: profile } = await supabase.from('profiles').select('*').eq('id', data.user.id).single();
+    if(profile) { 
+      currentUser = profile; 
+      updateAuthUI(); 
+      const isBlocked = await checkBlock();
+      if(!isBlocked) show('home');
+    }
+  }
+
+  window.logout = async () => { 
+    await supabase.auth.signOut(); 
+    currentUser = null; 
+    updateAuthUI(); 
+    show('home'); 
+  }
+
+  window.changePassword = async () => {
+    const newPass = document.getElementById('new-password').value;
+    if(newPass.length < 6) return alert('Пароль слишком короткий');
+    const { error } = await supabase.auth.updateUser({ password: newPass });
+    if(error) alert(error.message); else alert('Пароль обновлен!');
+  }
+
+  window.uploadAvatar = async (input) => {
+    const file = input.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const base64 = e.target.result;
+      await supabase.from('profiles').update({ avatar: base64 }).eq('id', currentUser.id);
+      currentUser.avatar = base64;
+      updateAuthUI();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // --- МОИ ЗАЯВКИ ---
+  async function loadMyTickets() {
+    const { data } = await supabase.from('orders').select('*').eq('buyer_id', currentUser.id).neq('status', 'unblock_request').neq('is_deleted', true).order('created_at', { ascending: false });
+    const list = document.getElementById('my-tickets-list');
+    if(!data || data.length === 0) { list.innerHTML = '<p style="color:var(--text-muted); text-align:center;">У вас нет заявок</p>'; return; }
+    
+    list.innerHTML = data.map(t => `
+      <div class="admin-block" style="cursor:pointer;" onclick="openTicketView(${t.id})">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <strong>Заявка</strong>
+          <span style="font-size:12px; padding:4px 8px; border-radius:6px; background:${t.status === 'closed' ? '#333' : 'var(--primary)'}; color:#fff;">${t.status === 'closed' ? 'Закрыта' : 'В обработке'}</span>
+        </div>
+        <p style="font-size:13px; color:var(--text-muted); margin-top:5px;">${t.message.substring(0, 50)}...</p>
+      </div>
+    `).join('');
+  }
+
+  // --- ЗАЯВКИ ЗАБЛОКИРОВАННОГО (ИСТОРИЯ) ---
+  window.openBlockedTickets = async () => {
+    const { data } = await supabase.from('orders').select('*').eq('buyer_id', currentUser.id).neq('is_deleted', true).order('created_at', { ascending: false });
+    const list = document.getElementById('blocked-tickets-list');
+    
+    if(!data || data.length === 0) { 
+      list.innerHTML = '<p style="color:var(--text-muted); text-align:center;">Вы никогда не отправляли заявок</p>'; 
+      return; 
+    }
+    
+    list.innerHTML = data.map(t => `
+      <div class="admin-block" style="margin-bottom:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <strong>Заявка</strong>
+          <span style="font-size:12px; padding:4px 8px; border-radius:6px; background:${t.status === 'closed' ? '#333' : (t.status === 'unblock_request' ? '#fbbf24' : 'var(--primary)')}; color:#fff;">
+            ${t.status === 'closed' ? 'Закрыта' : (t.status === 'unblock_request' ? 'Разблокировка' : 'В обработке')}
+          </span>
+        </div>
+        <button class="btn-primary" onclick="openBlockedChat(${t.id})" style="width:auto; padding:6px 12px; margin-top:10px;">Открыть чат</button>
+      </div>
+    `).join('');
+    show('blocked-tickets');
+  }
+
+  window.openBlockedChat = async (id) => {
+    currentTicketId = id;
+    const { data: ticket } = await supabase.from('orders').select('*').eq('id', id).single();
+    const { data: msgs } = await supabase.from('ticket_messages').select('*').eq('ticket_id', id).order('created_at');
+    
+    const chatBox = document.getElementById('blocked-chat-box');
+    let chatHtml = '';
+    
+    // Первое сообщение (заявка)
+    chatHtml += `<div class="chat-msg their-msg">
+      <div class="msg-sender">${currentUser.nickname}</div>
+      ${ticket.message}
+    </div>`;
+
+    if(msgs) {
+      msgs.forEach(m => {
+        const isAdmin = m.sender_id !== currentUser.id;
+        const senderName = isAdmin ? 'KupiGame <span class="admin-tag">Админ</span>' : currentUser.nickname;
+        chatHtml += `<div class="chat-msg ${isAdmin ? 'my-msg' : 'their-msg'}">
+          <div class="msg-sender ${isAdmin ? 'my-msg-text' : ''}">${senderName}</div>
+          ${m.message}
+        </div>`;
+      });
+    }
+    chatBox.innerHTML = chatHtml;
+    
+    if(ticket.status === 'closed') {
+      document.getElementById('blocked-chat-reply-area').style.display = 'none';
+    } else {
+      document.getElementById('blocked-chat-reply-area').style.display = 'block';
+    }
+    show('blocked-chat');
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  window.sendBlockedChatReply = async () => {
+    const text = document.getElementById('blocked-chat-reply-text').value;
+    if(!text) return;
+    await supabase.from('ticket_messages').insert([{ ticket_id: currentTicketId, sender_id: currentUser.id, message: text }]);
+    document.getElementById('blocked-chat-reply-text').value = '';
+    openBlockedChat(currentTicketId);
+  }
+
+  window.goBackFromTicket = () => {
+    if(isAdminView) { isAdminView = false; show('admin'); }
+    else show('profile');
+  }
+
+  window.openTicketView = async (id) => {
+    currentTicketId = id;
+    isAdminView = false;
+    const { data: ticket } = await supabase.from('orders').select('*').eq('id', id).single();
+    
+    const { data: msgs } = await supabase.from('ticket_messages').select('*').eq('ticket_id', id).order('created_at');
+    
+    const chatBox = document.getElementById('ticket-chat-box');
+    let chatHtml = `<div class="chat-msg their-msg">
+      <div class="msg-sender">${currentUser.nickname}</div>
+      ${ticket.message}
+    </div>`;
+      
+    if(msgs) {
+      msgs.forEach(m => {
+        const isAdmin = m.sender_id !== currentUser.id;
+        const senderName = isAdmin ? 'KupiGame <span class="admin-tag">Админ</span>' : currentUser.nickname;
+        
+        chatHtml += `<div class="chat-msg ${isAdmin ? 'their-msg' : 'my-msg'}">
+          <div class="msg-sender ${!isAdmin ? 'my-msg-text' : ''}">${senderName}</div>
+          ${m.message}
+        </div>`;
+      });
+    }
+    chatBox.innerHTML = chatHtml;
+    
+    if(ticket.status === 'closed') {
+      document.getElementById('ticket-reply-area').style.display = 'none';
+      document.getElementById('ticket-actions').style.display = 'none';
+    } else {
+      document.getElementById('ticket-reply-area').style.display = 'block';
+      document.getElementById('ticket-actions').style.display = 'none';
+    }
+    show('ticket-view');
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  window.openAdminTicket = async (id) => {
+    currentTicketId = id;
+    isAdminView = true;
+    const { data: ticket } = await supabase.from('orders').select('*').eq('id', id).single();
+    const { data: buyer } = await supabase.from('profiles').select('nickname, avatar').eq('id', ticket.buyer_id).single();
+    const { data: msgs } = await supabase.from('ticket_messages').select('*').eq('ticket_id', id).order('created_at');
+    
+    const chatBox = document.getElementById('ticket-chat-box');
+    let chatHtml = `<div class="chat-msg their-msg">
+      <div class="msg-sender">${buyer ? buyer.nickname : 'Покупатель'}</div>
+      ${ticket.message}
+    </div>`;
+
+    if(msgs) msgs.forEach(m => {
+      const isAdmin = m.sender_id === currentUser.id;
+      const senderName = isAdmin ? 'KupiGame <span class="admin-tag">Админ</span>' : (buyer ? buyer.nickname : 'Покупатель');
+      
+      chatHtml += `<div class="chat-msg ${isAdmin ? 'my-msg' : 'their-msg'}">
+        <div class="msg-sender ${isAdmin ? 'my-msg-text' : ''}">${senderName}</div>
+        ${m.message}
+      </div>`;
+    });
+    
+    chatBox.innerHTML = chatHtml;
+    document.getElementById('ticket-reply-area').style.display = 'block';
+    document.getElementById('ticket-actions').style.display = 'flex';
+    document.getElementById('ticket-actions').innerHTML = `
+      <button class="btn-red" onclick="closeTicket()">Закрыть</button>
+      <button class="btn-red" onclick="deleteTicketAdmin()" style="background:#333;">Удалить</button>
+    `;
+    show('ticket-view');
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  window.sendTicketReply = async () => {
+    const text = document.getElementById('ticket-reply-text').value;
+    if(!text) return;
+    await supabase.from('ticket_messages').insert([{ ticket_id: currentTicketId, sender_id: currentUser.id, message: text }]);
+    document.getElementById('ticket-reply-text').value = '';
+    if(isAdminView) openAdminTicket(currentTicketId); else openTicketView(currentTicketId);
+  }
+
+  window.closeTicket = async () => {
+    await supabase.from('orders').update({ status: 'closed' }).eq('id', currentTicketId);
+    alert('Заявка закрыта!');
+    if(isAdminView) { show('admin'); loadAdminTickets(); } else openTicketView(currentTicketId);
+  }
+
+  window.deleteTicketClient = async () => {
+    // Мягкое удаление для клиента (is_deleted = true)
+    await supabase.from('orders').update({ is_deleted: true }).eq('id', currentTicketId);
+    alert('Заявка удалена!');
+    show('profile');
+  }
+
+  window.deleteTicketAdmin = async () => {
+    // Жесткое удаление для админа
+    await supabase.from('orders').delete().eq('id', currentTicketId);
+    alert('Заявка удалена!');
+    show('admin');
+    loadAdminTickets();
+  }
+
+  // --- ЧАТЫ ---
+  async function loadChats() {
+    const { data } = await supabase.from('orders').select('*').eq('buyer_id', currentUser.id).neq('is_deleted', true).order('created_at', { ascending: false });
+    const list = document.getElementById('chats-list');
+    if(!data || data.length === 0) { list.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:20px;">У вас нет чатов</p>'; return; }
+    
+    const { data: adminProfile } = await supabase.from('profiles').select('nickname, avatar').eq('nickname', 'KupiGame').single();
+    const adminAvatar = adminProfile && adminProfile.avatar 
+      ? `<img src="${adminProfile.avatar}">` 
+      : 'K';
+
+    list.innerHTML = data.map(t => {
+      const name = 'KupiGame';
+      const avatar = adminAvatar;
+      const lastMsg = t.message.length > 40 ? t.message.substring(0, 40) + '...' : t.message;
+      
+      return `
+        <div class="chat-list-item" onclick="openTicketView(${t.id})">
+          <div class="chat-avatar">${avatar}</div>
+          <div class="chat-info">
+            <div class="chat-name">${name}</div>
+            <div class="chat-last-msg">${lastMsg}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // --- СОЗДАНИЕ ЗАЯВКИ ---
+  window.sendTicket = async () => {
+    if(!currentUser) return alert('Войдите в аккаунт!');
+    const text = document.getElementById('support-text').value;
+    if(!text) return;
+    const { error } = await supabase.from('orders').insert([{ buyer_id: currentUser.id, status: 'open', message: text }]);
+    if(error) alert('Ошибка базы: ' + error.message); 
+    else { alert('Заявка отправлена!'); document.getElementById('support-text').value = ''; loadMyTickets(); show('profile'); }
+  }
+
+  // --- ЗАЯВКА НА РАЗБЛОКИРОВКУ ---
+  window.sendUnblock = async () => {
+    const reason = document.getElementById('unblock-reason').value;
+    if(!reason) return alert('Напишите причину');
+    const now = new Date().toLocaleString();
+    
+    if(!currentUser) return alert('Ошибка: вы не авторизованы');
+
+    const { error } = await supabase.from('orders').insert([{ 
+      buyer_id: currentUser.id, 
+      status: 'unblock_request', 
+      message: `Ник: ${currentUser.nickname}\nПричина: ${document.getElementById('block-reason').textContent}\nПочему не согласен: ${reason}\nДата: ${now}`
+    }]);
+    
+    if(error) { alert('ОШИБКА БАЗЫ: ' + error.message); return; }
+    alert('Заявка отправлена владельцу!');
+    openBlockedTickets();
+  }
+
+  // --- АДМИНКА: ЗАЯВКИ ---
+  async function loadAdminTickets() {
+    const { data } = await supabase.from('orders').select('*').eq('status', 'open');
+    document.getElementById('admin-tickets-list').innerHTML = (data || []).map(t => `
+      <div class="admin-block">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <strong>Обращение</strong>
+          <button onclick="openAdminTicket(${t.id})" class="btn-primary" style="width:auto; padding:6px 12px;">Открыть</button>
+        </div>
+        <p style="font-size:13px; margin-top:5px;">${t.message.substring(0, 50)}...</p>
+      </div>
+    `).join('');
+  }
+
+  async function loadUnblockRequests() {
+    const { data } = await supabase.from('orders').select('*').eq('status', 'unblock_request');
+    document.getElementById('unblock-requests-list').innerHTML = (data || []).map(t => `
+      <div class="admin-block">
+        <p style="white-space:pre-wrap;">${t.message}</p>
+        <div style="display:flex; gap:10px; margin-top:10px;">
+          <button onclick="openAdminTicket(${t.id})" class="btn-primary" style="padding:6px 12px; width:auto;">Открыть</button>
+          <button onclick="deleteTicket(${t.id})" style="color:red; background:none; border:none;">Удалить</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  window.deleteTicket = async (id) => { 
+    const { error } = await supabase.from('orders').delete().eq('id', id); 
+    if(error) alert('Ошибка удаления: ' + error.message);
+    else { alert('Удалено!'); loadUnblockRequests(); checkBlockCounts(); }
+  }
+
+  // --- ОСТАЛЬНОЕ (КАТАЛОГ) ---
+  async function loadGames() {
+    const list = document.getElementById('games-list');
+    const { data } = await supabase.from('games').select('*');
+    if(!data || data.length === 0) { list.innerHTML = '<p style="color:var(--text-muted);">Игр пока нет.</p>'; return; }
+    list.innerHTML = data.map(g => `
+      <div class="game-row" onclick="openGame('${g.name}')">
+        <div style="display:flex; align-items:center; gap:15px;">
+          <div class="game-img">${g.img ? `<img src="${g.img}">` : '🎮'}</div>
+          <h3>${g.name}</h3>
+        </div>
+        <div style="color:var(--text-muted);">→</div>
+      </div>
+    `).join('');
+  }
+
+  window.openGame = async (gameName) => {
+    document.getElementById('products-title').textContent = gameName;
+    const { data } = await supabase.from('products').select('*').eq('game', gameName);
+    const list = document.getElementById('products-list');
+    if(!data || data.length === 0) list.innerHTML = '<p>Товаров пока нет.</p>';
+    else list.innerHTML = data.map(p => `
+      <div class="product-item" onclick="openProductDetail(${p.id})">
+        <div class="p-title">${p.title}</div>
+        <div class="p-price">${p.price} ₽</div>
+      </div>
+    `).join('');
+    show('products');
+  }
+
+  window.openProductDetail = async (id) => {
+    const { data } = await supabase.from('products').select('*').eq('id', id).single();
+    const content = document.getElementById('product-detail-content');
+    content.innerHTML = `
+      <div class="admin-block" style="text-align:center;">
+        ${data.image ? `<img src="${data.image}" style="width:100%; border-radius:12px; margin-bottom:15px;">` : ''}
+        <h2>${data.title}</h2>
+        <p style="margin-bottom:15px;">${data.description || ''}</p>
+        <div style="font-size:24px; font-weight:bold; color:var(--accent); margin-bottom:15px;">${data.price} ₽</div>
+        ${data.paylink ? `<a href="${data.paylink}" target="_blank" class="btn-primary" style="width:100%; display:block; text-decoration:none;">Оплатить</a>` : '<p style="color:red;">Ссылка не указана</p>'}
+      </div>
+    `;
+    show('product-detail');
+  }
+
+  // --- ОСТАЛЬНАЯ АДМИНКА ---
+  async function loadAdminGames() {
+    const { data } = await supabase.from('games').select('*');
+    document.getElementById('admin-tab-games').innerHTML = `
+      <div class="admin-block">
+        <h3 style="margin-bottom:15px;">Добавить игру</h3>
+        <input type="text" id="new-game-name" placeholder="Название игры">
+        <input type="text" id="new-game-url" placeholder="Ссылка (URL) на обложку" style="margin-bottom:10px;">
+        <input type="file" id="game-img-upload" accept="image/*" style="margin-bottom:15px;">
+        <button class="btn-primary" onclick="addGame()" style="width:100%;">Добавить</button>
+      </div>
+      ${(data || []).map(g => `
+        <div style="background:var(--card); padding:15px; border-radius:10px; margin-bottom:10px; display:flex; justify-content:space-between;">
+          <span>${g.name}</span>
+          <button onclick="deleteGame(${g.id})" style="color:red; background:none; border:none;">Удалить</button>
+        </div>
+      `).join('')}
+    `;
+  }
+
+  window.addGame = async () => {
+    const name = document.getElementById('new-game-name').value;
+    const url = document.getElementById('new-game-url').value;
+    const file = document.getElementById('game-img-upload').files[0];
+    if(!name) return;
+    let imgBase64 = url; 
+    if(file) imgBase64 = await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result);
+      reader.readAsDataURL(file);
+    });
+    const { error } = await supabase.from('games').insert([{ name, img: imgBase64 }]);
+    if(error) alert('Ошибка: ' + error.message); else { alert('Игра добавлена!'); loadAdminGames(); }
+  }
+
+  window.deleteGame = async (id) => { 
+    const { error } = await supabase.from('games').delete().eq('id', id); 
+    if(error) alert('Ошибка: ' + error.message); else loadAdminGames(); 
+  }
+
+  async function loadAdminGamesSelect() {
+    const { data: games } = await supabase.from('games').select('*');
+    document.getElementById('admin-game-select').innerHTML = (games || []).map(g => `<option value="${g.name}">${g.name}</option>`).join('');
+  }
+
+  window.addProduct = async () => {
+    const game = document.getElementById('admin-game-select').value;
+    const title = document.getElementById('admin-title').value;
+    const price = document.getElementById('admin-price').value;
+    const desc = document.getElementById('admin-desc').value;
+    const paylink = document.getElementById('admin-paylink').value;
+    const file = document.getElementById('product-img-upload').files[0];
+    if(!title || !price) return alert('Заполните поля');
+    let imgBase64 = null;
+    if(file) imgBase64 = await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result);
+      reader.readAsDataURL(file);
+    });
+    const { error } = await supabase.from('products').insert([{ game, title, price: Number(price), description: desc, paylink, image: imgBase64 }]);
+    if(error) alert('Ошибка: ' + error.message); else alert('Товар добавлен!');
+  }
+
+  window.searchUser = async () => {
+    const nick = document.getElementById('search-nick').value;
+    const { data } = await supabase.from('profiles').select('*').eq('nickname', nick).single();
+    const res = document.getElementById('user-search-result');
+    if(!data) { res.innerHTML = '<p style="color:red; padding:15px;">Пользователь не найден</p>'; return; }
+    res.innerHTML = `
+      <div class="admin-block">
+        <h3>${data.nickname}</h3>
+        <p>Статус: ${data.is_blocked ? '<span style="color:red;">Заблокирован</span>' : 'Активен'}</p>
+        <div id="user-card-action">
+          ${data.is_blocked 
+            ? `<button class="btn-green" onclick="unblockUser('${data.id}', '${data.nickname}')">Разблокировать</button>`
+            : `<input type="text" id="block-reason-input" placeholder="Причина блокировки" style="margin-top:10px;">
+               <button class="btn-red" onclick="blockUser('${data.id}', '${data.nickname}')">Заблокировать</button>`
+          }
+        </div>
+      </div>
+    `;
+  }
+
+  window.blockUser = async (userId, nick) => {
+    const reason = document.getElementById('block-reason-input').value;
+    if(!reason) return alert('Укажите причину блокировки');
+    const { error } = await supabase.from('profiles').update({ is_blocked: true, block_reason: reason }).eq('id', userId);
+    if(error) { alert('Ошибка: ' + error.message); return; }
+    alert('Пользователь заблокирован!');
+    document.getElementById('search-nick').value = nick;
+    searchUser(); checkBlockCounts();
+  }
+
+  window.unblockUser = async (id, nick) => {
+    const { error } = await supabase.from('profiles').update({ is_blocked: false, block_reason: null }).eq('id', id);
+    if(error) { alert('Ошибка: ' + error.message); return; }
+    alert('Пользователь разблокирован!');
+    document.getElementById('search-nick').value = nick;
+    searchUser(); checkBlockCounts(); loadBlockedUsers();
+  }
+
+  async function loadBlockedUsers() {
+    const { data } = await supabase.from('profiles').select('*').eq('is_blocked', true);
+    document.getElementById('blocked-list').innerHTML = (data || []).map(u => `
+      <div class="admin-block" style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <h3>${u.nickname}</h3>
+          <p style="color:var(--text-muted); font-size:13px;">Причина: ${u.block_reason}</p>
+        </div>
+        <button class="btn-green" style="width:auto; padding:8px 15px;" onclick="unblockUser('${u.id}', '${u.nickname}')">Разблокировать</button>
+      </div>
+    `).join('');
+  }
+
+  window.uploadHero = async () => {
+    const input = document.getElementById('hero-upload');
+    if(!input.files[0]) return;
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      localStorage.setItem('heroImage', e.target.result);
+      applyHero();
+      alert('Обложка обновлена!');
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+
+  function applyHero() {
+    const img = localStorage.getItem('heroImage');
+    const el = document.getElementById('main-hero-img');
+    if(img) { el.src = img; el.style.display = 'block'; }
+  }
+
+  const docs = {
+    privacy: { title: "Политика конфиденциальности", text: "1. Мы собираем только ваш ник.\n2. Мы не передаем данные.\n3. База защищена.\n4. Мы не крадем данные.\n5. Вы можете удалить аккаунт.\n6. Cookies используются для входа.\n7. Мы не продаем данные.\n8. Данные хранятся в Supabase.\n9. Доступ только у админа.\n10. Пароли зашифрованы.\n11. Мы не следим за вами.\n12. Данные не передаются третьим лицам.\n13. Вы можете запросить удаление.\n14. Мы соблюдаем законы.\n15. Ваши данные защищены." },
+    terms: { title: "Пользовательское соглашение", text: "1. Вы соглашаетесь с правилами.\n2. Запрещено мошенничество.\n3. Админ может блокировать.\n4. Оплата через ЮMoney.\n5. Возврат по договоренности.\n6. Запрещен спам.\n7. Запрещены оскорбления.\n8. Админ не несет ответственности за действия игроков.\n9. Все споры решаются в чате.\n10. Вы соглашаетесь с политикой конфиденциальности.\n11. Мы можем менять условия.\n12. Аккаунт может быть удален за нарушения.\n13. Вы несете ответственность за свой пароль.\n14. Запрещено создавать клоны.\n15. Сделки проводятся через сайт." }
+  };
+
+  window.showDoc = (type) => {
+    document.getElementById('doc-title').textContent = docs[type].title;
+    document.getElementById('doc-text').innerText = docs[type].text;
+    show('doc');
+  }
+
+  async function init() {
+    applyHero();
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
+      if(profile) { currentUser = profile; updateAuthUI(); }
+    }
+  }
+  init();
+</script>
+</body>
+</html>
