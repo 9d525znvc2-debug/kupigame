@@ -446,7 +446,7 @@
     if(tab === 'blocked') loadBlockedUsers();
     if(tab === 'unblock-requests') loadUnblockRequests();
     if(tab === 'reviews') loadAdminReviews();
-    if(tab === 'settings') checkBlockCounts();
+    if(tab === 'settings') loadHeroSettings();
   }
 
   async function checkBlockCounts() {
@@ -1128,26 +1128,27 @@
     show('blocked');
   }
 
-  // --- ОБЛОЖКА ---
+  // --- ОБЛОЖКА (СОХРАНЕНИЕ В БАЗУ) ---
   window.uploadHero = async () => {
     const input = document.getElementById('hero-upload');
-    const widthInput = document.getElementById('hero-width');
-    const heightInput = document.getElementById('hero-height');
-    const fitInput = document.getElementById('hero-fit');
+    const width = document.getElementById('hero-width').value || '100%';
+    const height = document.getElementById('hero-height').value || 'auto';
+    const fit = document.getElementById('hero-fit').value || 'contain';
 
     if(!input.files[0]) return;
-
-    const width = widthInput.value || '100%';
-    const height = heightInput.value || 'auto';
-    const fit = fitInput.value || 'contain';
 
     const reader = new FileReader();
     reader.onload = async (e) => {
       const base64 = e.target.result;
-      localStorage.setItem('heroImage', base64);
-      localStorage.setItem('heroWidth', width);
-      localStorage.setItem('heroHeight', height);
-      localStorage.setItem('heroFit', fit);
+      
+      const { error } = await supabase.from('profiles').update({
+        hero_url: base64,
+        hero_width: width,
+        hero_height: height,
+        hero_fit: fit
+      }).eq('id', currentUser.id);
+
+      if(error) { alert('Ошибка: ' + error.message); return; }
       
       applyHero();
       alert('Обложка и настройки сохранены!');
@@ -1155,35 +1156,29 @@
     reader.readAsDataURL(input.files[0]);
   }
 
-  function applyHero() {
-    const img = localStorage.getItem('heroImage');
-    const width = localStorage.getItem('heroWidth') || '100%';
-    const height = localStorage.getItem('heroHeight') || 'auto';
-    const fit = localStorage.getItem('heroFit') || 'contain';
-    
+  async function applyHero() {
+    const { data } = await supabase.from('profiles').select('hero_url, hero_width, hero_height, hero_fit').eq('nickname', 'KupiGame').single();
     const el = document.getElementById('main-hero-img');
-    if(img) { 
-      el.src = img; 
+    
+    if(data && data.hero_url) {
+      el.src = data.hero_url; 
       el.style.display = 'block'; 
-      el.style.width = width;
-      el.style.height = height;
-      el.style.objectFit = fit;
+      el.style.width = data.hero_width || '100%';
+      el.style.height = data.hero_height || 'auto';
+      el.style.objectFit = data.hero_fit || 'contain';
     }
   }
 
-  // Заполнение полей при открытии настроек (если картинка есть)
   async function loadHeroSettings() {
-    const width = localStorage.getItem('heroWidth') || '100%';
-    const height = localStorage.getItem('heroHeight') || 'auto';
-    const fit = localStorage.getItem('heroFit') || 'contain';
+    const { data } = await supabase.from('profiles').select('hero_width, hero_height, hero_fit').eq('nickname', 'KupiGame').single();
     
     const wInput = document.getElementById('hero-width');
     const hInput = document.getElementById('hero-height');
     const fInput = document.getElementById('hero-fit');
     
-    if(wInput) wInput.value = width;
-    if(hInput) hInput.value = height;
-    if(fInput) fInput.value = fit;
+    if(wInput) wInput.value = data?.hero_width || '100%';
+    if(hInput) hInput.value = data?.hero_height || 'auto';
+    if(fInput) fInput.value = data?.hero_fit || 'contain';
   }
 
   const docs = {
@@ -1199,7 +1194,6 @@
 
   async function init() {
     applyHero();
-    loadHeroSettings();
     
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
