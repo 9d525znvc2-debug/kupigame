@@ -28,7 +28,7 @@
   .screen.active { display: block; }
 
   .hero-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; }
-  .hero-image { width: 100%; border-radius: 12px; margin-bottom: 20px; display: none; object-fit: cover; }
+  .hero-image { width: 100%; max-height: 400px; border-radius: 12px; margin-bottom: 20px; display: none; object-fit: contain; }
   .hero-card h1 { font-size: 26px; margin-bottom: 10px; }
   .hero-card h1 span { color: var(--primary); }
   .btn-primary { background: var(--primary); color: #fff; padding: 12px 24px; border: none; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; text-align: center; text-decoration: none; display: inline-block; width: 100%; max-width: 300px; }
@@ -37,8 +37,28 @@
   .game-img { width: 50px; height: 50px; border-radius: 12px; object-fit: contain; background: #1a1a26; display: flex; align-items: center; justify-content: center; font-size: 24px; overflow: hidden; }
   .game-img img { width: 100%; height: 100%; border-radius: 12px; object-fit: cover; }
   .product-item { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 15px; margin-bottom: 12px; cursor: pointer; }
-  .product-item .p-title { font-weight: bold; font-size: 16px; color: #fff; margin-bottom: 5px; }
+  .product-item .p-title { font-weight: bold; font-size: 16px; margin-bottom: 5px; }
   .product-item .p-price { font-size: 20px; font-weight: 800; color: var(--accent); }
+
+  .detail-product { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+  .seller-block { display: flex; align-items: center; gap: 15px; padding: 15px; background: #1a1a26; border-radius: 12px; margin-bottom: 20px; cursor: pointer; }
+  .seller-avatar { width: 50px; height: 50px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; overflow: hidden; }
+  .seller-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .seller-info h3 { font-size: 16px; color: #fff; margin-bottom: 3px; }
+  .seller-stars { color: #fbbf24; font-size: 16px; letter-spacing: 2px; }
+  
+  .product-title-big { font-size: 22px; font-weight: bold; margin-bottom: 15px; }
+  .product-desc-block { background: #1a1a26; border-radius: 12px; padding: 15px; margin-bottom: 20px; font-size: 14px; line-height: 1.6; color: #c8c8d8; white-space: pre-wrap; }
+  
+  .product-images { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+  .product-images img { width: 100px; height: 100px; border-radius: 8px; object-fit: cover; cursor: pointer; }
+
+  .price-block { display: flex; align-items: center; justify-content: space-between; background: #1a1a26; padding: 15px; border-radius: 12px; margin-bottom: 20px; }
+  .price-block .price { font-size: 24px; font-weight: 800; color: #fff; }
+
+  .reviews-section { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+  .reviews-section h3 { margin-bottom: 15px; }
+  .no-reviews { border: 1px dashed var(--border); padding: 20px; text-align: center; border-radius: 12px; color: var(--text-muted); font-size: 14px; }
 
   .auth-box, .admin-block, .doc-box { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 25px; margin-bottom: 20px; }
   input, textarea, select { width: 100%; padding: 14px; margin-bottom: 15px; background: var(--bg); border: 1px solid var(--border); color: #fff; border-radius: 10px; font-size: 15px; }
@@ -54,8 +74,8 @@
   
   .btn-red { background: #ff4d4d; color: #fff; padding: 10px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
   .btn-green { background: var(--green); color: #fff; padding: 10px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
-  
-  /* Стили для чатов (как на FunPay) */
+
+  /* ЧАТЫ */
   .chat-list-item { display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--card); border-bottom: 1px solid var(--border); cursor: pointer; }
   .chat-list-item:hover { background: #1a1a26; }
   .chat-avatar { width: 50px; height: 50px; border-radius: 50%; background: #1a1a26; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: bold; color: #fff; flex-shrink: 0; overflow: hidden; }
@@ -64,7 +84,6 @@
   .chat-name { font-weight: bold; font-size: 16px; color: #fff; display: flex; align-items: center; gap: 5px; }
   .chat-last-msg { font-size: 14px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 3px; }
   
-  /* Стили для сообщений внутри чата */
   .chat-box { background: var(--bg); border-radius: 12px; padding: 15px; margin-bottom: 15px; max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
   .chat-msg { max-width: 80%; padding: 10px 15px; border-radius: 12px; font-size: 14px; line-height: 1.4; }
   .chat-msg.my-msg { background: var(--primary); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
@@ -92,9 +111,9 @@
     <button onclick="show('catalog')" id="nav-catalog">Каталог</button>
     <button onclick="show('chats')" id="nav-chats" class="hidden">Чаты</button>
     <button onclick="show('profile')" id="nav-profile" class="hidden">Профиль</button>
+    <button onclick="show('admin')" id="nav-admin" class="admin hidden">Админ</button>
     
     <button id="logout-btn" onclick="logout()" class="btn-logout hidden">Выйти</button>
-    <button onclick="show('admin')" id="nav-admin" class="admin hidden">Админ</button>
 
     <div id="auth-links" style="display:flex; flex-direction:column; gap:10px; align-items:flex-end; margin-top:10px; width:100%;">
       <button onclick="show('login')" style="color:var(--accent); width:100%; text-align:right;">Войти</button>
@@ -110,10 +129,7 @@
       <h2 style="color:#ff4d4d; margin-bottom:15px;">Вы заблокированы</h2>
       <p style="margin-bottom:20px;">Причина: <span id="block-reason" style="font-weight:bold;"></span></p>
       <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px;">Обратитесь к владельцу магазина.</p>
-      
       <button class="btn-primary" onclick="show('unblock-form')" style="max-width:100%; margin-bottom:10px;">Написать в поддержку</button>
-      <button class="btn-primary" onclick="openBlockedTickets()" style="max-width:100%; margin-bottom:10px; background:var(--card); border:1px solid var(--border);">Мои заявки</button>
-      
       <button class="btn-logout" onclick="logout()" style="background:transparent; border:1px solid var(--border);">Выйти</button>
     </div>
   </section>
@@ -122,32 +138,9 @@
   <section class="screen" id="screen-unblock-form">
     <div class="auth-box">
       <h2 style="margin-bottom:15px; text-align:center;">Заявка на разблокировку</h2>
-      <p style="font-size:13px; color:var(--text-muted); margin-bottom:15px; text-align:center;">Заполните форму, и мы рассмотрим вашу заявку.</p>
       <input type="text" id="unblock-nick" placeholder="Ваш ник" readonly>
       <textarea id="unblock-reason" placeholder="Почему вы не согласны с блокировкой?" style="height:100px;"></textarea>
       <button class="btn-primary" onclick="sendUnblock()" style="max-width:100%;">Отправить заявку</button>
-      <button class="btn-red" onclick="show('blocked')" style="margin-top:10px;">Назад</button>
-    </div>
-  </section>
-
-  <!-- ЗАЯВКИ ЗАБЛОКИРОВАННОГО -->
-  <section class="screen" id="screen-blocked-tickets">
-    <div class="auth-box">
-      <h2 style="margin-bottom:15px; text-align:center;">Мои заявки</h2>
-      <div id="blocked-tickets-list"></div>
-      <button class="btn-red" onclick="show('blocked')" style="margin-top:15px;">Назад</button>
-    </div>
-  </section>
-
-  <!-- ЧАТ ЗАБЛОКИРОВАННОГО -->
-  <section class="screen" id="screen-blocked-chat">
-    <div class="auth-box">
-      <div class="chat-box" id="blocked-chat-box"></div>
-      <div id="blocked-chat-reply-area">
-        <textarea id="blocked-chat-reply-text" placeholder="Написать сообщение..." style="height:80px;"></textarea>
-        <button class="btn-primary" onclick="sendBlockedChatReply()" style="width:100%;">Отправить</button>
-      </div>
-      <button class="btn-red" onclick="openBlockedTickets()" style="margin-top:15px;">Назад к заявкам</button>
     </div>
   </section>
 
@@ -159,7 +152,6 @@
       <p style="color:var(--text-muted); margin-bottom:20px;">Сделки ведёт продавец, владелец магазина KupiGame.</p>
       <button class="btn-primary" onclick="show('catalog')">Перейти в каталог</button>
     </div>
-    
     <div class="tg-block" style="text-align: center; padding: 20px; background: var(--card); border-radius: 16px; border: 1px solid var(--border); margin-bottom: 20px;">
       <p style="font-weight: bold; margin-bottom: 15px;">Все актуальные новости и отзывы</p>
       <a href="https://t.me/KupiGameOfficial" target="_blank" class="btn-primary" style="text-decoration:none; display:inline-block; width:auto;">В нашем Telegram</a>
@@ -173,17 +165,23 @@
     <div id="games-list"></div>
   </section>
 
-  <!-- ТОВАРЫ -->
+  <!-- ТОВАРЫ ИГРЫ -->
   <section class="screen" id="screen-products">
     <button class="back-btn" onclick="show('catalog')">←</button>
     <h1 class="catalog-title" id="products-title"></h1>
     <div id="products-list"></div>
   </section>
 
-  <!-- ТОВАР -->
+  <!-- КАРТОЧКА ТОВАРА -->
   <section class="screen" id="screen-product-detail">
-    <button class="back-btn" onclick="show('products')">←</button>
+    <button class="back-btn" onclick="goBackFromProduct()">←</button>
     <div id="product-detail-content"></div>
+  </section>
+
+  <!-- ПРОФИЛЬ ПРОДАВЦА -->
+  <section class="screen" id="screen-seller">
+    <button class="back-btn" onclick="goBackFromSeller()">←</button>
+    <div id="seller-profile-content"></div>
   </section>
 
   <!-- ВХОД -->
@@ -214,33 +212,21 @@
   <section class="screen" id="screen-profile">
     <button class="back-btn" onclick="show('home')">←</button>
     <h1 class="catalog-title">Мой профиль</h1>
-    
-    <div class="admin-tabs">
-      <button class="admin-tab active" onclick="switchProfileTab('settings', this)">Настройки</button>
-      <button class="admin-tab" onclick="switchProfileTab('my-tickets', this)">Мои заявки</button>
-    </div>
-
-    <div id="profile-tab-settings" class="profile-content">
-      <div class="auth-box">
-        <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;">
-          <div id="profile-avatar" style="width:60px; height:60px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; font-size:24px; overflow:hidden;">U</div>
-          <div>
-            <h3 id="profile-nick">User</h3>
-            <label for="avatar-upload" style="color:var(--accent); cursor:pointer; font-size:14px;">Сменить аватар</label>
-            <input type="file" id="avatar-upload" class="hidden" accept="image/*" onchange="uploadAvatar(this)">
-          </div>
+    <div class="auth-box">
+      <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;">
+        <div id="profile-avatar" style="width:60px; height:60px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; font-size:24px; overflow:hidden;">U</div>
+        <div>
+          <h3 id="profile-nick">User</h3>
+          <label for="avatar-upload" style="color:var(--accent); cursor:pointer; font-size:14px;">Сменить аватар</label>
+          <input type="file" id="avatar-upload" class="hidden" accept="image/*" onchange="uploadAvatar(this)">
         </div>
-        <input type="password" id="new-password" placeholder="Новый пароль" autocomplete="new-password">
-        <button class="btn-primary" onclick="changePassword()" style="width:100%;">Обновить пароль</button>
       </div>
-    </div>
-
-    <div id="profile-tab-my-tickets" class="profile-content hidden">
-      <div id="my-tickets-list"></div>
+      <input type="password" id="new-password" placeholder="Новый пароль" autocomplete="new-password">
+      <button class="btn-primary" onclick="changePassword()" style="width:100%;">Обновить пароль</button>
     </div>
   </section>
 
-  <!-- ЧАТЫ (СПИСОК) -->
+  <!-- ЧАТЫ -->
   <section class="screen" id="screen-chats">
     <button class="back-btn" onclick="show('home')">←</button>
     <h1 class="catalog-title">Мои чаты</h1>
@@ -289,23 +275,25 @@
       <button class="admin-tab active" onclick="switchAdminTab('games', this)">Игры</button>
       <button class="admin-tab" onclick="switchAdminTab('products', this)">Товары</button>
       <button class="admin-tab" onclick="switchAdminTab('people', this)">Люди</button>
-      <button class="admin-tab" onclick="switchAdminTab('blocked', this)">Заблокированные (<span id="blocked-count">0</span>)</button>
-      <button class="admin-tab" onclick="switchAdminTab('unblock-requests', this)">Разблокировка (<span id="unblock-count">0</span>)</button>
-      <button class="admin-tab" onclick="switchAdminTab('tickets', this)">Заявки</button>
       <button class="admin-tab" onclick="switchAdminTab('settings', this)">Настройки</button>
     </div>
 
     <div id="admin-tab-games" class="admin-content"></div>
     <div id="admin-tab-products" class="admin-content hidden">
       <div class="admin-block">
-        <h3 style="margin-bottom:15px;">Добавить товар</h3>
+        <h3 id="product-form-title" style="margin-bottom:15px;">Добавить товар</h3>
         <select id="admin-game-select"></select>
-        <input type="text" id="admin-title" placeholder="Название">
-        <input type="number" id="admin-price" placeholder="Цена ₽">
-        <textarea id="admin-desc" placeholder="Описание"></textarea>
+        <input type="text" id="admin-title" placeholder="Название (например: Аккаунт•Brawl Stars)">
+        <input type="color" id="admin-color" value="#fbbf24" style="height:50px; padding:5px;">
+        <textarea id="admin-desc" placeholder="Описание" style="height:120px;"></textarea>
         <input type="text" id="admin-paylink" placeholder="Ссылка на оплату">
-        <input type="file" id="product-img-upload" accept="image/*">
-        <button class="btn-primary" onclick="addProduct()" style="width:100%; margin-top:15px;">Опубликовать</button>
+        <label style="color:var(--text-muted); font-size:12px;">Скриншоты (до 10 фото):</label>
+        <input type="file" id="product-img-upload" accept="image/*" multiple>
+        
+        <input type="hidden" id="edit-product-id" value="">
+        
+        <button class="btn-primary" id="product-submit-btn" onclick="saveProduct()" style="width:100%; margin-top:15px;">Опубликовать</button>
+        <button class="btn-red hidden" id="product-cancel-btn" onclick="resetProductForm()">Отмена</button>
       </div>
     </div>
 
@@ -316,18 +304,6 @@
         <button class="btn-primary" onclick="searchUser()" style="width:100%;">Найти</button>
       </div>
       <div id="user-search-result"></div>
-    </div>
-
-    <div id="admin-tab-blocked" class="admin-content hidden">
-      <div id="blocked-list"></div>
-    </div>
-
-    <div id="admin-tab-unblock-requests" class="admin-content hidden">
-      <div id="unblock-requests-list"></div>
-    </div>
-
-    <div id="admin-tab-tickets" class="admin-content hidden">
-      <div id="admin-tickets-list"></div>
     </div>
 
     <div id="admin-tab-settings" class="admin-content hidden">
@@ -367,38 +343,20 @@
     if(screen === 'home') document.getElementById('nav-home').classList.add('active');
     if(screen === 'catalog') { document.getElementById('nav-catalog').classList.add('active'); loadGames(); }
     if(screen === 'chats') { document.getElementById('nav-chats').classList.add('active'); loadChats(); }
-    if(screen === 'profile') { document.getElementById('nav-profile').classList.add('active'); loadMyTickets(); }
+    if(screen === 'profile') document.getElementById('nav-profile').classList.add('active');
     if(screen === 'admin') document.getElementById('nav-admin').classList.add('active');
     
     window.scrollTo(0, 0);
   }
 
-  window.switchProfileTab = (tab, btn) => {
-    document.querySelectorAll('#screen-profile .admin-tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.profile-content').forEach(c => c.classList.add('hidden'));
-    document.getElementById('profile-tab-' + tab).classList.remove('hidden');
-  }
-
   window.switchAdminTab = async (tab, btn) => {
-    document.querySelectorAll('#screen-admin .admin-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
-    document.querySelectorAll('#screen-admin .admin-content').forEach(c => c.classList.add('hidden'));
+    document.querySelectorAll('.admin-content').forEach(c => c.classList.add('hidden'));
     document.getElementById('admin-tab-' + tab).classList.remove('hidden');
     
     if(tab === 'games') loadAdminGames();
-    if(tab === 'products') loadAdminGamesSelect();
-    if(tab === 'blocked') loadBlockedUsers();
-    if(tab === 'unblock-requests') loadUnblockRequests();
-    if(tab === 'tickets') loadAdminTickets();
-    if(tab === 'settings') checkBlockCounts();
-  }
-
-  async function checkBlockCounts() {
-    const { count: blockedCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('is_blocked', true);
-    document.getElementById('blocked-count').textContent = blockedCount || 0;
-    const { count: reqCount } = await supabase.from('orders').select('*', { count: 'exact', head: true }).eq('status', 'unblock_request');
-    document.getElementById('unblock-count').textContent = reqCount || 0;
+    if(tab === 'products') loadAdminProducts();
   }
 
   async function checkBlock() {
@@ -407,9 +365,7 @@
     if(data && data.is_blocked) {
       document.getElementById('block-reason').textContent = data.block_reason || 'Нарушение правил';
       document.getElementById('unblock-nick').value = currentUser.nickname;
-      document.getElementById('unblock-reason').value = ''; 
       show('blocked');
-      
       document.getElementById('nav-home').classList.add('hidden');
       document.getElementById('nav-catalog').classList.add('hidden');
       document.getElementById('nav-profile').classList.add('hidden');
@@ -442,7 +398,6 @@
       document.getElementById('profile-avatar').innerHTML = avatarHtml;
       
       checkBlock();
-      checkBlockCounts();
     } else {
       document.getElementById('auth-links').classList.remove('hidden');
       document.getElementById('user-area').classList.add('hidden');
@@ -450,7 +405,6 @@
       document.getElementById('nav-admin').classList.add('hidden');
       document.getElementById('nav-profile').classList.add('hidden');
       document.getElementById('nav-chats').classList.add('hidden');
-      
       document.getElementById('login-nick').value = '';
       document.getElementById('login-pass').value = '';
     }
@@ -477,7 +431,7 @@
     const pass = document.getElementById('login-pass').value;
     const dummyEmail = `${nick.toLowerCase()}@kupigame.local`;
     const { data, error } = await supabase.auth.signInWithPassword({ email: dummyEmail, password: pass });
-    if (error) { const err = document.getElementById('login-error'); err.textContent = 'Неверный ник или пароль'; err.style.display = 'block'; return; }
+    if (error) { alert('Неверный ник или пароль'); return; }
     
     const { data: profile } = await supabase.from('profiles').select('*').eq('id', data.user.id).single();
     if(profile) { 
@@ -488,12 +442,7 @@
     }
   }
 
-  window.logout = async () => { 
-    await supabase.auth.signOut(); 
-    currentUser = null; 
-    updateAuthUI(); 
-    show('home'); 
-  }
+  window.logout = async () => { await supabase.auth.signOut(); currentUser = null; updateAuthUI(); show('home'); }
 
   window.changePassword = async () => {
     const newPass = document.getElementById('new-password').value;
@@ -515,286 +464,7 @@
     reader.readAsDataURL(file);
   }
 
-  // --- МОИ ЗАЯВКИ ---
-  async function loadMyTickets() {
-    const { data } = await supabase.from('orders').select('*').eq('buyer_id', currentUser.id).neq('status', 'unblock_request').neq('is_deleted', true).order('created_at', { ascending: false });
-    const list = document.getElementById('my-tickets-list');
-    if(!data || data.length === 0) { list.innerHTML = '<p style="color:var(--text-muted); text-align:center;">У вас нет заявок</p>'; return; }
-    
-    list.innerHTML = data.map(t => `
-      <div class="admin-block" style="cursor:pointer;" onclick="openTicketView(${t.id})">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <strong>Заявка</strong>
-          <span style="font-size:12px; padding:4px 8px; border-radius:6px; background:${t.status === 'closed' ? '#333' : 'var(--primary)'}; color:#fff;">${t.status === 'closed' ? 'Закрыта' : 'В обработке'}</span>
-        </div>
-        <p style="font-size:13px; color:var(--text-muted); margin-top:5px;">${t.message.substring(0, 50)}...</p>
-      </div>
-    `).join('');
-  }
-
-  // --- ЗАЯВКИ ЗАБЛОКИРОВАННОГО (ИСТОРИЯ) ---
-  window.openBlockedTickets = async () => {
-    const { data } = await supabase.from('orders').select('*').eq('buyer_id', currentUser.id).neq('is_deleted', true).order('created_at', { ascending: false });
-    const list = document.getElementById('blocked-tickets-list');
-    
-    if(!data || data.length === 0) { 
-      list.innerHTML = '<p style="color:var(--text-muted); text-align:center;">Вы никогда не отправляли заявок</p>'; 
-      return; 
-    }
-    
-    list.innerHTML = data.map(t => `
-      <div class="admin-block" style="margin-bottom:10px;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <strong>Заявка</strong>
-          <span style="font-size:12px; padding:4px 8px; border-radius:6px; background:${t.status === 'closed' ? '#333' : (t.status === 'unblock_request' ? '#fbbf24' : 'var(--primary)')}; color:#fff;">
-            ${t.status === 'closed' ? 'Закрыта' : (t.status === 'unblock_request' ? 'Разблокировка' : 'В обработке')}
-          </span>
-        </div>
-        <button class="btn-primary" onclick="openBlockedChat(${t.id})" style="width:auto; padding:6px 12px; margin-top:10px;">Открыть чат</button>
-      </div>
-    `).join('');
-    show('blocked-tickets');
-  }
-
-  window.openBlockedChat = async (id) => {
-    currentTicketId = id;
-    const { data: ticket } = await supabase.from('orders').select('*').eq('id', id).single();
-    const { data: msgs } = await supabase.from('ticket_messages').select('*').eq('ticket_id', id).order('created_at');
-    
-    const chatBox = document.getElementById('blocked-chat-box');
-    let chatHtml = '';
-    
-    // Первое сообщение (заявка)
-    chatHtml += `<div class="chat-msg their-msg">
-      <div class="msg-sender">${currentUser.nickname}</div>
-      ${ticket.message}
-    </div>`;
-
-    if(msgs) {
-      msgs.forEach(m => {
-        const isAdmin = m.sender_id !== currentUser.id;
-        const senderName = isAdmin ? 'KupiGame <span class="admin-tag">Админ</span>' : currentUser.nickname;
-        chatHtml += `<div class="chat-msg ${isAdmin ? 'my-msg' : 'their-msg'}">
-          <div class="msg-sender ${isAdmin ? 'my-msg-text' : ''}">${senderName}</div>
-          ${m.message}
-        </div>`;
-      });
-    }
-    chatBox.innerHTML = chatHtml;
-    
-    if(ticket.status === 'closed') {
-      document.getElementById('blocked-chat-reply-area').style.display = 'none';
-    } else {
-      document.getElementById('blocked-chat-reply-area').style.display = 'block';
-    }
-    show('blocked-chat');
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
-
-  window.sendBlockedChatReply = async () => {
-    const text = document.getElementById('blocked-chat-reply-text').value;
-    if(!text) return;
-    await supabase.from('ticket_messages').insert([{ ticket_id: currentTicketId, sender_id: currentUser.id, message: text }]);
-    document.getElementById('blocked-chat-reply-text').value = '';
-    openBlockedChat(currentTicketId);
-  }
-
-  window.goBackFromTicket = () => {
-    if(isAdminView) { isAdminView = false; show('admin'); }
-    else show('profile');
-  }
-
-  window.openTicketView = async (id) => {
-    currentTicketId = id;
-    isAdminView = false;
-    const { data: ticket } = await supabase.from('orders').select('*').eq('id', id).single();
-    
-    const { data: msgs } = await supabase.from('ticket_messages').select('*').eq('ticket_id', id).order('created_at');
-    
-    const chatBox = document.getElementById('ticket-chat-box');
-    let chatHtml = `<div class="chat-msg their-msg">
-      <div class="msg-sender">${currentUser.nickname}</div>
-      ${ticket.message}
-    </div>`;
-      
-    if(msgs) {
-      msgs.forEach(m => {
-        const isAdmin = m.sender_id !== currentUser.id;
-        const senderName = isAdmin ? 'KupiGame <span class="admin-tag">Админ</span>' : currentUser.nickname;
-        
-        chatHtml += `<div class="chat-msg ${isAdmin ? 'their-msg' : 'my-msg'}">
-          <div class="msg-sender ${!isAdmin ? 'my-msg-text' : ''}">${senderName}</div>
-          ${m.message}
-        </div>`;
-      });
-    }
-    chatBox.innerHTML = chatHtml;
-    
-    if(ticket.status === 'closed') {
-      document.getElementById('ticket-reply-area').style.display = 'none';
-      document.getElementById('ticket-actions').style.display = 'none';
-    } else {
-      document.getElementById('ticket-reply-area').style.display = 'block';
-      document.getElementById('ticket-actions').style.display = 'none';
-    }
-    show('ticket-view');
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
-
-  window.openAdminTicket = async (id) => {
-    currentTicketId = id;
-    isAdminView = true;
-    const { data: ticket } = await supabase.from('orders').select('*').eq('id', id).single();
-    const { data: buyer } = await supabase.from('profiles').select('nickname, avatar').eq('id', ticket.buyer_id).single();
-    const { data: msgs } = await supabase.from('ticket_messages').select('*').eq('ticket_id', id).order('created_at');
-    
-    const chatBox = document.getElementById('ticket-chat-box');
-    let chatHtml = `<div class="chat-msg their-msg">
-      <div class="msg-sender">${buyer ? buyer.nickname : 'Покупатель'}</div>
-      ${ticket.message}
-    </div>`;
-
-    if(msgs) msgs.forEach(m => {
-      const isAdmin = m.sender_id === currentUser.id;
-      const senderName = isAdmin ? 'KupiGame <span class="admin-tag">Админ</span>' : (buyer ? buyer.nickname : 'Покупатель');
-      
-      chatHtml += `<div class="chat-msg ${isAdmin ? 'my-msg' : 'their-msg'}">
-        <div class="msg-sender ${isAdmin ? 'my-msg-text' : ''}">${senderName}</div>
-        ${m.message}
-      </div>`;
-    });
-    
-    chatBox.innerHTML = chatHtml;
-    document.getElementById('ticket-reply-area').style.display = 'block';
-    document.getElementById('ticket-actions').style.display = 'flex';
-    document.getElementById('ticket-actions').innerHTML = `
-      <button class="btn-red" onclick="closeTicket()">Закрыть</button>
-      <button class="btn-red" onclick="deleteTicketAdmin()" style="background:#333;">Удалить</button>
-    `;
-    show('ticket-view');
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
-
-  window.sendTicketReply = async () => {
-    const text = document.getElementById('ticket-reply-text').value;
-    if(!text) return;
-    await supabase.from('ticket_messages').insert([{ ticket_id: currentTicketId, sender_id: currentUser.id, message: text }]);
-    document.getElementById('ticket-reply-text').value = '';
-    if(isAdminView) openAdminTicket(currentTicketId); else openTicketView(currentTicketId);
-  }
-
-  window.closeTicket = async () => {
-    await supabase.from('orders').update({ status: 'closed' }).eq('id', currentTicketId);
-    alert('Заявка закрыта!');
-    if(isAdminView) { show('admin'); loadAdminTickets(); } else openTicketView(currentTicketId);
-  }
-
-  window.deleteTicketClient = async () => {
-    // Мягкое удаление для клиента (is_deleted = true)
-    await supabase.from('orders').update({ is_deleted: true }).eq('id', currentTicketId);
-    alert('Заявка удалена!');
-    show('profile');
-  }
-
-  window.deleteTicketAdmin = async () => {
-    // Жесткое удаление для админа
-    await supabase.from('orders').delete().eq('id', currentTicketId);
-    alert('Заявка удалена!');
-    show('admin');
-    loadAdminTickets();
-  }
-
-  // --- ЧАТЫ ---
-  async function loadChats() {
-    const { data } = await supabase.from('orders').select('*').eq('buyer_id', currentUser.id).neq('is_deleted', true).order('created_at', { ascending: false });
-    const list = document.getElementById('chats-list');
-    if(!data || data.length === 0) { list.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:20px;">У вас нет чатов</p>'; return; }
-    
-    const { data: adminProfile } = await supabase.from('profiles').select('nickname, avatar').eq('nickname', 'KupiGame').single();
-    const adminAvatar = adminProfile && adminProfile.avatar 
-      ? `<img src="${adminProfile.avatar}">` 
-      : 'K';
-
-    list.innerHTML = data.map(t => {
-      const name = 'KupiGame';
-      const avatar = adminAvatar;
-      const lastMsg = t.message.length > 40 ? t.message.substring(0, 40) + '...' : t.message;
-      
-      return `
-        <div class="chat-list-item" onclick="openTicketView(${t.id})">
-          <div class="chat-avatar">${avatar}</div>
-          <div class="chat-info">
-            <div class="chat-name">${name}</div>
-            <div class="chat-last-msg">${lastMsg}</div>
-          </div>
-        </div>
-      `;
-    }).join('');
-  }
-
-  // --- СОЗДАНИЕ ЗАЯВКИ ---
-  window.sendTicket = async () => {
-    if(!currentUser) return alert('Войдите в аккаунт!');
-    const text = document.getElementById('support-text').value;
-    if(!text) return;
-    const { error } = await supabase.from('orders').insert([{ buyer_id: currentUser.id, status: 'open', message: text }]);
-    if(error) alert('Ошибка базы: ' + error.message); 
-    else { alert('Заявка отправлена!'); document.getElementById('support-text').value = ''; loadMyTickets(); show('profile'); }
-  }
-
-  // --- ЗАЯВКА НА РАЗБЛОКИРОВКУ ---
-  window.sendUnblock = async () => {
-    const reason = document.getElementById('unblock-reason').value;
-    if(!reason) return alert('Напишите причину');
-    const now = new Date().toLocaleString();
-    
-    if(!currentUser) return alert('Ошибка: вы не авторизованы');
-
-    const { error } = await supabase.from('orders').insert([{ 
-      buyer_id: currentUser.id, 
-      status: 'unblock_request', 
-      message: `Ник: ${currentUser.nickname}\nПричина: ${document.getElementById('block-reason').textContent}\nПочему не согласен: ${reason}\nДата: ${now}`
-    }]);
-    
-    if(error) { alert('ОШИБКА БАЗЫ: ' + error.message); return; }
-    alert('Заявка отправлена владельцу!');
-    openBlockedTickets();
-  }
-
-  // --- АДМИНКА: ЗАЯВКИ ---
-  async function loadAdminTickets() {
-    const { data } = await supabase.from('orders').select('*').eq('status', 'open');
-    document.getElementById('admin-tickets-list').innerHTML = (data || []).map(t => `
-      <div class="admin-block">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <strong>Обращение</strong>
-          <button onclick="openAdminTicket(${t.id})" class="btn-primary" style="width:auto; padding:6px 12px;">Открыть</button>
-        </div>
-        <p style="font-size:13px; margin-top:5px;">${t.message.substring(0, 50)}...</p>
-      </div>
-    `).join('');
-  }
-
-  async function loadUnblockRequests() {
-    const { data } = await supabase.from('orders').select('*').eq('status', 'unblock_request');
-    document.getElementById('unblock-requests-list').innerHTML = (data || []).map(t => `
-      <div class="admin-block">
-        <p style="white-space:pre-wrap;">${t.message}</p>
-        <div style="display:flex; gap:10px; margin-top:10px;">
-          <button onclick="openAdminTicket(${t.id})" class="btn-primary" style="padding:6px 12px; width:auto;">Открыть</button>
-          <button onclick="deleteTicket(${t.id})" style="color:red; background:none; border:none;">Удалить</button>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  window.deleteTicket = async (id) => { 
-    const { error } = await supabase.from('orders').delete().eq('id', id); 
-    if(error) alert('Ошибка удаления: ' + error.message);
-    else { alert('Удалено!'); loadUnblockRequests(); checkBlockCounts(); }
-  }
-
-  // --- ОСТАЛЬНОЕ (КАТАЛОГ) ---
+  // --- КАТАЛОГ ---
   async function loadGames() {
     const list = document.getElementById('games-list');
     const { data } = await supabase.from('games').select('*');
@@ -824,22 +494,95 @@
     show('products');
   }
 
+  let previousScreen = 'products';
+
   window.openProductDetail = async (id) => {
     const { data } = await supabase.from('products').select('*').eq('id', id).single();
     const content = document.getElementById('product-detail-content');
+    
+    const images = data.images || []; 
+    const imagesHtml = images.length > 0 ? `
+      <div class="product-images">
+        ${images.map(img => `<img src="${img}" onclick="window.open(this.src)">`).join('')}
+      </div>
+    ` : '';
+
+    const titleColor = data.title_color || '#fff';
+
     content.innerHTML = `
-      <div class="admin-block" style="text-align:center;">
-        ${data.image ? `<img src="${data.image}" style="width:100%; border-radius:12px; margin-bottom:15px;">` : ''}
-        <h2>${data.title}</h2>
-        <p style="margin-bottom:15px;">${data.description || ''}</p>
-        <div style="font-size:24px; font-weight:bold; color:var(--accent); margin-bottom:15px;">${data.price} ₽</div>
-        ${data.paylink ? `<a href="${data.paylink}" target="_blank" class="btn-primary" style="width:100%; display:block; text-decoration:none;">Оплатить</a>` : '<p style="color:red;">Ссылка не указана</p>'}
+      <div class="seller-block" onclick="openSellerProfile('KupiGame')">
+        <div class="seller-avatar">K</div>
+        <div class="seller-info">
+          <h3>KupiGame</h3>
+          <div class="seller-stars">★★★★★</div>
+        </div>
+        <div style="margin-left:auto; color:var(--text-muted);">→</div>
+      </div>
+      
+      <div class="detail-product">
+        <div class="product-title-big" style="color:${titleColor}">${data.title}</div>
+        <div class="product-desc-block">${data.description || 'Описание отсутствует'}</div>
+        
+        ${imagesHtml}
+        
+        <div class="price-block">
+          <span style="color:var(--text-muted);">Цена товара</span>
+          <span class="price">${data.price} ₽</span>
+        </div>
+        
+        <button class="btn-primary" onclick="pay('${data.paylink}')" style="width:100%;">Оплатить</button>
+      </div>
+
+      <div class="reviews-section">
+        <h3>Отзывы покупателей (0)</h3>
+        <div class="no-reviews">Отзывов пока нет. После покупки покупатели оставляют отзывы здесь.</div>
       </div>
     `;
+    previousScreen = 'products';
     show('product-detail');
   }
 
-  // --- ОСТАЛЬНАЯ АДМИНКА ---
+  window.goBackFromProduct = () => { show(previousScreen); }
+  window.goBackFromSeller = () => { show(previousScreen); }
+
+  window.openSellerProfile = async (nickname) => {
+    const { data: products } = await supabase.from('products').select('*');
+    
+    const content = document.getElementById('seller-profile-content');
+    content.innerHTML = `
+      <div class="auth-box" style="text-align:center;">
+        <div style="width:80px; height:80px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; font-size:36px; margin:0 auto 15px;">K</div>
+        <h2 style="margin-bottom:5px;">${nickname}</h2>
+        <p style="color:var(--text-muted); font-size:14px; margin-bottom:15px;">Владелец магазина · проверенный продавец</p>
+        
+        <div class="seller-stars" style="font-size:24px; margin-bottom:10px;">★★★★★</div>
+        <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px;">Пока без отзывов · товаров: ${products ? products.length : 0}</p>
+        
+        <div style="text-align:left; max-width:300px; margin:0 auto;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:14px;"><span>5 ★</span> <div style="width:150px; height:8px; background:#1a1a26; border-radius:4px; align-self:center;"></div> <span>0</span></div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:14px;"><span>4 ★</span> <div style="width:150px; height:8px; background:#1a1a26; border-radius:4px; align-self:center;"></div> <span>0</span></div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:14px;"><span>3 ★</span> <div style="width:150px; height:8px; background:#1a1a26; border-radius:4px; align-self:center;"></div> <span>0</span></div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:14px;"><span>2 ★</span> <div style="width:150px; height:8px; background:#1a1a26; border-radius:4px; align-self:center;"></div> <span>0</span></div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:14px;"><span>1 ★</span> <div style="width:150px; height:8px; background:#1a1a26; border-radius:4px; align-self:center;"></div> <span>0</span></div>
+        </div>
+      </div>
+      
+      <h3 style="margin-bottom:15px; display:flex; justify-content:space-between;">Товары продавца (${products ? products.length : 0}) <button class="btn-primary" style="width:auto; padding:5px 15px; font-size:13px;" onclick="show('catalog')">Каталог</button></h3>
+      <div id="seller-products-list">
+        ${(products || []).map(p => `
+          <div class="product-item" onclick="previousScreen = 'seller'; openProductDetail(${p.id})">
+            <div class="p-title">${p.title}</div>
+            <div class="p-price">${p.price} ₽</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    show('seller');
+  }
+
+  window.pay = (link) => { if(link) window.open(link, '_blank'); else alert('Ссылка не указана.'); }
+
+  // --- АДМИНКА: ИГРЫ ---
   async function loadAdminGames() {
     const { data } = await supabase.from('games').select('*');
     document.getElementById('admin-tab-games').innerHTML = `
@@ -879,47 +622,154 @@
     if(error) alert('Ошибка: ' + error.message); else loadAdminGames(); 
   }
 
-  async function loadAdminGamesSelect() {
+  // --- АДМИНКА: ТОВАРЫ (ДОБАВЛЕНИЕ И РЕДАКТИРОВАНИЕ) ---
+  async function loadAdminProducts() {
     const { data: games } = await supabase.from('games').select('*');
     document.getElementById('admin-game-select').innerHTML = (games || []).map(g => `<option value="${g.name}">${g.name}</option>`).join('');
+    
+    const { data: products } = await supabase.from('products').select('*');
+    document.getElementById('admin-tab-products').innerHTML = `
+      <div class="admin-block">
+        <h3 id="product-form-title" style="margin-bottom:15px;">Добавить товар</h3>
+        <select id="admin-game-select"></select>
+        <input type="text" id="admin-title" placeholder="Название (например: Аккаунт•Brawl Stars)">
+        <input type="color" id="admin-color" value="#fbbf24" style="height:50px; padding:5px;">
+        <textarea id="admin-desc" placeholder="Описание" style="height:120px;"></textarea>
+        <input type="text" id="admin-paylink" placeholder="Ссылка на оплату">
+        <label style="color:var(--text-muted); font-size:12px;">Скриншоты (до 10 фото):</label>
+        <input type="file" id="product-img-upload" accept="image/*" multiple>
+        
+        <input type="hidden" id="edit-product-id" value="">
+        
+        <button class="btn-primary" id="product-submit-btn" onclick="saveProduct()" style="width:100%; margin-top:15px;">Опубликовать</button>
+        <button class="btn-red hidden" id="product-cancel-btn" onclick="resetProductForm()">Отмена</button>
+      </div>
+      <div style="margin-top:20px;">
+        <h3>Существующие товары</h3>
+        ${(products || []).map(p => `
+          <div style="background:var(--card); padding:15px; border-radius:10px; margin-top:10px; display:flex; justify-content:space-between; align-items:center;">
+            <span>${p.title} — ${p.price}₽</span>
+            <div>
+              <button onclick="editProduct(${p.id})" style="color:var(--accent); background:none; border:none; margin-right:10px;">Ред.</button>
+              <button onclick="deleteProductAdmin(${p.id})" style="color:red; background:none; border:none;">Удалить</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
   }
 
-  window.addProduct = async () => {
+  window.saveProduct = async () => {
+    const id = document.getElementById('edit-product-id').value;
     const game = document.getElementById('admin-game-select').value;
     const title = document.getElementById('admin-title').value;
-    const price = document.getElementById('admin-price').value;
+    const color = document.getElementById('admin-color').value;
     const desc = document.getElementById('admin-desc').value;
     const paylink = document.getElementById('admin-paylink').value;
-    const file = document.getElementById('product-img-upload').files[0];
-    if(!title || !price) return alert('Заполните поля');
-    let imgBase64 = null;
-    if(file) imgBase64 = await new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = (e) => resolve(e.target.result);
-      reader.readAsDataURL(file);
-    });
-    const { error } = await supabase.from('products').insert([{ game, title, price: Number(price), description: desc, paylink, image: imgBase64 }]);
-    if(error) alert('Ошибка: ' + error.message); else alert('Товар добавлен!');
+    const files = document.getElementById('product-img-upload').files;
+
+    if(!title || !game) return alert('Заполните название и игру');
+
+    let imagesBase64 = [];
+    if(files.length > 10) return alert('Максимум 10 картинок');
+    
+    if(files.length > 0) {
+      for (let i = 0; i < files.length; i++) {
+        const b64 = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result);
+          reader.readAsDataURL(files[i]);
+        });
+        imagesBase64.push(b64);
+      }
+    }
+
+    if(id) {
+      const updateData = { title, title_color: color, description: desc, paylink };
+      if(imagesBase64.length > 0) updateData.images = imagesBase64;
+      const { error } = await supabase.from('products').update(updateData).eq('id', id);
+      if(error) alert('Ошибка: ' + error.message); else { alert('Товар обновлен!'); resetProductForm(); loadAdminProducts(); }
+    } else {
+      const { error } = await supabase.from('products').insert([{ 
+        game, title, title_color: color, description: desc, price: 0, paylink, images: imagesBase64 
+      }]);
+      if(error) alert('Ошибка: ' + error.message); else { alert('Товар добавлен!'); resetProductForm(); loadAdminProducts(); }
+    }
   }
 
+  window.editProduct = async (id) => {
+    const { data } = await supabase.from('products').select('*').eq('id', id).single();
+    document.getElementById('edit-product-id').value = id;
+    document.getElementById('admin-game-select').value = data.game;
+    document.getElementById('admin-title').value = data.title;
+    document.getElementById('admin-color').value = data.title_color || '#fbbf24';
+    document.getElementById('admin-desc').value = data.description || '';
+    document.getElementById('admin-paylink').value = data.paylink || '';
+    
+    document.getElementById('product-form-title').textContent = 'Редактировать товар';
+    document.getElementById('product-submit-btn').textContent = 'Сохранить изменения';
+    document.getElementById('product-cancel-btn').classList.remove('hidden');
+    window.scrollTo(0, 0);
+  }
+
+  window.resetProductForm = () => {
+    document.getElementById('edit-product-id').value = '';
+    document.getElementById('admin-title').value = '';
+    document.getElementById('admin-desc').value = '';
+    document.getElementById('admin-paylink').value = '';
+    document.getElementById('product-img-upload').value = '';
+    document.getElementById('product-form-title').textContent = 'Добавить товар';
+    document.getElementById('product-submit-btn').textContent = 'Опубликовать';
+    document.getElementById('product-cancel-btn').classList.add('hidden');
+  }
+
+  window.deleteProductAdmin = async (id) => {
+    if(!confirm('Удалить товар?')) return;
+    await supabase.from('products').delete().eq('id', id);
+    loadAdminProducts();
+  }
+
+  // --- АДМИНКА: ЛЮДИ ---
   window.searchUser = async () => {
     const nick = document.getElementById('search-nick').value;
     const { data } = await supabase.from('profiles').select('*').eq('nickname', nick).single();
     const res = document.getElementById('user-search-result');
     if(!data) { res.innerHTML = '<p style="color:red; padding:15px;">Пользователь не найден</p>'; return; }
+    
     res.innerHTML = `
       <div class="admin-block">
         <h3>${data.nickname}</h3>
-        <p>Статус: ${data.is_blocked ? '<span style="color:red;">Заблокирован</span>' : 'Активен'}</p>
-        <div id="user-card-action">
-          ${data.is_blocked 
-            ? `<button class="btn-green" onclick="unblockUser('${data.id}', '${data.nickname}')">Разблокировать</button>`
-            : `<input type="text" id="block-reason-input" placeholder="Причина блокировки" style="margin-top:10px;">
-               <button class="btn-red" onclick="blockUser('${data.id}', '${data.nickname}')">Заблокировать</button>`
-          }
-        </div>
+        <p style="margin-bottom:10px;">Статус: ${data.is_blocked ? '<span style="color:red;">Заблокирован</span>' : 'Активен'}</p>
+        
+        <h4 style="margin-bottom:10px;">Сменить пароль</h4>
+        <input type="password" id="admin-new-pass" placeholder="Новый пароль">
+        <button class="btn-primary" onclick="adminChangeUserPass('${data.id}')" style="width:auto; padding:6px 12px;">Сменить</button>
+        
+        <h4 style="margin:15px 0 10px;">Написать в чат</h4>
+        <textarea id="admin-chat-text" placeholder="Сообщение человеку..." style="height:80px;"></textarea>
+        <button class="btn-primary" onclick="adminSendChat('${data.id}')" style="width:auto; padding:6px 12px;">Отправить</button>
+        
+        <h4 style="margin:15px 0 10px;">Блокировка</h4>
+        ${data.is_blocked 
+          ? `<p style="color:red; margin-bottom:10px;">Причина: ${data.block_reason}</p>
+             <button class="btn-green" onclick="unblockUser('${data.id}', '${data.nickname}')">Разблокировать</button>`
+          : `<input type="text" id="block-reason-input" placeholder="Причина блокировки">
+             <button class="btn-red" onclick="blockUser('${data.id}', '${data.nickname}')">Заблокировать</button>`
+        }
       </div>
     `;
+  }
+
+  window.adminChangeUserPass = async (userId) => {
+    alert('В реальном проекте нужен серверный ключ. Здесь смена пароля другого пользователя не сработает.');
+  }
+
+  window.adminSendChat = async (userId) => {
+    const text = document.getElementById('admin-chat-text').value;
+    if(!text) return;
+    await supabase.from('orders').insert([{ buyer_id: userId, status: 'open', message: 'Админ: ' + text }]);
+    alert('Сообщение отправлено!');
+    document.getElementById('admin-chat-text').value = '';
   }
 
   window.blockUser = async (userId, nick) => {
@@ -929,7 +779,7 @@
     if(error) { alert('Ошибка: ' + error.message); return; }
     alert('Пользователь заблокирован!');
     document.getElementById('search-nick').value = nick;
-    searchUser(); checkBlockCounts();
+    searchUser();
   }
 
   window.unblockUser = async (id, nick) => {
@@ -937,22 +787,114 @@
     if(error) { alert('Ошибка: ' + error.message); return; }
     alert('Пользователь разблокирован!');
     document.getElementById('search-nick').value = nick;
-    searchUser(); checkBlockCounts(); loadBlockedUsers();
+    searchUser();
   }
 
-  async function loadBlockedUsers() {
-    const { data } = await supabase.from('profiles').select('*').eq('is_blocked', true);
-    document.getElementById('blocked-list').innerHTML = (data || []).map(u => `
-      <div class="admin-block" style="display:flex; justify-content:space-between; align-items:center;">
-        <div>
-          <h3>${u.nickname}</h3>
-          <p style="color:var(--text-muted); font-size:13px;">Причина: ${u.block_reason}</p>
+  // --- ЧАТЫ ---
+  async function loadChats() {
+    const { data } = await supabase.from('orders').select('*').eq('buyer_id', currentUser.id).order('created_at', { ascending: false });
+    const list = document.getElementById('chats-list');
+    if(!data || data.length === 0) { list.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:20px;">У вас нет чатов</p>'; return; }
+    
+    const { data: adminProfile } = await supabase.from('profiles').select('nickname, avatar').eq('nickname', 'KupiGame').single();
+    const adminAvatar = adminProfile && adminProfile.avatar 
+      ? `<img src="${adminProfile.avatar}">` 
+      : 'K';
+
+    list.innerHTML = data.map(t => {
+      const name = 'KupiGame';
+      const avatar = adminAvatar;
+      const lastMsg = t.message.length > 40 ? t.message.substring(0, 40) + '...' : t.message;
+      
+      return `
+        <div class="chat-list-item" onclick="openTicketView(${t.id})">
+          <div class="chat-avatar">${avatar}</div>
+          <div class="chat-info">
+            <div class="chat-name">${name}</div>
+            <div class="chat-last-msg">${lastMsg}</div>
+          </div>
         </div>
-        <button class="btn-green" style="width:auto; padding:8px 15px;" onclick="unblockUser('${u.id}', '${u.nickname}')">Разблокировать</button>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   }
 
+  window.openTicketView = async (id) => {
+    currentTicketId = id;
+    isAdminView = false;
+    const { data: ticket } = await supabase.from('orders').select('*').eq('id', id).single();
+    
+    const { data: msgs } = await supabase.from('ticket_messages').select('*').eq('ticket_id', id).order('created_at');
+    
+    const chatBox = document.getElementById('ticket-chat-box');
+    let chatHtml = `<div class="chat-msg their-msg">
+      <div class="msg-sender">${currentUser.nickname}</div>
+      ${ticket.message}
+    </div>`;
+      
+    if(msgs) {
+      msgs.forEach(m => {
+        const isAdmin = m.sender_id !== currentUser.id;
+        const senderName = isAdmin ? 'KupiGame <span class="admin-tag">Админ</span>' : currentUser.nickname;
+        
+        chatHtml += `<div class="chat-msg ${isAdmin ? 'their-msg' : 'my-msg'}">
+          <div class="msg-sender ${!isAdmin ? 'my-msg-text' : ''}">${senderName}</div>
+          ${m.message}
+        </div>`;
+      });
+    }
+    chatBox.innerHTML = chatHtml;
+    
+    if(ticket.status === 'closed') {
+      document.getElementById('ticket-reply-area').style.display = 'none';
+      document.getElementById('ticket-actions').style.display = 'none';
+    } else {
+      document.getElementById('ticket-reply-area').style.display = 'block';
+      document.getElementById('ticket-actions').style.display = 'none';
+    }
+    show('ticket-view');
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  window.goBackFromTicket = () => {
+    if(isAdminView) { isAdminView = false; show('admin'); }
+    else show('profile');
+  }
+
+  window.sendTicketReply = async () => {
+    const text = document.getElementById('ticket-reply-text').value;
+    if(!text) return;
+    await supabase.from('ticket_messages').insert([{ ticket_id: currentTicketId, sender_id: currentUser.id, message: text }]);
+    document.getElementById('ticket-reply-text').value = '';
+    if(isAdminView) openAdminTicket(currentTicketId); else openTicketView(currentTicketId);
+  }
+
+  // --- ПОДДЕРЖКА ---
+  window.sendTicket = async () => {
+    if(!currentUser) return alert('Войдите в аккаунт!');
+    const text = document.getElementById('support-text').value;
+    if(!text) return;
+    const { error } = await supabase.from('orders').insert([{ buyer_id: currentUser.id, status: 'open', message: text }]);
+    if(error) alert('Ошибка базы: ' + error.message); 
+    else { alert('Заявка отправлена!'); document.getElementById('support-text').value = ''; show('profile'); }
+  }
+
+  window.sendUnblock = async () => {
+    const reason = document.getElementById('unblock-reason').value;
+    if(!reason) return alert('Напишите причину');
+    if(!currentUser) return alert('Ошибка: вы не авторизованы');
+
+    const { error } = await supabase.from('orders').insert([{ 
+      buyer_id: currentUser.id, 
+      status: 'unblock_request', 
+      message: `Ник: ${currentUser.nickname}\nПричина: ${document.getElementById('block-reason').textContent}\nПочему не согласен: ${reason}`
+    }]);
+    
+    if(error) { alert('ОШИБКА БАЗЫ: ' + error.message); return; }
+    alert('Заявка отправлена владельцу!');
+    show('blocked');
+  }
+
+  // --- ОБЛОЖКА ---
   window.uploadHero = async () => {
     const input = document.getElementById('hero-upload');
     if(!input.files[0]) return;
