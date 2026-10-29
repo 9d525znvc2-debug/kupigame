@@ -23,32 +23,40 @@
   .nav-badge { background: var(--accent); color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 10px; margin-left: 5px; font-weight: bold; display: inline-block; vertical-align: middle; }
   main { max-width: 800px; margin: 0 auto; padding: 20px; }
   .screen { display: none; }
-  .screen.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+  .screen.active { display: block; animation: fadeIn 0.4s ease-in-out; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   
-  /* ГЛАВНАЯ СТРАНИЦА */
-  .hero-bg { background: radial-gradient(circle at top right, rgba(139, 92, 246, 0.15), transparent 50%), radial-gradient(circle at bottom left, rgba(56, 189, 248, 0.1), transparent 50%); border-radius: 20px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); }
-  .hero-image { width: 100%; max-height: 350px; border-radius: 16px; object-fit: cover; display: none; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-  .hero-title { font-size: 28px; font-weight: 900; margin-bottom: 10px; color: #fff; text-align: center; }
-  .hero-title span { color: var(--primary); }
-  .hero-subtitle { color: var(--text-muted); font-size: 15px; margin-bottom: 20px; text-align: center; }
-  .btn-hero { background: linear-gradient(90deg, #8b5cf6, #6d28d9); color: #fff; padding: 14px 30px; border: none; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; text-decoration: none; display: block; width: 100%; text-align: center; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); }
-  .btn-hero:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6); }
+  /* НОВЫЙ ДИЗАЙН ГЛАВНОЙ */
+  .hero-container { position: relative; border-radius: 24px; overflow: hidden; background: #0d0d14; border: 1px solid var(--border); margin-bottom: 25px; box-shadow: 0 10px 40px rgba(139, 92, 246, 0.15); }
+  .hero-bg-glow { position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at center, rgba(139, 92, 246, 0.2) 0%, transparent 60%); animation: rotateGlow 15s linear infinite; z-index: 0; }
+  @keyframes rotateGlow { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  .hero-content { position: relative; z-index: 1; padding: 30px 20px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+  .hero-image { width: 100%; max-height: 350px; border-radius: 16px; object-fit: cover; display: none; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 5px 20px rgba(0,0,0,0.6); }
+  .hero-title { font-size: 32px; font-weight: 900; line-height: 1.2; margin-bottom: 10px; background: linear-gradient(90deg, #fff, #d8b4fe, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 2px 10px rgba(139, 92, 246, 0.3); }
+  .hero-subtitle { color: var(--text-muted); font-size: 15px; margin-bottom: 25px; max-width: 300px; }
+  .btn-hero { background: linear-gradient(90deg, #8b5cf6, #6d28d9); color: #fff; padding: 16px 32px; border: none; border-radius: 14px; font-weight: 900; font-size: 16px; cursor: pointer; text-decoration: none; display: block; width: 100%; text-align: center; transition: all 0.3s ease; box-shadow: 0 4px 20px rgba(139, 92, 246, 0.5); text-transform: uppercase; letter-spacing: 1px; }
+  .btn-hero:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 25px rgba(139, 92, 246, 0.7); }
   
+  .features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
+  .feature-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 15px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+  .feature-icon { font-size: 24px; }
+  .feature-title { font-weight: bold; font-size: 15px; color: #fff; }
+  .feature-desc { font-size: 12px; color: var(--text-muted); }
+
   .tg-card { text-align: center; padding: 25px; background: var(--card); border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
   .tg-card p { font-weight: bold; font-size: 16px; margin-bottom: 15px; color: #e8e8f0; }
-  .btn-tg { background: #229ED9; color: #fff; padding: 12px 24px; border-radius: 10px; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; gap: 8px; transition: background 0.2s; }
-  .btn-tg:hover { background: #1a7fb3; }
-
+  .btn-tg { background: #229ED9; color: #fff; padding: 14px 24px; border-radius: 12px; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; width: 100%; font-size: 16px; box-shadow: 0 4px 15px rgba(34, 158, 217, 0.3); }
+  .btn-tg:hover { background: #1a7fb3; transform: translateY(-2px); }
+  
+  /* КАТАЛОГ */
   .game-row { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 15px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; cursor: pointer; transition: transform 0.2s; }
   .game-row:hover { transform: translateX(5px); border-color: var(--primary); }
   .game-img { width: 50px; height: 50px; border-radius: 12px; object-fit: contain; background: #1a1a26; display: flex; align-items: center; justify-content: center; font-size: 24px; overflow: hidden; }
   .game-img img { width: 100%; height: 100%; border-radius: 12px; object-fit: cover; }
   
-  /* КАТЕГОРИИ В КАТАЛОГЕ */
-  .category-tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
-  .category-tab { background: var(--card); border: 1px solid var(--border); color: var(--text-muted); padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 15px; transition: all 0.2s; white-space: nowrap; }
-  .category-tab.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 0 15px rgba(139, 92, 246, 0.4); }
+  .category-tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; -webkit-overflow-scrolling: touch; }
+  .category-tab { background: var(--card); border: 1px solid var(--border); color: var(--text-muted); padding: 12px 24px; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 15px; transition: all 0.2s; white-space: nowrap; }
+  .category-tab.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 0 15px rgba(139, 92, 246, 0.5); }
   
   .catalog-item { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 15px; margin-bottom: 12px; cursor: pointer; display: flex; flex-direction: column; gap: 10px; }
   .catalog-item .cat-title { font-weight: bold; font-size: 18px; }
@@ -183,17 +191,33 @@
 
   <!-- ГЛАВНАЯ -->
   <section class="screen active" id="screen-home">
-    <div class="hero-bg">
-      <img id="main-hero-img" class="hero-image">
-      <h1 class="hero-title">Аккаунты и <span>товары</span> для игр</h1>
-      <p class="hero-subtitle">Сделки ведёт продавец, владелец магазина KupiGame.</p>
-      <button class="btn-hero" onclick="show('catalog')">Перейти в каталог</button>
+    <div class="hero-container">
+      <div class="hero-bg-glow"></div>
+      <div class="hero-content">
+        <img id="main-hero-img" class="hero-image">
+        <h1 class="hero-title">KupiGame</h1>
+        <p class="hero-subtitle">Надежный магазин игровых аккаунтов и услуг. Быстро, качественно, безопасно.</p>
+        <button class="btn-hero" onclick="show('catalog')">Перейти в каталог</button>
+      </div>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">Быстрая выдача</div>
+        <div class="feature-desc">Товар приходит сразу после оплаты</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <div class="feature-title">Безопасно</div>
+        <div class="feature-desc">Гарантия на все аккаунты</div>
+      </div>
     </div>
     
     <div class="tg-card">
       <p>Все актуальные новости и отзывы</p>
       <a href="https://t.me/KupiGameOfficial" target="_blank" class="btn-tg">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.2-2.85 5.172-4.67c.223-.2-.054-.31-.34-.11l-6.4 4.03-2.756-.86c-.6-.188-.615-.6.126-.887l10.77-4.157c.5-.183.936.11.775.885z"/></svg>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.2-2.85 5.172-4.67c.223-.2-.054-.31-.34-.11l-6.4 4.03-2.756-.86c-.6-.188-.615-.6.126-.887l10.77-4.157c.5-.183.936.11.775.885z"/></svg>
         В нашем Telegram
       </a>
     </div>
