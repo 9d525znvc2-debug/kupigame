@@ -26,7 +26,7 @@
   .screen.active { display: block; animation: fadeIn 0.4s ease-in-out; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   
-  /* НОВЫЙ ДИЗАЙН ГЛАВНОЙ */
+  /* ГЛАВНАЯ */
   .hero-container { position: relative; border-radius: 24px; overflow: hidden; background: #0d0d14; border: 1px solid var(--border); margin-bottom: 25px; box-shadow: 0 10px 40px rgba(139, 92, 246, 0.15); }
   .hero-bg-glow { position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at center, rgba(139, 92, 246, 0.2) 0%, transparent 60%); animation: rotateGlow 15s linear infinite; z-index: 0; }
   @keyframes rotateGlow { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -48,7 +48,6 @@
   .btn-tg { background: #229ED9; color: #fff; padding: 14px 24px; border-radius: 12px; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; width: 100%; font-size: 16px; box-shadow: 0 4px 15px rgba(34, 158, 217, 0.3); }
   .btn-tg:hover { background: #1a7fb3; transform: translateY(-2px); }
   
-  /* КАТАЛОГ */
   .game-row { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 15px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; cursor: pointer; transition: transform 0.2s; }
   .game-row:hover { transform: translateX(5px); border-color: var(--primary); }
   .game-img { width: 50px; height: 50px; border-radius: 12px; object-fit: contain; background: #1a1a26; display: flex; align-items: center; justify-content: center; font-size: 24px; overflow: hidden; }
@@ -446,7 +445,7 @@
         else if(tab === 'tickets') await loadAdminTickets(content); 
         else if(tab === 'admin-chats') await loadAdminChats(content);
         else if(tab === 'blocked') await loadBlockedUsers(content);
-        else if(tab === 'unblock-requests') await loadUnblockRequests(content);
+        else if(tab === 'unblock-requests') await loadAdminUnblockRequests(content); // ИЗМЕНЕНО ИМЯ
         else if(tab === 'reviews') await loadAdminReviews(content);
         else if(tab === 'settings') await loadHeroSettings(content);
     } catch(e) {
