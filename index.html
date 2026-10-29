@@ -105,7 +105,8 @@
   .admin-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
   .admin-tab { background: var(--card); border: 1px solid var(--border); color: var(--text-muted); padding: 8px 16px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; position: relative; }
   .admin-tab.active { background: var(--primary); border-color: var(--primary); color: #fff; }
-  footer { padding: 30px 20px; border-top: 1px solid var(--border); text-align: center; font-size: 13px; color: var(--text-muted); }
+  
+  footer { padding: 30px 20px; border-top: 1px solid var(--border); text-align: center; font-size: 13px; color: var(--text-muted); background: linear-gradient(0deg, rgba(139, 92, 246, 0.05), transparent); }
   footer a { display: block; color: var(--accent); margin-bottom: 10px; font-weight: 600; cursor: pointer; }
   .hidden { display: none !important; }
   .btn-primary { background: var(--primary); color: #fff; padding: 12px 24px; border: none; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; text-align: center; text-decoration: none; display: inline-block; width: 100%; max-width: 300px; }
@@ -306,7 +307,8 @@
     
     <div class="auth-box">
       <h3 style="margin-bottom:15px;">Мои заявки в поддержку</h3>
-      <button class="btn-secondary" onclick="openMyTickets()">Посмотреть мои обращения</button>
+      <button class="btn-secondary" onclick="openMyTickets()" style="margin-bottom:10px;">Посмотреть мои обращения</button>
+      <button class="btn-primary" onclick="show('support')" style="width:100%;">Написать в поддержку</button>
     </div>
   </section>
 
@@ -383,6 +385,7 @@
   let currentTicketId = null;
   let isAdminView = false;
   let currentProducts = [];
+  let previousScreen = 'products'; // Для правильного возврата
 
   const isAdmin = () => !!(currentUser && (currentUser.is_admin === true || currentUser.nickname === 'KupiGame'));
 
@@ -402,7 +405,17 @@
     return html;
   }
 
-  window.show = (screen) => {
+  window.show = async (screen) => {
+    // Если пользователь заблокирован, не даем ему открывать другие страницы
+    if (currentUser && !isAdmin()) {
+        const { data } = await supabase.from('profiles').select('is_blocked').eq('id', currentUser.id).single();
+        if (data && data.is_blocked) {
+            if (screen !== 'blocked' && screen !== 'blocked-tickets' && screen !== 'unblock-form' && screen !== 'ticket-view') {
+                screen = 'blocked';
+            }
+        }
+    }
+
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     const target = document.getElementById('screen-' + screen);
     if(target) target.classList.add('active');
@@ -642,6 +655,7 @@
     document.querySelector('.category-tab').classList.add('active'); 
     
     renderFilteredProducts('Аккаунты');
+    previousScreen = 'catalog'; // Возврат в каталог при нажатии "Назад" из товара
     show('products');
   }
 
@@ -676,8 +690,6 @@
       `;
     }).join('');
   }
-
-  let previousScreen = 'products';
 
   window.openProductDetail = async (id) => {
     const { data } = await supabase.from('products').select('*').eq('id', id).single();
@@ -738,7 +750,6 @@
     }
     document.getElementById('detail-seller-stars').innerHTML = renderStars(avg);
 
-    previousScreen = 'products';
     show('product-detail');
   }
 
@@ -800,6 +811,7 @@
         `).join('')}
       </div>
     `;
+    previousScreen = 'catalog'; // Из профиля продавца назад в каталог
     show('seller');
   }
 
@@ -1247,7 +1259,20 @@
 
   window.goBackFromTicket = () => {
     if(isAdminView) { isAdminView = false; show('admin'); }
-    else show('profile');
+    else {
+        // Если пользователь заблокирован, возвращаем в заблокированные заявки
+        if (currentUser && !isAdmin()) {
+            supabase.from('profiles').select('is_blocked').eq('id', currentUser.id).single().then(({data}) => {
+                if (data && data.is_blocked) {
+                    show('blocked-tickets');
+                } else {
+                    show('my-tickets');
+                }
+            });
+        } else {
+            show('profile');
+        }
+    }
   }
 
   window.sendTicketReply = async () => {
@@ -1506,8 +1531,7 @@
   }
 
   async function applyHero() {
-    const { data } = await supabase.from('profiles').select('hero_url').eq('nickname', 'KupiGame').single();
-    // Баннер убран по просьбе
+    // Баннер убран
   }
 
   async function init() {
