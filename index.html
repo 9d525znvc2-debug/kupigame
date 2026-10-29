@@ -1340,6 +1340,23 @@
     show('my-tickets');
   };
 
+  // ЖЕСТКО ВСТРОЕННАЯ ФУНКЦИЯ ЗАГРУЗКИ РАЗБЛОКИРОВОК
+  async function loadAdminUnblockRequests(container) {
+    const { data } = await supabase.from('orders').select('*').eq('status', 'unblock_request');
+    container.innerHTML = (data || []).map(t => `
+      <div class="admin-block">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <strong>Заявка на разблокировку</strong>
+          <div style="display:flex; gap:10px;">
+            <button onclick="openAdminTicket(${t.id})" class="btn-small primary">Открыть</button>
+            <button onclick="deleteTicketAdmin(${t.id})" class="btn-small red">Удалить</button>
+          </div>
+        </div>
+        <p style="font-size:13px; margin-top:5px;">${esc((t.message || '').substring(0, 80))}...</p>
+      </div>
+    `).join('');
+  }
+
   window.sendBlockedChatReply = async () => {
     alert('Функция временно недоступна.');
   };
