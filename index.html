@@ -3,13 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>KupiGame — игровой магазин</title>
 <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%238b5cf6%22/><text y=%2270%22 x=%2250%22 font-size=%2260%22 text-anchor=%22middle%22 fill=%22white%22>K</text></svg>">
 <style>
-  :root { --primary: #8b5cf6; --primary-hover: #7c3aed; --bg: #090910; --card: #12121a; --text: #e8e8f0; --text-muted: #9898b0; --border: #2a2a3a; --accent: #38bdf8; --green: #10b981; --orange: #f97316; --star-gold: #fbbf24; }
+  :root { --primary: #8b5cf6; --primary-hover: #7c3aed; --bg: #090910; --card: #12121a; --text: #e8e8f0; --text-muted: #9898b0; --border: #2a2a3a; --accent: #38bdf8; --green: #10b981; --orange: #f97316; --star-gold: #fbbf24; --gray-status: #6b7280; }
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-  body { background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 80px; }
-  header { background: var(--bg); padding: 15px 20px; display: flex; align-items: flex-start; justify-content: space-between; border-bottom: 1px solid var(--border); width: 100%; }
+  
+  body { background-color: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 80px; background-image: radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(56, 189, 248, 0.05) 0%, transparent 40%); background-attachment: fixed; }
+  
+  header { background: rgba(9, 9, 16, 0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; padding: 15px 20px; display: flex; align-items: flex-start; justify-content: space-between; border-bottom: 1px solid var(--border); width: 100%; }
   .logo { font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 8px; cursor: pointer; color: #fff; }
   .logo-icon { width: 20px; height: 20px; background: var(--primary); transform: rotate(45deg); border-radius: 4px; }
   .user-pill { background: var(--card); border: 1px solid var(--border); border-radius: 30px; padding: 5px 15px 5px 5px; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; }
@@ -21,18 +26,18 @@
   .nav-menu button.admin { color: #fbbf24; }
   #logout-btn { margin-top: 0; width: 100%; text-align: center; }
   .nav-badge { background: var(--accent); color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 10px; margin-left: 5px; font-weight: bold; display: inline-block; vertical-align: middle; }
+  
   main { max-width: 800px; margin: 0 auto; padding: 20px; }
   .screen { display: none; }
   .screen.active { display: block; animation: fadeIn 0.4s ease-in-out; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   
   /* ГЛАВНАЯ */
-  .hero-container { position: relative; border-radius: 24px; overflow: hidden; background: #0d0d14; border: 1px solid var(--border); margin-bottom: 25px; box-shadow: 0 10px 40px rgba(139, 92, 246, 0.15); }
-  .hero-bg-glow { position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at center, rgba(139, 92, 246, 0.2) 0%, transparent 60%); animation: rotateGlow 15s linear infinite; z-index: 0; }
+  .hero-container { position: relative; border-radius: 24px; overflow: hidden; background: linear-gradient(135deg, #12121a, #1a1a26); border: 1px solid var(--border); margin-bottom: 25px; box-shadow: 0 10px 40px rgba(139, 92, 246, 0.15); }
+  .hero-bg-glow { position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at center, rgba(139, 92, 246, 0.15) 0%, transparent 60%); animation: rotateGlow 20s linear infinite; z-index: 0; }
   @keyframes rotateGlow { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-  .hero-content { position: relative; z-index: 1; padding: 30px 20px; text-align: center; display: flex; flex-direction: column; align-items: center; }
-  .hero-image { width: 100%; max-height: 350px; border-radius: 16px; object-fit: cover; display: none; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 5px 20px rgba(0,0,0,0.6); }
-  .hero-title { font-size: 32px; font-weight: 900; line-height: 1.2; margin-bottom: 10px; background: linear-gradient(90deg, #fff, #d8b4fe, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 2px 10px rgba(139, 92, 246, 0.3); }
+  .hero-content { position: relative; z-index: 1; padding: 40px 20px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+  .hero-title { font-size: 36px; font-weight: 900; line-height: 1.2; margin-bottom: 10px; background: linear-gradient(90deg, #fff, #d8b4fe, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 2px 10px rgba(139, 92, 246, 0.3); }
   .hero-subtitle { color: var(--text-muted); font-size: 15px; margin-bottom: 25px; max-width: 300px; }
   .btn-hero { background: linear-gradient(90deg, #8b5cf6, #6d28d9); color: #fff; padding: 16px 32px; border: none; border-radius: 14px; font-weight: 900; font-size: 16px; cursor: pointer; text-decoration: none; display: block; width: 100%; text-align: center; transition: all 0.3s ease; box-shadow: 0 4px 20px rgba(139, 92, 246, 0.5); text-transform: uppercase; letter-spacing: 1px; }
   .btn-hero:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 25px rgba(139, 92, 246, 0.7); }
@@ -129,6 +134,9 @@
   .btn-small { padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: bold; border: none; cursor: pointer; }
   .btn-small.red { background: #ff4d4d; color: #fff; }
   .btn-small.primary { background: var(--primary); color: #fff; }
+  .status-badge { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; margin-top: 10px; }
+  .status-open { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+  .status-closed { background: rgba(107, 114, 128, 0.2); color: #9ca3af; }
 </style>
 </head>
 <body>
@@ -171,11 +179,9 @@
   </section>
 
   <section class="screen" id="screen-blocked-tickets">
-    <div class="auth-box">
-      <h2 style="margin-bottom:15px; text-align:center;">Мои заявки</h2>
-      <div id="blocked-tickets-list"></div>
-      <button class="btn-red" onclick="show('blocked')" style="margin-top:15px;">Назад</button>
-    </div>
+    <button class="back-btn" onclick="show('blocked')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
+    <h1 class="catalog-title" style="font-size: 24px; margin-bottom:15px;">Мои заявки</h1>
+    <div id="blocked-tickets-list"></div>
   </section>
 
   <section class="screen" id="screen-unblock-form">
@@ -193,7 +199,6 @@
     <div class="hero-container">
       <div class="hero-bg-glow"></div>
       <div class="hero-content">
-        <img id="main-hero-img" class="hero-image">
         <h1 class="hero-title">KupiGame</h1>
         <p class="hero-subtitle">Надежный магазин игровых аккаунтов и услуг. Быстро, качественно, безопасно.</p>
         <button class="btn-hero" onclick="show('catalog')">Перейти в каталог</button>
@@ -202,14 +207,24 @@
 
     <div class="features-grid">
       <div class="feature-card">
-        <div class="feature-icon">⚡</div>
-        <div class="feature-title">Быстрая выдача</div>
-        <div class="feature-desc">Товар приходит сразу после оплаты</div>
-      </div>
-      <div class="feature-card">
         <div class="feature-icon">🛡️</div>
         <div class="feature-title">Безопасно</div>
         <div class="feature-desc">Гарантия на все аккаунты</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎧</div>
+        <div class="feature-title">Онлайн-поддержка</div>
+        <div class="feature-desc">Всегда на связи и готовы помочь</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <div class="feature-title">Выгодные цены</div>
+        <div class="feature-desc">Лучшие предложения на рынке</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">✨</div>
+        <div class="feature-title">Качество</div>
+        <div class="feature-desc">Только проверенные товары</div>
       </div>
     </div>
     
@@ -310,6 +325,7 @@
   <section class="screen" id="screen-ticket-view">
     <button class="back-btn" onclick="goBackFromTicket()" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
     <div class="admin-block">
+      <div id="ticket-status-badge"></div>
       <div class="chat-box" id="ticket-chat-box"></div>
       <div id="ticket-reply-area">
         <textarea id="ticket-reply-text" placeholder="Написать сообщение..." style="height:80px;"></textarea>
@@ -366,7 +382,7 @@
   let currentUser = null;
   let currentTicketId = null;
   let isAdminView = false;
-  let currentProducts = []; // Храним товары текущей игры для фильтрации
+  let currentProducts = [];
 
   const isAdmin = () => !!(currentUser && (currentUser.is_admin === true || currentUser.nickname === 'KupiGame'));
 
@@ -445,7 +461,7 @@
         else if(tab === 'tickets') await loadAdminTickets(content); 
         else if(tab === 'admin-chats') await loadAdminChats(content);
         else if(tab === 'blocked') await loadBlockedUsers(content);
-        else if(tab === 'unblock-requests') await loadAdminUnblockRequests(content); // ИЗМЕНЕНО ИМЯ
+        else if(tab === 'unblock-requests') await loadAdminUnblockRequests(content);
         else if(tab === 'reviews') await loadAdminReviews(content);
         else if(tab === 'settings') await loadHeroSettings(content);
     } catch(e) {
@@ -622,9 +638,8 @@
     const { data } = await supabase.from('products').select('*').eq('game', gameName);
     currentProducts = data || [];
     
-    // Сброс табов на "Аккаунты" по умолчанию
     document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
-    document.querySelector('.category-tab').classList.add('active'); // Первый таб (Аккаунты)
+    document.querySelector('.category-tab').classList.add('active'); 
     
     renderFilteredProducts('Аккаунты');
     show('products');
@@ -639,7 +654,6 @@
   function renderFilteredProducts(category) {
     const list = document.getElementById('products-list');
     
-    // Фильтруем товары по категории
     const filtered = currentProducts.filter(p => {
         const pCat = p.category || 'Аккаунты';
         return pCat === category;
@@ -1117,6 +1131,7 @@
     });
     
     chatBox.innerHTML = chatHtml;
+    document.getElementById('ticket-status-badge').innerHTML = '';
     document.getElementById('ticket-reply-area').style.display = 'block';
     document.getElementById('ticket-actions').style.display = 'flex';
     document.getElementById('ticket-actions').innerHTML = `
@@ -1213,12 +1228,18 @@
     }
     chatBox.innerHTML = chatHtml;
     
+    const statusBadge = document.getElementById('ticket-status-badge');
+    const replyArea = document.getElementById('ticket-reply-area');
+    const actionsArea = document.getElementById('ticket-actions');
+
     if(ticket.status === 'closed') {
-      document.getElementById('ticket-reply-area').style.display = 'none';
-      document.getElementById('ticket-actions').style.display = 'none';
+      statusBadge.innerHTML = '<span class="status-badge status-closed">Закрыто</span>';
+      replyArea.style.display = 'none';
+      actionsArea.style.display = 'none';
     } else {
-      document.getElementById('ticket-reply-area').style.display = 'block';
-      document.getElementById('ticket-actions').style.display = 'none';
+      statusBadge.innerHTML = '<span class="status-badge status-open">Открыто</span>';
+      replyArea.style.display = 'block';
+      actionsArea.style.display = 'none';
     }
     show('ticket-view');
     chatBox.scrollTop = chatBox.scrollHeight;
@@ -1295,10 +1316,16 @@
     list.innerHTML = data.map(t => `
       <div class="admin-block">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-          <strong>Заявка #${t.id}</strong>
-          <span style="color:var(--orange); font-weight:bold;">${t.status === 'unblock_request' ? 'На рассмотрении' : t.status}</span>
+          <strong>Заявка на разблокировку</strong>
+          <button onclick="openTicketView(${t.id})" class="btn-small primary">Открыть</button>
         </div>
-        <p style="font-size:13px; margin-top:5px;">${esc(t.message)}</p>
+        <p style="font-size:13px; margin-top:5px;">${esc((t.message || '').substring(0, 80))}...</p>
+        <div style="margin-top:10px;">
+          ${t.status === 'closed' 
+            ? '<span class="status-badge status-closed">Закрыто</span>' 
+            : '<span class="status-badge status-open">На рассмотрении</span>'
+          }
+        </div>
       </div>
     `).join('');
     
@@ -1328,12 +1355,18 @@
     }
     
     list.innerHTML = data.map(t => `
-      <div class="admin-block" style="cursor:pointer;" onclick="openTicketView(${t.id})">
+      <div class="admin-block">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-          <strong>Обращение #${t.id}</strong>
-          <span style="color:var(--accent); font-weight:bold;">Открыто</span>
+          <strong>Обращение</strong>
+          <button onclick="openTicketView(${t.id})" class="btn-small primary">Открыть</button>
         </div>
         <p style="font-size:13px; margin-top:5px; color:var(--text-muted);">${esc((t.message || '').substring(0, 50))}...</p>
+        <div style="margin-top:10px;">
+          ${t.status === 'closed' 
+            ? '<span class="status-badge status-closed">Закрыто</span>' 
+            : '<span class="status-badge status-open">Открыто</span>'
+          }
+        </div>
       </div>
     `).join('');
     
@@ -1473,15 +1506,8 @@
   }
 
   async function applyHero() {
-    const { data } = await supabase.from('profiles').select('hero_url, hero_width, hero_height, hero_fit').eq('nickname', 'KupiGame').single();
-    const el = document.getElementById('main-hero-img');
-    
-    if(data && data.hero_url) {
-      el.src = data.hero_url; 
-      el.style.display = 'block'; 
-    } else {
-      el.style.display = 'none';
-    }
+    const { data } = await supabase.from('profiles').select('hero_url').eq('nickname', 'KupiGame').single();
+    // Баннер убран по просьбе
   }
 
   async function init() {
