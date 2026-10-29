@@ -23,14 +23,24 @@
   .nav-badge { background: var(--accent); color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 10px; margin-left: 5px; font-weight: bold; display: inline-block; vertical-align: middle; }
   main { max-width: 800px; margin: 0 auto; padding: 20px; }
   .screen { display: none; }
-  .screen.active { display: block; }
-  .hero-card { background: transparent; border: none; border-radius: 0; padding: 0; text-align: center; margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; width: 100%; }
-  .hero-image { width: 100%; max-height: 400px; border-radius: 0; margin-bottom: 20px; display: none; object-fit: cover; }
-  .hero-card h1 { font-size: 26px; margin-bottom: 10px; }
-  .hero-card h1 span { color: var(--primary); }
-  .btn-primary { background: var(--primary); color: #fff; padding: 12px 24px; border: none; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; text-align: center; text-decoration: none; display: inline-block; width: 100%; max-width: 300px; }
-  .divider { width: 100%; height: 1px; background: var(--border); margin-bottom: 20px; }
-  .game-row { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 15px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; cursor: pointer; }
+  .screen.active { display: block; animation: fadeIn 0.4s ease-in-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  
+  /* НОВЫЙ ДИЗАЙН ГЛАВНОЙ */
+  .hero-section { position: relative; width: 100%; border-radius: 20px; overflow: hidden; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+  .hero-image { width: 100%; max-height: 450px; object-fit: cover; display: none; }
+  .hero-overlay { position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(transparent, rgba(9,9,16,0.95)); padding: 40px 20px 20px; text-align: center; }
+  .hero-title { font-size: 32px; font-weight: 900; margin-bottom: 10px; background: linear-gradient(90deg, #fff, #d8b4fe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero-subtitle { color: var(--text-muted); font-size: 15px; margin-bottom: 20px; }
+  .btn-hero { background: linear-gradient(90deg, #8b5cf6, #6d28d9); color: #fff; padding: 14px 30px; border: none; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; text-decoration: none; display: inline-block; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); }
+  .btn-hero:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6); }
+  .tg-card { text-align: center; padding: 25px; background: var(--card); border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+  .tg-card p { font-weight: bold; font-size: 16px; margin-bottom: 15px; color: #e8e8f0; }
+  .btn-tg { background: #229ED9; color: #fff; padding: 12px 24px; border-radius: 10px; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; gap: 8px; transition: background 0.2s; }
+  .btn-tg:hover { background: #1a7fb3; }
+  
+  .game-row { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 15px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; cursor: pointer; transition: transform 0.2s; }
+  .game-row:hover { transform: translateX(5px); border-color: var(--primary); }
   .game-img { width: 50px; height: 50px; border-radius: 12px; object-fit: contain; background: #1a1a26; display: flex; align-items: center; justify-content: center; font-size: 24px; overflow: hidden; }
   .game-img img { width: 100%; height: 100%; border-radius: 12px; object-fit: cover; }
   .catalog-item { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 15px; margin-bottom: 12px; cursor: pointer; display: flex; flex-direction: column; gap: 10px; }
@@ -81,6 +91,7 @@
   footer { padding: 30px 20px; border-top: 1px solid var(--border); text-align: center; font-size: 13px; color: var(--text-muted); }
   footer a { display: block; color: var(--accent); margin-bottom: 10px; font-weight: 600; cursor: pointer; }
   .hidden { display: none !important; }
+  .btn-primary { background: var(--primary); color: #fff; padding: 12px 24px; border: none; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; text-align: center; text-decoration: none; display: inline-block; width: 100%; max-width: 300px; }
   .btn-red { background: #ff4d4d; color: #fff; padding: 10px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
   .btn-green { background: var(--green); color: #fff; padding: 10px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
   .btn-secondary { background: var(--card); border: 1px solid var(--border); color: #fff; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; text-align: center; display: block; text-decoration: none; }
@@ -165,17 +176,23 @@
     </div>
   </section>
 
+  <!-- НОВЫЙ ДИЗАЙН ГЛАВНОЙ -->
   <section class="screen active" id="screen-home">
-    <div class="hero-card">
+    <div class="hero-section">
       <img id="main-hero-img" class="hero-image">
-      <div class="divider"></div>
-      <h1>Аккаунты <span>и товары</span> для игр</h1>
-      <p style="color:var(--text-muted); margin-bottom:20px;">Сделки ведёт продавец, владелец магазина KupiGame.</p>
-      <button class="btn-primary" onclick="show('catalog')">Перейти в каталог</button>
+      <div class="hero-overlay" id="hero-overlay-text">
+        <h1 class="hero-title">Аккаунты и товары для игр</h1>
+        <p class="hero-subtitle">Сделки ведёт продавец, владелец магазина KupiGame.</p>
+        <button class="btn-hero" onclick="show('catalog')">Перейти в каталог</button>
+      </div>
     </div>
-    <div class="tg-block" style="text-align: center; padding: 20px; background: var(--card); border-radius: 16px; border: 1px solid var(--border); margin-bottom: 20px;">
-      <p style="font-weight: bold; margin-bottom: 15px;">Все актуальные новости и отзывы</p>
-      <a href="https://t.me/KupiGameOfficial" target="_blank" class="btn-primary" style="text-decoration:none; display:inline-block; width:auto;">В нашем Telegram</a>
+    
+    <div class="tg-card">
+      <p>Все актуальные новости и отзывы</p>
+      <a href="https://t.me/KupiGameOfficial" target="_blank" class="btn-tg">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.2-2.85 5.172-4.67c.223-.2-.054-.31-.34-.11l-6.4 4.03-2.756-.86c-.6-.188-.615-.6.126-.887l10.77-4.157c.5-.183.936.11.775.885z"/></svg>
+        В нашем Telegram
+      </a>
     </div>
   </section>
 
@@ -239,7 +256,6 @@
       <button class="btn-primary" onclick="changePassword()" style="width:100%;">Обновить пароль</button>
     </div>
     
-    <!-- НОВАЯ КНОПКА МОИ ЗАЯВКИ -->
     <div class="auth-box">
       <h3 style="margin-bottom:15px;">Мои заявки в поддержку</h3>
       <button class="btn-secondary" onclick="openMyTickets()">Посмотреть мои обращения</button>
@@ -586,6 +602,7 @@
         let html = '';
         
         order.forEach(cat => {
+            // Если в категории есть товары, выводим заголовок и товары
             if (categories[cat] && categories[cat].length > 0) {
                 html += `<div class="category-title">${cat}</div>`;
                 html += categories[cat].map(p => {
@@ -1271,6 +1288,7 @@
     const list = document.getElementById('my-tickets-list');
     if (!currentUser) return;
     
+    // Ищем обычные обращения (status='open'), а не разблокировки
     const { data, error } = await supabase.from('orders')
         .select('*')
         .eq('buyer_id', currentUser.id)
@@ -1419,13 +1437,21 @@
   async function applyHero() {
     const { data } = await supabase.from('profiles').select('hero_url, hero_width, hero_height, hero_fit').eq('nickname', 'KupiGame').single();
     const el = document.getElementById('main-hero-img');
+    const overlay = document.getElementById('hero-overlay-text');
     
     if(data && data.hero_url) {
       el.src = data.hero_url; 
       el.style.display = 'block'; 
-      el.style.width = data.hero_width || '100%';
-      el.style.height = data.hero_height || 'auto';
-      el.style.objectFit = data.hero_fit || 'contain';
+      overlay.style.position = 'absolute';
+      overlay.style.background = 'linear-gradient(transparent, rgba(9,9,16,0.95))';
+    } else {
+      // Если нет баннера, делаем красивый градиентный фон
+      el.style.display = 'none';
+      overlay.style.position = 'relative';
+      overlay.style.background = 'linear-gradient(135deg, #1a1a26, #090910)';
+      overlay.style.padding = '40px 20px';
+      overlay.style.borderRadius = '20px';
+      overlay.style.border = '1px solid var(--border)';
     }
   }
 
