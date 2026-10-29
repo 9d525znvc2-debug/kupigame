@@ -47,7 +47,6 @@
   .seller-avatar img { width: 100%; height: 100%; object-fit: cover; }
   .seller-info h3 { font-size: 16px; color: #fff; margin-bottom: 3px; }
   
-  /* Звезды */
   .stars-container { display: inline-flex; align-items: center; gap: 2px; font-size: 16px; letter-spacing: 1px; }
   .star-full { color: var(--star-gold); }
   .star-empty { color: #4a4a5a; }
@@ -84,6 +83,7 @@
   .hidden { display: none !important; }
   .btn-red { background: #ff4d4d; color: #fff; padding: 10px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
   .btn-green { background: var(--green); color: #fff; padding: 10px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
+  .btn-secondary { background: var(--card); border: 1px solid var(--border); color: #fff; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; text-align: center; display: block; text-decoration: none; }
   .chat-list-item { display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--card); border-bottom: 1px solid var(--border); cursor: pointer; position: relative; }
   .chat-list-item:hover { background: #1a1a26; }
   .chat-list-item.unread { background: rgba(249, 115, 22, 0.15); border-left: 4px solid var(--orange); }
@@ -152,17 +152,6 @@
       <h2 style="margin-bottom:15px; text-align:center;">Мои заявки</h2>
       <div id="blocked-tickets-list"></div>
       <button class="btn-red" onclick="show('blocked')" style="margin-top:15px;">Назад</button>
-    </div>
-  </section>
-
-  <section class="screen" id="screen-blocked-chat">
-    <div class="auth-box">
-      <div class="chat-box" id="blocked-chat-box"></div>
-      <div id="blocked-chat-reply-area">
-        <textarea id="blocked-chat-reply-text" placeholder="Написать сообщение..." style="height:80px;"></textarea>
-        <button class="btn-primary" onclick="sendBlockedChatReply()" style="width:100%;">Отправить</button>
-      </div>
-      <button class="btn-red" onclick="openBlockedTickets()" style="margin-top:15px;">Назад к заявкам</button>
     </div>
   </section>
 
@@ -249,6 +238,18 @@
       <input type="password" id="new-password" placeholder="Новый пароль" autocomplete="new-password">
       <button class="btn-primary" onclick="changePassword()" style="width:100%;">Обновить пароль</button>
     </div>
+    
+    <!-- НОВАЯ КНОПКА МОИ ЗАЯВКИ -->
+    <div class="auth-box">
+      <h3 style="margin-bottom:15px;">Мои заявки в поддержку</h3>
+      <button class="btn-secondary" onclick="openMyTickets()">Посмотреть мои обращения</button>
+    </div>
+  </section>
+
+  <section class="screen" id="screen-my-tickets">
+    <button class="back-btn" onclick="show('profile')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
+    <h1 class="catalog-title" style="font-size: 24px;">Мои заявки</h1>
+    <div id="my-tickets-list"></div>
   </section>
 
   <section class="screen" id="screen-chats">
@@ -319,7 +320,6 @@
 
   const isAdmin = () => !!(currentUser && (currentUser.is_admin === true || currentUser.nickname === 'KupiGame'));
 
-  // Генератор звезд с половинами
   function renderStars(rating) {
     const r = parseFloat(rating);
     let html = `<div class="stars-container">`;
@@ -575,7 +575,6 @@
     if(!data || data.length === 0) {
         list.innerHTML = '<p>Товаров пока нет.</p>';
     } else {
-        // Группируем по категориям
         const categories = {};
         data.forEach(p => {
             const cat = p.category || 'Прочее';
@@ -583,7 +582,6 @@
             categories[cat].push(p);
         });
 
-        // Жесткий порядок категорий
         const order = ['Аккаунты', 'Услуги', 'Прочее'];
         let html = '';
         
@@ -604,7 +602,6 @@
             }
         });
         
-        // Если есть товары с другими категориями (не из списка), выводим их в конце
         Object.keys(categories).forEach(cat => {
             if (!order.includes(cat) && categories[cat].length > 0) {
                 html += `<div class="category-title">${esc(cat)}</div>`;
@@ -680,7 +677,6 @@
         document.getElementById('seller-avatar-img').innerHTML = `<img src="${esc(adminProfile.avatar)}">`;
     }
 
-    // Считаем рейтинг для карточки товара
     const { data: reviews } = await supabase.from('reviews').select('rating');
     let avg = 0;
     if (reviews && reviews.length > 0) {
@@ -701,7 +697,6 @@
     const { data: adminProfile } = await supabase.from('profiles').select('avatar').eq('nickname', 'KupiGame').single();
     const { data: reviews } = await supabase.from('reviews').select('*').order('created_at', { ascending: false });
     
-    // Считаем средний рейтинг
     let avg = 0;
     if (reviews && reviews.length > 0) {
         const sum = reviews.reduce((a, b) => a + b.rating, 0);
@@ -1269,6 +1264,41 @@
     `).join('');
     
     show('blocked-tickets');
+  };
+
+  // --- НОВОЕ: МОИ ЗАЯВКИ В ПРОФИЛЕ ---
+  window.openMyTickets = async () => {
+    const list = document.getElementById('my-tickets-list');
+    if (!currentUser) return;
+    
+    const { data, error } = await supabase.from('orders')
+        .select('*')
+        .eq('buyer_id', currentUser.id)
+        .eq('status', 'open')
+        .order('created_at', { ascending: false });
+        
+    if (error) {
+        list.innerHTML = '<p style="color:red;">Ошибка загрузки: ' + error.message + '</p>';
+        return;
+    }
+    
+    if (!data || data.length === 0) {
+        list.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:20px;">У вас нет активных обращений в поддержку.</p>';
+        show('my-tickets');
+        return;
+    }
+    
+    list.innerHTML = data.map(t => `
+      <div class="admin-block" style="cursor:pointer;" onclick="openTicketView(${t.id})">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <strong>Обращение #${t.id}</strong>
+          <span style="color:var(--accent); font-weight:bold;">Открыто</span>
+        </div>
+        <p style="font-size:13px; margin-top:5px; color:var(--text-muted);">${esc((t.message || '').substring(0, 50))}...</p>
+      </div>
+    `).join('');
+    
+    show('my-tickets');
   };
 
   window.sendBlockedChatReply = async () => {
