@@ -16,8 +16,27 @@
   body { background-color: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 80px; background-image: radial-gradient(circle at 0% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%), radial-gradient(circle at 100% 80%, rgba(56, 189, 248, 0.05) 0%, transparent 40%); background-attachment: fixed; }
   
   header { background: rgba(9, 9, 16, 0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; padding: 15px 20px; display: flex; align-items: flex-start; justify-content: space-between; border-bottom: 1px solid var(--border); width: 100%; }
-  .logo { font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 8px; cursor: pointer; color: #fff; }
-  .logo-icon { width: 20px; height: 20px; background: var(--primary); transform: rotate(45deg); border-radius: 4px; }
+  
+  .logo { font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 10px; cursor: pointer; color: #fff; }
+  .logo-icon { 
+    width: 24px; height: 24px; 
+    background: linear-gradient(135deg, #a78bfa, #7c3aed); 
+    transform: rotate(45deg); 
+    border-radius: 6px; 
+    box-shadow: 0 0 12px rgba(139, 92, 246, 0.6);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .logo-icon::after {
+    content: 'K'; position: absolute; transform: rotate(-45deg); 
+    font-size: 12px; font-weight: 900; color: #fff;
+  }
+  .logo-text {
+    background: linear-gradient(90deg, #fff, #d8b4fe);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 5px rgba(139, 92, 246, 0.3);
+  }
+
   .user-pill { background: var(--card); border: 1px solid var(--border); border-radius: 30px; padding: 5px 15px 5px 5px; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; }
   .btn-logout { background: var(--card); border: 1px solid var(--border); color: #fff; padding: 8px 15px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; width: 100%; }
   .nav-menu { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; font-size: 15px; font-weight: 600; }
@@ -33,7 +52,6 @@
   .screen.active { display: block; animation: fadeIn 0.4s ease-in-out; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   
-  /* ГЛАВНАЯ */
   .hero-container { position: relative; border-radius: 24px; overflow: hidden; background: linear-gradient(135deg, #12121a, #1a1a26); border: 1px solid var(--border); margin-bottom: 25px; box-shadow: 0 10px 40px rgba(139, 92, 246, 0.15); }
   .hero-bg-glow { position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at center, rgba(139, 92, 246, 0.15) 0%, transparent 60%); animation: rotateGlow 20s linear infinite; z-index: 0; }
   @keyframes rotateGlow { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -44,7 +62,7 @@
   .btn-hero:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 25px rgba(139, 92, 246, 0.7); }
   
   .features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
-  .feature-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 15px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+  .feature-card { background: linear-gradient(135deg, #1a1a26, #2a1a4a); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 16px; padding: 15px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.1); }
   .feature-icon { font-size: 24px; }
   .feature-title { font-weight: bold; font-size: 15px; background: linear-gradient(90deg, #fff, #d8b4fe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
   .feature-desc { font-size: 12px; color: var(--text-muted); }
@@ -145,7 +163,10 @@
 
 <header>
   <div class="logo-area">
-    <div class="logo" onclick="show('home')"><div class="logo-icon"></div> KupiGame</div>
+    <div class="logo" onclick="show('home')">
+      <div class="logo-icon"></div>
+      <span class="logo-text">KupiGame</span>
+    </div>
     <div id="user-area" class="hidden">
       <div class="user-pill">
         <div id="user-avatar" style="width:30px; height:30px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; font-weight:bold; overflow:hidden;">U</div>
@@ -196,7 +217,6 @@
     </div>
   </section>
 
-  <!-- ГЛАВНАЯ -->
   <section class="screen active" id="screen-home">
     <div class="hero-container">
       <div class="hero-bg-glow"></div>
@@ -278,7 +298,6 @@
       <button class="btn-primary" onclick="login()" style="width:100%;">Войти</button>
     </div>
   </section>
-
   <section class="screen" id="screen-register">
     <button class="back-btn" onclick="show('home')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
     <div class="auth-box">
@@ -306,10 +325,10 @@
       <button class="btn-primary" onclick="changePassword()" style="width:100%;">Обновить пароль</button>
     </div>
     
-    <div class="auth-box">
-      <h3 style="margin-bottom:15px;">Мои заявки в поддержку</h3>
-      <button class="btn-secondary" onclick="openMyTickets()" style="margin-bottom:10px;">Посмотреть мои обращения</button>
-      <button class="btn-primary" onclick="show('support')" style="width:100%;">Написать в поддержку</button>
+    <div class="auth-box" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+      <h3 style="margin-bottom:15px; width: 100%;">Мои заявки в поддержку</h3>
+      <button class="btn-secondary" onclick="openMyTickets()" style="margin-bottom:10px; font-size: 15px; padding: 12px; max-width: 300px;">Посмотреть мои обращения</button>
+      <button class="btn-primary" onclick="show('support')" style="width: 100%; max-width: 300px; font-size: 15px; padding: 12px;">Написать в поддержку</button>
     </div>
   </section>
 
@@ -481,8 +500,7 @@
         content.innerHTML = '<p style="color:red;">Ошибка загрузки: ' + e.message + '</p>';
     }
   }
-
-  async function checkBlockCounts() {
+async function checkBlockCounts() {
     const { count: blockedCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('is_blocked', true);
     const bEl = document.getElementById('blocked-count');
     if(bEl) bEl.textContent = blockedCount || 0;
@@ -564,7 +582,6 @@
     }
   }
 
-  // --- АВТОРИЗАЦИЯ ---
   window.register = async () => {
     const nick = document.getElementById('reg-nick').value.trim();
     const pass = document.getElementById('reg-pass').value;
@@ -630,7 +647,6 @@
     reader.readAsDataURL(file);
   }
 
-  // --- КАТАЛОГ ---
   async function loadGames() {
     const list = document.getElementById('games-list');
     const { data } = await supabase.from('games').select('*');
@@ -667,17 +683,14 @@
 
   function renderFilteredProducts(category) {
     const list = document.getElementById('products-list');
-    
     const filtered = currentProducts.filter(p => {
         const pCat = p.category || 'Аккаунты';
         return pCat === category;
     });
-
     if (filtered.length === 0) {
         list.innerHTML = '<div style="text-align:center; padding: 40px 20px; color:var(--text-muted); font-size:16px;">В этой категории пока нет товаров.</div>';
         return;
     }
-
     list.innerHTML = filtered.map(p => {
       const firstImage = (p.images && p.images.length > 0) ? p.images[0] : null;
       return `
@@ -694,17 +707,14 @@
   window.openProductDetail = async (id) => {
     const { data } = await supabase.from('products').select('*').eq('id', id).single();
     const content = document.getElementById('product-detail-content');
-    
     const images = data.images || []; 
     const imagesHtml = images.length > 0 ? `
       <div class="product-images">
         ${images.map(img => `<img src="${esc(img)}" onclick="window.open(this.src)">`).join('')}
       </div>
     ` : '';
-
     const titleColor = data.title_color || '#fff';
     const priceDisplay = data.price > 0 ? data.price + ' ₽' : 'Цена не указана';
-
     content.innerHTML = `
       <div class="seller-block" onclick="openSellerProfile('KupiGame')">
         <div class="seller-avatar" id="seller-avatar-img">K</div>
@@ -714,34 +724,27 @@
         </div>
         <div style="margin-left:auto; color:var(--text-muted);">→</div>
       </div>
-      
       <div class="detail-product">
         <div class="product-title-big" style="color:${esc(titleColor)}">${esc(data.title)}</div>
-        
         <div class="desc-container">
           <div class="desc-label">Краткое описание</div>
           <div class="desc-text">${esc(data.shortdesc || 'Краткое описание отсутствует')}</div>
         </div>
-
         <div class="desc-container">
           <div class="desc-label">Подробное описание</div>
           <div class="desc-text">${esc(data.description || 'Подробное описание отсутствует')}</div>
         </div>
-        
         ${imagesHtml}
-        
         <div class="action-block">
           <div class="price-display">${priceDisplay}</div>
           <button class="btn-primary" onclick="pay('${esc(data.paylink || '').replace(/'/g, "\\'")}')" style="width:100%;">Оплатить</button>
         </div>
       </div>
     `;
-
     const { data: adminProfile } = await supabase.from('profiles').select('avatar').eq('nickname', 'KupiGame').single();
     if(adminProfile && adminProfile.avatar) {
         document.getElementById('seller-avatar-img').innerHTML = `<img src="${esc(adminProfile.avatar)}">`;
     }
-
     const { data: reviews } = await supabase.from('reviews').select('rating');
     let avg = 0;
     if (reviews && reviews.length > 0) {
@@ -749,7 +752,6 @@
         avg = (sum / reviews.length).toFixed(1);
     }
     document.getElementById('detail-seller-stars').innerHTML = renderStars(avg);
-
     show('product-detail');
   }
 
@@ -760,30 +762,25 @@
     const { data: products } = await supabase.from('products').select('*');
     const { data: adminProfile } = await supabase.from('profiles').select('avatar').eq('nickname', 'KupiGame').single();
     const { data: reviews } = await supabase.from('reviews').select('*').order('created_at', { ascending: false });
-    
     let avg = 0;
     if (reviews && reviews.length > 0) {
         const sum = reviews.reduce((a, b) => a + b.rating, 0);
         avg = (sum / reviews.length).toFixed(1);
     }
-
     const avatarHtml = adminProfile && adminProfile.avatar 
       ? `<img src="${esc(adminProfile.avatar)}" style="width:100%; height:100%; object-fit:cover;">` 
       : 'K';
-
     const content = document.getElementById('seller-profile-content');
     content.innerHTML = `
       <div class="auth-box" style="text-align:center;">
         <div style="width:80px; height:80px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; font-size:36px; margin:0 auto 15px; overflow:hidden;">${avatarHtml}</div>
         <h2 style="margin-bottom:5px;">${esc(nickname)}</h2>
         <p style="color:var(--text-muted); font-size:14px; margin-bottom:15px;">Владелец магазина · проверенный продавец</p>
-        
         <div style="font-size:24px; margin-bottom:10px; display:flex; justify-content:center;">
             ${renderStars(avg)}
         </div>
         <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px;">Рейтинг: ${avg} · товаров: ${products ? products.length : 0}</p>
       </div>
-      
       <h3 style="margin-bottom:15px;">Отзывы (${reviews ? reviews.length : 0})</h3>
       <div>
         ${(!reviews || reviews.length === 0) ? '<p style="color:var(--text-muted); font-size:14px;">Отзывов пока нет.</p>' : reviews.map(r => `
@@ -800,7 +797,6 @@
           </div>
         `).join('')}
       </div>
-
       <h3 style="margin:20px 0 15px; display:flex; justify-content:space-between;">Товары продавца (${products ? products.length : 0}) <button class="btn-primary" style="width:auto; padding:5px 15px; font-size:13px;" onclick="show('catalog')">Каталог</button></h3>
       <div id="seller-products-list">
         ${(products || []).map(p => `
@@ -820,8 +816,7 @@
     if(!/^https?:\/\//i.test(link)) return alert('Некорректная ссылка.');
     window.open(link, '_blank'); 
   }
-
-  // --- АДМИНКА ---
+// --- АДМИНКА ---
   async function loadAdminGames(container) {
     const { data } = await supabase.from('games').select('*');
     container.innerHTML = `
@@ -1004,7 +999,7 @@
         <h3>${esc(data.nickname)}</h3>
         <p style="margin-bottom:10px;">Статус: ${data.is_blocked ? '<span style="color:red;">Заблокирован</span>' : 'Активен'}</p>
         
-        <h4 style="margin-bottom:10px;">Сменить пароль</h4>
+        <h4 style="margin-bottom:10px;">Сменить пароль (в один клик)</h4>
         <input type="password" id="admin-new-pass" placeholder="Новый пароль">
         <button class="btn-primary" onclick="adminChangeUserPass('${data.id}')" style="width:auto; padding:6px 12px;">Сменить</button>
         
@@ -1021,6 +1016,21 @@
         }
       </div>
     `;
+  }
+  window.adminChangeUserPass = async (targetUserId) => {
+    const newPass = document.getElementById('admin-new-pass').value;
+    if (newPass.length < 6) return alert('Пароль должен быть минимум 6 символов');
+    
+    const { data, error } = await supabase.functions.invoke('admin-set-password', {
+        body: { targetUserId: targetUserId, newPassword: newPass }
+    });
+
+    if (error) {
+        alert('Ошибка смены пароля (проверьте, задеплоена ли функция): ' + error.message);
+    } else {
+        alert('Пароль успешно изменен!');
+        document.getElementById('admin-new-pass').value = '';
+    }
   }
 
   window.adminSendChat = async (userId) => {
@@ -1072,8 +1082,7 @@
     document.getElementById('search-nick').value = nick;
     searchUser(); checkBlockCounts();
   }
-
-  async function loadBlockedUsers(container) {
+async function loadBlockedUsers(container) {
     const { data } = await supabase.from('profiles').select('*').eq('is_blocked', true);
     container.innerHTML = (data || []).map(u => `
       <div class="admin-block" style="display:flex; justify-content:space-between; align-items:center;">
@@ -1289,7 +1298,6 @@
     if(isAdminView) openAdminTicket(currentTicketId); else openTicketView(currentTicketId);
   }
 
-  // --- ПОДДЕРЖКА ---
   window.sendTicket = async () => {
     if(!currentUser) return alert('Войдите в аккаунт!');
     const text = document.getElementById('support-text').value;
@@ -1315,7 +1323,6 @@
     show('blocked');
   }
 
-  // --- БЛОКИРОВАННЫЕ: МОИ ЗАЯВКИ ---
   window.openBlockedTickets = async () => {
     const list = document.getElementById('blocked-tickets-list');
     if (!currentUser) return;
@@ -1356,7 +1363,6 @@
     show('blocked-tickets');
   };
 
-  // --- НОВОЕ: МОИ ЗАЯВКИ В ПРОФИЛЕ ---
   window.openMyTickets = async () => {
     const list = document.getElementById('my-tickets-list');
     if (!currentUser) return;
@@ -1397,7 +1403,6 @@
     show('my-tickets');
   };
 
-  // ЖЕСТКО ВСТРОЕННАЯ ФУНКЦИЯ ЗАГРУЗКИ РАЗБЛОКИРОВОК
   async function loadAdminUnblockRequests(container) {
     const { data } = await supabase.from('orders').select('*').eq('status', 'unblock_request');
     container.innerHTML = (data || []).map(t => `
@@ -1413,13 +1418,6 @@
       </div>
     `).join('');
   }
-
-  window.sendBlockedChatReply = async () => {
-    alert('Функция временно недоступна.');
-  };
-  window.adminChangeUserPass = async (id) => {
-    alert('Смена пароля другому пользователю недоступна.');
-  };
 
   const docs = {
     privacy: { title: "Политика конфиденциальности", text: "1. Мы собираем только ваш ник.\n2. Мы не передаем данные.\n3. База защищена.\n4. Мы не крадем данные.\n5. Вы можете удалить аккаунт.\n6. Cookies используются для входа.\n7. Мы не продаем данные.\n8. Данные хранятся в Supabase.\n9. Доступ только у админа.\n10. Пароли зашифрованы.\n11. Мы не следим за вами.\n12. Данные не передаются третьим лицам.\n13. Вы можете запросить удаление.\n14. Мы соблюдаем законы.\n15. Ваши данные защищены." },
@@ -1530,9 +1528,7 @@
   }
 
   async function applyHero() {
-    // Баннер убран
   }
-
   async function init() {
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
