@@ -1014,7 +1014,7 @@ window.openProductDetail = async (id) => {
     `).join('');
   }
 
-window.updateThemeOrder = async (gameName, categoryName, newOrder) => {
+  window.updateThemeOrder = async (gameName, categoryName, newOrder) => {
     const order = Number(newOrder);
     if(!order) return;
     const { error } = await supabase.from('products').update({ category_order: order }).eq('game', gameName).eq('category', categoryName);
@@ -1034,10 +1034,8 @@ window.updateThemeOrder = async (gameName, categoryName, newOrder) => {
         renderGameThemes();
         updateCategoryOptions();
     }
-    window.themesByGame = newThemesByGame;
-    renderGameThemes();
-    updateCategoryOptions();
   }
+
   window.deleteThemeFromGame = async (gameName, categoryName) => {
     const { count } = await supabase.from('products').select('*', { count: 'exact', head: true }).eq('game', gameName).eq('category', categoryName);
     
@@ -1061,7 +1059,90 @@ window.updateThemeOrder = async (gameName, categoryName, newOrder) => {
     renderGameThemes();
     updateCategoryOptions();
   }
-// --- АДМИНКА: ТЕМАТИКИ ---
+
+  window.saveProduct = async () => {
+    const id = document.getElementById('edit-product-id').value;
+    const game = document.getElementById('admin-game-select').value;
+    const category = document.getElementById('admin-category-input').value.trim() || 'Прочее';
+    const category_order = Number(document.getElementById('admin-category-order').value) || 1;
+    const title = document.getElementById('admin-title').value;
+    const color = document.getElementById('admin-color').value;
+    const price = document.getElementById('admin-price').value;
+    const shortdesc = document.getElementById('admin-shortdesc').value;
+    const desc = document.getElementById('admin-desc').value;
+    const paylink = document.getElementById('admin-paylink').value;
+    const files = document.getElementById('product-img-upload').files;
+
+    if(!title || !game) return alert('Заполните название и игру');
+
+    let imagesBase64 = [];
+    if(files.length > 10) return alert('Максимум 10 картинок');
+    
+    if(files.length > 0) {
+      for (let i = 0; i < files.length; i++) {
+        const b64 = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result);
+          reader.readAsDataURL(files[i]);
+        });
+        imagesBase64.push(b64);
+      }
+    }
+
+    if(id) {
+      const updateData = { title, title_color: color, price: Number(price), shortdesc, description: desc, paylink, category, category_order };
+      if(imagesBase64.length > 0) updateData.images = imagesBase64;
+      const { error } = await supabase.from('products').update(updateData).eq('id', id);
+      if(error) alert('Ошибка: ' + error.message); else { alert('Товар обновлен!'); switchAdminTab('products', document.querySelectorAll('.admin-tab')[1]); }
+    } else {
+      const { error } = await supabase.from('products').insert([{ 
+        game, title, title_color: color, price: Number(price), shortdesc, description: desc, paylink, images: imagesBase64, category, category_order
+      }]);
+      if(error) alert('Ошибка: ' + error.message); else { alert('Товар добавлен!'); switchAdminTab('products', document.querySelectorAll('.admin-tab')[1]); }
+    }
+  }
+
+  window.editProduct = async (id) => {
+    const { data } = await supabase.from('products').select('*').eq('id', id).single();
+    document.getElementById('edit-product-id').value = id;
+    document.getElementById('admin-game-select').value = data.game;
+    document.getElementById('admin-category-input').value = data.category || 'Прочее';
+    document.getElementById('admin-category-order').value = data.category_order || 1;
+    document.getElementById('admin-title').value = data.title;
+    document.getElementById('admin-color').value = data.title_color || '#fbbf24';
+    document.getElementById('admin-price').value = data.price || '';
+    document.getElementById('admin-shortdesc').value = data.shortdesc || '';
+    document.getElementById('admin-desc').value = data.description || '';
+    document.getElementById('admin-paylink').value = data.paylink || '';
+    
+    document.getElementById('product-form-title').textContent = 'Редактировать товар';
+    document.getElementById('product-submit-btn').textContent = 'Сохранить изменения';
+    document.getElementById('product-cancel-btn').classList.remove('hidden');
+    window.scrollTo(0, 0);
+  }
+
+  window.resetProductForm = () => {
+    document.getElementById('edit-product-id').value = '';
+    document.getElementById('admin-title').value = '';
+    document.getElementById('admin-price').value = '';
+    document.getElementById('admin-shortdesc').value = '';
+    document.getElementById('admin-desc').value = '';
+    document.getElementById('admin-paylink').value = '';
+    document.getElementById('admin-category-input').value = '';
+    document.getElementById('admin-category-order').value = '1';
+    document.getElementById('product-img-upload').value = '';
+    document.getElementById('product-form-title').textContent = 'Добавить товар';
+    document.getElementById('product-submit-btn').textContent = 'Опубликовать';
+    document.getElementById('product-cancel-btn').classList.add('hidden');
+  }
+
+  window.deleteProductAdmin = async (id) => {
+    if(!confirm('Удалить товар?')) return;
+    await supabase.from('products').delete().eq('id', id);
+    switchAdminTab('products', document.querySelectorAll('.admin-tab')[1]);
+  }
+
+  // --- АДМИНКА: ТЕМАТИКИ ---
   async function loadAdminThemes(container) {
     container.innerHTML = `
       <div class="admin-block">
