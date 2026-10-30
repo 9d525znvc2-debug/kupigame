@@ -463,7 +463,6 @@
     tabsContainer.innerHTML = `
       <button class="admin-tab active" onclick="switchAdminTab('games', this)">Игры</button>
       <button class="admin-tab" onclick="switchAdminTab('products', this)">Товары</button>
-      <button class="admin-tab" onclick="switchAdminTab('themes', this)">Тематики</button>
       <button class="admin-tab" onclick="switchAdminTab('people', this)">Люди</button>
       <button class="admin-tab" onclick="switchAdminTab('blocked', this)">Заблокированные (<span id="blocked-count">0</span>)</button>
       <button class="admin-tab" onclick="switchAdminTab('unblock-requests', this)">Разблокировка (<span id="unblock-count">0</span>)</button>
@@ -909,31 +908,31 @@ window.openProductDetail = async (id) => {
     const { data: games } = await supabase.from('games').select('*');
     const { data: products } = await supabase.from('products').select('*');
     
-    // Получаем уникальные тематики, которые уже есть
-    const { data: allProds } = await supabase.from('products').select('category, category_order');
-    const uniqueThemes = {};
-    (allProds || []).forEach(p => {
+    const themesByGame = {};
+    (products || []).forEach(p => {
+        const g = p.game || 'Без игры';
         const cat = p.category || 'Прочее';
-        if (!uniqueThemes[cat] || uniqueThemes[cat] > (p.category_order || 1)) {
-            uniqueThemes[cat] = p.category_order || 1;
+        const order = p.category_order || 1;
+        if (!themesByGame[g]) themesByGame[g] = {};
+        if (!themesByGame[g][cat] || themesByGame[g][cat] > order) {
+            themesByGame[g][cat] = order;
         }
     });
-    const themeOptions = Object.keys(uniqueThemes).sort((a,b) => uniqueThemes[a] - uniqueThemes[b]).map(cat => `<option value="${esc(cat)}">${esc(cat)} (Порядок: ${uniqueThemes[cat]})</option>`).join('');
 
     container.innerHTML = `
       <div class="admin-block">
         <h3 id="product-form-title" style="margin-bottom:15px;">Добавить товар</h3>
-        <select id="admin-game-select">
+        <select id="admin-game-select" onchange="updateCategoryOptions()">
+            <option value="">-- Выберите игру --</option>
             ${(games || []).map(g => `<option value="${esc(g.name)}">${esc(g.name)}</option>`).join('')}
         </select>
         
         <div style="background:var(--bg); padding:15px; border-radius:10px; border:1px solid var(--border); margin-bottom:15px;">
-            <label style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:5px;">Выберите существующую тематику:</label>
+            <label style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:5px;">Выберите тематику для этой игры:</label>
             <select id="admin-category-select" onchange="document.getElementById('admin-category-input').value = this.value">
-                <option value="">-- Новая тематика --</option>
-                ${themeOptions}
+                <option value="">-- Сначала выберите игру --</option>
             </select>
-            <label style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:5px;">Или введите название:</label>
+            <label style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:5px;">Или введите новую:</label>
             <input type="text" id="admin-category-input" placeholder="Например: Аккаунты">
             <label style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:5px;">Порядок (1, 2, 3...):</label>
             <input type="number" id="admin-category-order" value="1" min="1">
@@ -955,7 +954,7 @@ window.openProductDetail = async (id) => {
         <h3>Существующие товары</h3>
         ${(products || []).map(p => `
           <div style="background:var(--card); padding:15px; border-radius:10px; margin-top:10px; display:flex; justify-content:space-between; align-items:center;">
-            <span>${esc(p.title)} — ${p.price}₽ <span style="font-size:10px; color:gray;">(${esc(p.category || 'Прочее')}, пор: ${p.category_order || 1})</span></span>
+            <span>${esc(p.title)} — ${p.price}₽ <span style="font-size:10px; color:gray;">(${esc(p.game || 'Без игры')} / ${esc(p.category || 'Прочее')}, пор: ${p.category_order || 1})</span></span>
             <div>
               <button onclick="editProduct(${p.id})" style="color:var(--accent); background:none; border:none; margin-right:10px;">Ред.</button>
               <button onclick="deleteProductAdmin(${p.id})" style="color:red; background:none; border:none;">Удалить</button>
@@ -963,134 +962,113 @@ window.openProductDetail = async (id) => {
           </div>
         `).join('')}
       </div>
+      <div class="admin-block" style="margin-top:20px;">
+        <h3 style="margin-bottom:15px;">Управление тематиками</h3>
+        <select id="theme-game-select" onchange="renderGameThemes()">
+            <option value="">-- Выберите игру --</option>
+            ${(games || []).map(g => `<option value="${esc(g.name)}">${esc(g.name)}</option>`).join('')}
+        </select>
+        <div id="themes-manager-list" style="margin-top:15px;"></div>
+      </div>
     `;
+    
+    window.themesByGame = themesByGame;
+    window.updateCategoryOptions();
   }
 
-  window.saveProduct = async () => {
-    const id = document.getElementById('edit-product-id').value;
+  window.updateCategoryOptions = () => {
     const game = document.getElementById('admin-game-select').value;
-    const category = document.getElementById('admin-category-input').value.trim() || 'Прочее';
-    const category_order = Number(document.getElementById('admin-category-order').value) || 1;
-    const title = document.getElementById('admin-title').value;
-    const color = document.getElementById('admin-color').value;
-    const price = document.getElementById('admin-price').value;
-    const shortdesc = document.getElementById('admin-shortdesc').value;
-    const desc = document.getElementById('admin-desc').value;
-    const paylink = document.getElementById('admin-paylink').value;
-    const files = document.getElementById('product-img-upload').files;
-
-    if(!title || !game) return alert('Заполните название и игру');
-
-    let imagesBase64 = [];
-    if(files.length > 10) return alert('Максимум 10 картинок');
+    const catSelect = document.getElementById('admin-category-select');
+    const themes = window.themesByGame[game] || {};
     
-    if(files.length > 0) {
-      for (let i = 0; i < files.length; i++) {
-        const b64 = await new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onload = (e) => resolve(e.target.result);
-          reader.readAsDataURL(files[i]);
+    catSelect.innerHTML = '<option value="">-- Новая тематика --</option>' + 
+        Object.keys(themes).sort((a,b) => themes[a] - themes[b]).map(cat => 
+            `<option value="${esc(cat)}">${esc(cat)} (Порядок: ${themes[cat]})</option>`
+        ).join('');
+  }
+
+  window.renderGameThemes = () => {
+    const game = document.getElementById('theme-game-select').value;
+    const list = document.getElementById('themes-manager-list');
+    
+    if (!game) {
+        list.innerHTML = '<p style="color:var(--text-muted);">Выберите игру, чтобы увидеть её тематики.</p>';
+        return;
+    }
+
+    const themes = window.themesByGame[game] || {};
+    if (Object.keys(themes).length === 0) {
+        list.innerHTML = '<p style="color:var(--text-muted);">У этой игры пока нет тематик. Создайте их при добавлении товара.</p>';
+        return;
+    }
+
+    list.innerHTML = Object.keys(themes).sort((a,b) => themes[a] - themes[b]).map(cat => `
+      <div class="theme-item">
+        <span>${esc(cat)}</span>
+        <div class="theme-controls">
+          <label style="font-size:12px;">Порядок:</label>
+          <input type="number" value="${themes[cat]}" min="1" onchange="updateThemeOrder('${esc(game).replace(/'/g, "\\'")}', '${esc(cat).replace(/'/g, "\\'")}', this.value)">
+          <button onclick="deleteThemeFromGame('${esc(game).replace(/'/g, "\\'")}', '${esc(cat).replace(/'/g, "\\'")}')" style="color:red; background:none; border:none; cursor:pointer; font-size:12px; margin-left:10px;">Удалить</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+window.updateThemeOrder = async (gameName, categoryName, newOrder) => {
+    const order = Number(newOrder);
+    if(!order) return;
+    const { error } = await supabase.from('products').update({ category_order: order }).eq('game', gameName).eq('category', categoryName);
+    if (error) alert('Ошибка обновления: ' + error.message);
+    else {
+        alert('Порядок тематики обновлен!');
+        const { data } = await supabase.from('products').select('game, category, category_order');
+        const newThemesByGame = {};
+        (data || []).forEach(p => {
+            const g = p.game || 'Без игры';
+            const cat = p.category || 'Прочее';
+            const ord = p.category_order || 1;
+            if (!newThemesByGame[g]) newThemesByGame[g] = {};
+            if (!newThemesByGame[g][cat] || newThemesByGame[g][cat] > ord) newThemesByGame[g][cat] = ord;
         });
-        imagesBase64.push(b64);
-      }
+        window.themesByGame = newThemesByGame;
+        renderGameThemes();
+        updateCategoryOptions();
+    }
+    window.themesByGame = newThemesByGame;
+    renderGameThemes();
+    updateCategoryOptions();
+  }
+  window.deleteThemeFromGame = async (gameName, categoryName) => {
+    const { count } = await supabase.from('products').select('*', { count: 'exact', head: true }).eq('game', gameName).eq('category', categoryName);
+    
+    if (count > 0) {
+        return alert(`Нельзя удалить тематику "${categoryName}" в игре "${gameName}", так как в ней есть товары (${count} шт). Сначала удалите или перенесите эти товары.`);
     }
 
-    if(id) {
-      const updateData = { title, title_color: color, price: Number(price), shortdesc, description: desc, paylink, category, category_order };
-      if(imagesBase64.length > 0) updateData.images = imagesBase64;
-      const { error } = await supabase.from('products').update(updateData).eq('id', id);
-      if(error) alert('Ошибка: ' + error.message); else { alert('Товар обновлен!'); switchAdminTab('products', document.querySelectorAll('.admin-tab')[1]); }
-    } else {
-      const { error } = await supabase.from('products').insert([{ 
-        game, title, title_color: color, price: Number(price), shortdesc, description: desc, paylink, images: imagesBase64, category, category_order
-      }]);
-      if(error) alert('Ошибка: ' + error.message); else { alert('Товар добавлен!'); switchAdminTab('products', document.querySelectorAll('.admin-tab')[1]); }
-    }
-  }
+    if(!confirm(`Удалить пустую тематику "${categoryName}" в игре "${gameName}"?`)) return;
 
-  window.editProduct = async (id) => {
-    const { data } = await supabase.from('products').select('*').eq('id', id).single();
-    document.getElementById('edit-product-id').value = id;
-    document.getElementById('admin-game-select').value = data.game;
-    document.getElementById('admin-category-input').value = data.category || 'Прочее';
-    document.getElementById('admin-category-order').value = data.category_order || 1;
-    document.getElementById('admin-title').value = data.title;
-    document.getElementById('admin-color').value = data.title_color || '#fbbf24';
-    document.getElementById('admin-price').value = data.price || '';
-    document.getElementById('admin-shortdesc').value = data.shortdesc || '';
-    document.getElementById('admin-desc').value = data.description || '';
-    document.getElementById('admin-paylink').value = data.paylink || '';
-    
-    document.getElementById('product-form-title').textContent = 'Редактировать товар';
-    document.getElementById('product-submit-btn').textContent = 'Сохранить изменения';
-    document.getElementById('product-cancel-btn').classList.remove('hidden');
-    window.scrollTo(0, 0);
-  }
-
-  window.resetProductForm = () => {
-    document.getElementById('edit-product-id').value = '';
-    document.getElementById('admin-title').value = '';
-    document.getElementById('admin-price').value = '';
-    document.getElementById('admin-shortdesc').value = '';
-    document.getElementById('admin-desc').value = '';
-    document.getElementById('admin-paylink').value = '';
-    document.getElementById('admin-category-input').value = '';
-    document.getElementById('admin-category-order').value = '1';
-    document.getElementById('product-img-upload').value = '';
-    document.getElementById('product-form-title').textContent = 'Добавить товар';
-    document.getElementById('product-submit-btn').textContent = 'Опубликовать';
-    document.getElementById('product-cancel-btn').classList.add('hidden');
-  }
-
-  window.deleteProductAdmin = async (id) => {
-    if(!confirm('Удалить товар?')) return;
-    await supabase.from('products').delete().eq('id', id);
-    switchAdminTab('products', document.querySelectorAll('.admin-tab')[1]);
-  }
-
-  // --- АДМИНКА: ТЕМАТИКИ ---
-  async function loadAdminThemes(container) {
-    const { data } = await supabase.from('products').select('category, category_order');
-    
-    // Группируем уникальные тематики
-    const themesMap = {};
+    alert('Тематика удалена!');
+    const { data } = await supabase.from('products').select('game, category, category_order');
+    const newThemesByGame = {};
     (data || []).forEach(p => {
+        const g = p.game || 'Без игры';
         const cat = p.category || 'Прочее';
-        const order = p.category_order || 1;
-        if (!themesMap[cat] || themesMap[cat] > order) {
-            themesMap[cat] = order;
-        }
+        const ord = p.category_order || 1;
+        if (!newThemesByGame[g]) newThemesByGame[g] = {};
+        if (!newThemesByGame[g][cat] || newThemesByGame[g][cat] > ord) newThemesByGame[g][cat] = ord;
     });
-
+    window.themesByGame = newThemesByGame;
+    renderGameThemes();
+    updateCategoryOptions();
+  }
+// --- АДМИНКА: ТЕМАТИКИ ---
+  async function loadAdminThemes(container) {
     container.innerHTML = `
       <div class="admin-block">
         <h3 style="margin-bottom:15px;">Управление тематиками</h3>
-        <p style="font-size:13px; color:var(--text-muted); margin-bottom:15px;">Здесь можно изменить порядок отображения тематик в каталоге (1 - первая, 2 - вторая и т.д.). Названия тематик меняются в самих товарах.</p>
-        <div class="theme-list">
-          ${Object.keys(themesMap).map(cat => `
-            <div class="theme-item">
-              <span>${esc(cat)}</span>
-              <div class="theme-controls">
-                <label style="font-size:12px;">Порядок:</label>
-                <input type="number" value="${themesMap[cat]}" min="1" onchange="updateThemeOrder('${esc(cat).replace(/'/g, "\\'")}', this.value)">
-              </div>
-            </div>
-          `).join('')}
-        </div>
+        <p style="color:var(--text-muted);">Тематики теперь привязаны к играм. Зайдите во вкладку «Товары», выберите игру, и там вы сможете добавлять и удалять тематики для этой конкретной игры.</p>
       </div>
     `;
-  }
-
-  window.updateThemeOrder = async (categoryName, newOrder) => {
-    const order = Number(newOrder);
-    if(!order) return;
-    // Обновляем порядок у ВСЕХ товаров этой категории
-    const { error } = await supabase.from('products').update({ category_order: order }).eq('category', categoryName);
-    if (error) {
-        alert('Ошибка обновления: ' + error.message);
-    } else {
-        alert('Порядок тематики обновлен!');
-    }
   }
 // --- АДМИНКА: ЛЮДИ ---
   async function loadAdminPeople(container) {
@@ -1103,7 +1081,6 @@ window.openProductDetail = async (id) => {
       <div id="user-search-result"></div>
     `;
   }
-
   window.searchUser = async () => {
     const nick = document.getElementById('search-nick').value;
     const { data } = await supabase.from('profiles').select('*').eq('nickname', nick).single();
