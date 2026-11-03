@@ -54,8 +54,7 @@
   @media (max-width: 600px) {
     header { flex-direction: column; align-items: stretch; padding: 10px; gap: 15px; }
     .header-top { width: 100%; }
-    .auth-area, .profile-dropdown { width: 100%; justify-content: flex-end; margin-left: 0;
-}
+    .auth-area, .profile-dropdown { width: 100%; justify-content: flex-end; margin-left: 0; }
     .auth-area { margin-top: 5px; }
     .auth-btn { flex: 1; text-align: center; justify-content: center; padding: 10px; }
     .profile-trigger { width: 100%; justify-content: center; }
@@ -87,73 +86,25 @@
   .btn-tg { background: #229ED9; color: #fff; padding: 14px 24px; border-radius: 12px; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; width: 100%; font-size: 16px; box-shadow: 0 4px 15px rgba(34, 158, 217, 0.3); }
   .btn-tg:hover { background: #1a7fb3; transform: translateY(-2px); }
   
-  /* ФОН КАТАЛОГА (ИЗ АДМИНКИ) */
-  .bg-catalog-layer { 
-    position: fixed; 
-    top: 0; left: 0; 
-    width: 100vw; height: 100vh; 
-    background-size: cover; 
-    background-position: center; 
-    z-index: -1; 
-    opacity: 0; 
-    transition: opacity 0.5s ease; 
-    pointer-events: none; 
-  }
+  /* ФОН КАТАЛОГА */
+  .bg-catalog-layer { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-size: cover; background-position: center; z-index: -1; opacity: 0; transition: opacity 0.5s ease; pointer-events: none; }
   .bg-catalog-layer.active { opacity: 1; }
-  .bg-catalog-layer::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(180deg, rgba(9,9,16,0.95) 0%, rgba(9,9,16,0.4) 25%, rgba(9,9,16,0.2) 50%, rgba(9,9,16,0.4) 75%, rgba(9,9,16,0.95) 100%);
-  }
+  .bg-catalog-layer::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(180deg, rgba(9,9,16,0.95) 0%, rgba(9,9,16,0.4) 25%, rgba(9,9,16,0.2) 50%, rgba(9,9,16,0.4) 75%, rgba(9,9,16,0.95) 100%); }
 
   .games-grid-container { position: relative; z-index: 2; }
   
-  /* Карточки стали выше под большие иконки */
-  .game-card {
-    position: relative;
-    border-radius: 12px;
-    overflow: hidden;
-    margin-bottom: 10px;
-    cursor: pointer;
-    min-height: 85px; 
-    background: rgba(30, 20, 50, 0.4); 
-    backdrop-filter: blur(10px); 
-    border: 1px solid rgba(139, 92, 246, 0.3); 
-    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-    display: flex;
-    align-items: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-  }
-  .game-card:hover { 
-    transform: translateY(-2px); 
-    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4); 
-    border-color: rgba(139, 92, 246, 0.8); 
-  }
-  
+  .game-card { position: relative; border-radius: 12px; overflow: hidden; margin-bottom: 10px; cursor: pointer; min-height: 85px; background: rgba(30, 20, 50, 0.4); backdrop-filter: blur(10px); border: 1px solid rgba(139, 92, 246, 0.3); transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; display: flex; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+  .game-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4); border-color: rgba(139, 92, 246, 0.8); }
   .game-card-content { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 10px 15px; }
   .game-card-left { display: flex; align-items: center; gap: 15px; }
   
-  /* Увеличенные иконки с единой рамкой для всех */
-  .game-card-icon { 
-    width: 60px; 
-    height: 60px; 
-    border-radius: 12px; 
-    background: #1a1a26; /* Темная подложка, чтобы белые фоны картинок смотрелись органично */
-    object-fit: cover; 
-    border: 1.5px solid rgba(139, 92, 246, 0.5); /* Фиолетовая рамка для всех */
-    box-shadow: 0 4px 10px rgba(0,0,0,0.5); 
-    flex-shrink: 0; 
-  }
-  .game-card-icon-fallback { width: 60px; height: 60px; border-radius: 12px; background: rgba(139, 92, 246, 0.2); display: flex; align-items: center; justify-content: center; font-size: 24px; border: 1.5px solid rgba(139, 92, 246, 0.5); flex-shrink: 0; }
+  .game-card-icon { width: 60px; height: 60px; border-radius: 12px; background: #12121a; object-fit: cover; border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 4px 10px rgba(0,0,0,0.5); flex-shrink: 0; }
+  .game-card-icon-fallback { width: 60px; height: 60px; border-radius: 12px; background: rgba(139, 92, 246, 0.2); display: flex; align-items: center; justify-content: center; font-size: 24px; border: 1px solid rgba(139, 92, 246, 0.5); flex-shrink: 0; }
   
   .game-card-title { font-weight: 700; font-size: 16px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
   .game-card-arrow { color: #fff; font-size: 18px; opacity: 0.8; }
 
-  /* Сдвиг каталога вниз, чтобы фон был виден сверху */
-  #screen-catalog {
-    padding-top: 60px;
-  }
+  #screen-catalog { padding-top: 60px; }
 
   .category-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; position: relative; z-index: 2; }
   .category-tab { background: rgba(18, 18, 26, 0.8); backdrop-filter: blur(10px); border: 1px solid var(--border); color: var(--text-muted); padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 15px; transition: all 0.2s; white-space: nowrap; }
@@ -224,7 +175,7 @@
   .unread-badge { background: var(--accent); color: #fff; font-size: 13px; font-weight: bold; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .unread-badge.orange { background: var(--orange); }
   .chat-box { background: var(--bg); border-radius: 12px; padding: 15px; margin-bottom: 15px; max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-  .chat-msg { max-width: 80%; padding: 10px 15px; border-radius: 12px; font-size: 14px; line-height: 1.4; }
+  .chat-msg { max-width: 80%; padding: 10px 15px; border-radius: 12px; font-size: 14px; line-height: 1.4; white-space: pre-wrap; }
   .chat-msg.my-msg { background: var(--primary); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
   .chat-msg.their-msg { background: #1a1a26; border: 1px solid var(--border); align-self: flex-start; border-bottom-left-radius: 2px; }
   .msg-sender { font-size: 11px; margin-bottom: 4px; font-weight: bold; opacity: 0.9; display: flex; align-items: center; gap: 5px; color: #c8c8d8; }
@@ -432,8 +383,8 @@
     
     <div class="auth-box">
       <h3 style="margin-bottom:15px; text-align:center;">Мои заявки в поддержку</h3>
-      <button class="btn-secondary" onclick="openMyTickets()" style="margin-bottom:10px;">Посмотреть мои обращения</button>
-      <button class="btn-primary" onclick="show('support')" style="width:100%;">Написать в поддержку</button>
+      <button class="btn-secondary" onclick="openMyTickets()" style="margin-bottom:10px; width: 100%; max-width: none;">Посмотреть мои обращения</button>
+      <button class="btn-primary" onclick="show('support')" style="width: 100%; max-width: none;">Написать в поддержку</button>
     </div>
   </section>
 
@@ -1767,10 +1718,15 @@ window.goBackFromTicket = () => {
     if(!reason) return alert('Напишите причину');
     if(!currentUser) return alert('Ошибка: вы не авторизованы');
 
+    const blockReason = document.getElementById('block-reason').textContent;
+    
+    // ИСПРАВЛЕНО: Добавлены переносы строк \n для каждого пункта
+    const message = `Ник: ${currentUser.nickname}\nПричина: ${blockReason}\nПочему не согласен: ${reason}`;
+
     const { error } = await supabase.from('orders').insert([{ 
       buyer_id: currentUser.id, 
       status: 'unblock_request', 
-      message: `Ник: ${currentUser.nickname}\nПричина: ${document.getElementById('block-reason').textContent}\nПочему не согласен: ${reason}`
+      message: message
     }]);
     
     if(error) { alert('ОШИБКА БАЗЫ: ' + error.message); return; }
