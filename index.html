@@ -27,7 +27,7 @@
   .nav-menu button.admin { color: #fbbf24; }
   #logout-btn { margin-top: 0; width: 100%; text-align: center; }
   .nav-badge { background: var(--accent); color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 10px; margin-left: 5px; font-weight: bold; display: inline-block; vertical-align: middle; }
-  main { max-width: 800px; margin: 0 auto; padding: 20px; }
+  main { max-width: 800px; margin: 0 auto; padding: 20px; position: relative; z-index: 10; }
   .screen { display: none; }
   .screen.active { display: block; animation: fadeIn 0.4s ease-in-out; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -48,20 +48,113 @@
   .tg-card p { font-weight: bold; font-size: 16px; margin-bottom: 15px; background: linear-gradient(90deg, #fff, #d8b4fe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
   .btn-tg { background: #229ED9; color: #fff; padding: 14px 24px; border-radius: 12px; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; width: 100%; font-size: 16px; box-shadow: 0 4px 15px rgba(34, 158, 217, 0.3); }
   .btn-tg:hover { background: #1a7fb3; transform: translateY(-2px); }
-  .game-row { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 15px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; cursor: pointer; transition: transform 0.2s; }
-  .game-row:hover { transform: translateX(5px); border-color: var(--primary); }
-  .game-img { width: 50px; height: 50px; border-radius: 12px; object-fit: contain; background: #1a1a26; display: flex; align-items: center; justify-content: center; font-size: 24px; overflow: hidden; }
-  .game-img img { width: 100%; height: 100%; border-radius: 12px; object-fit: cover; }
-  .category-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
-  .category-tab { background: var(--card); border: 1px solid var(--border); color: var(--text-muted); padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 15px; transition: all 0.2s; white-space: nowrap; }
+  
+  /* НОВЫЙ ДИЗАЙН КАТАЛОГА ИГР */
+  .bg-blur-layer {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background-size: cover;
+    background-position: center;
+    filter: blur(40px) brightness(0.3);
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+  }
+  .bg-blur-layer.active { opacity: 1; }
+
+  .games-grid-container { position: relative; z-index: 2; }
+  
+  /* Карточка игры */
+  .game-card {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 15px;
+    cursor: pointer;
+    min-height: 100px; /* Сделал чуть выше для квадратных картинок */
+    background-color: #1a1a26;
+    background-size: cover;
+    background-position: center;
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  }
+  .game-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+    border-color: rgba(139, 92, 246, 0.5);
+  }
+  /* Затемнение теперь идет по всей ширине, но слева сильнее */
+  .game-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(90deg, rgba(9,9,16,0.95) 0%, rgba(9,9,16,0.8) 40%, rgba(9,9,16,0.3) 100%);
+    z-index: 1;
+  }
+  .game-card-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 20px;
+  }
+  .game-card-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  .game-card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    background: #000;
+    object-fit: cover;
+    border: 1px solid rgba(255,255,255,0.2);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    flex-shrink: 0;
+  }
+  .game-card-icon-fallback {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    background: rgba(139, 92, 246, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    border: 1px solid rgba(139, 92, 246, 0.5);
+    flex-shrink: 0;
+  }
+  .game-card-title {
+    font-weight: 800;
+    font-size: 18px;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+  }
+  .game-card-arrow {
+    color: #fff;
+    font-size: 20px;
+    opacity: 0.7;
+  }
+
+  .category-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; position: relative; z-index: 2; }
+  .category-tab { background: rgba(18, 18, 26, 0.8); backdrop-filter: blur(10px); border: 1px solid var(--border); color: var(--text-muted); padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 15px; transition: all 0.2s; white-space: nowrap; }
   .category-tab.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 0 15px rgba(139, 92, 246, 0.5); }
-  .catalog-item { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 15px; margin-bottom: 12px; cursor: pointer; display: flex; flex-direction: column; gap: 10px; }
+  
+  .catalog-item { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 15px; margin-bottom: 12px; cursor: pointer; display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 2; }
   .catalog-item .cat-title { font-weight: bold; font-size: 18px; }
   .catalog-item .cat-shortdesc { font-size: 14px; color: var(--text-muted); }
   .catalog-item .cat-image { width: 100%; border-radius: 10px; max-height: 200px; object-fit: cover; }
   .catalog-item .p-price { font-size: 20px; font-weight: 800; color: var(--accent); }
-  .detail-product { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
-  .seller-block { display: flex; align-items: center; gap: 15px; padding: 15px; background: #1a1a26; border-radius: 12px; margin-bottom: 20px; cursor: pointer; }
+  
+  .detail-product { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 20px; position: relative; z-index: 2; }
+  .seller-block { display: flex; align-items: center; gap: 15px; padding: 15px; background: #1a1a26; border-radius: 12px; margin-bottom: 20px; cursor: pointer; position: relative; z-index: 2; }
   .seller-avatar { width: 50px; height: 50px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; overflow: hidden; }
   .seller-avatar img { width: 100%; height: 100%; object-fit: cover; }
   .seller-info h3 { font-size: 16px; color: #fff; margin-bottom: 3px; }
@@ -92,13 +185,13 @@
   .review-date { font-size: 11px; color: var(--text-muted); }
   .review-stars { color: var(--star-gold); font-size: 14px; }
   .review-text { font-size: 14px; color: #c8c8d8; line-height: 1.5; }
-  .auth-box, .admin-block, .doc-box { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 25px; margin-bottom: 20px; }
+  .auth-box, .admin-block, .doc-box { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 25px; margin-bottom: 20px; position: relative; z-index: 2; }
   input, textarea, select { width: 100%; padding: 14px; margin-bottom: 15px; background: var(--bg); border: 1px solid var(--border); color: #fff; border-radius: 10px; font-size: 15px; }
   .error-msg { color: #ff4d4d; font-size: 14px; margin-bottom: 15px; text-align: center; display: none; }
   .admin-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
   .admin-tab { background: var(--card); border: 1px solid var(--border); color: var(--text-muted); padding: 8px 16px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; position: relative; }
   .admin-tab.active { background: var(--primary); border-color: var(--primary); color: #fff; }
-  footer { padding: 30px 20px; border-top: 1px solid var(--border); text-align: center; font-size: 13px; color: var(--text-muted); background: linear-gradient(0deg, rgba(139, 92, 246, 0.15) 0%, transparent 100%); }
+  footer { padding: 30px 20px; border-top: 1px solid var(--border); text-align: center; font-size: 13px; color: var(--text-muted); background: linear-gradient(0deg, rgba(139, 92, 246, 0.15) 0%, transparent 100%); position: relative; z-index: 10; }
   footer a { display: block; color: var(--accent); margin-bottom: 10px; font-weight: 600; cursor: pointer; }
   .hidden { display: none !important; }
   .btn-primary { background: var(--primary); color: #fff; padding: 12px 24px; border: none; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; text-align: center; text-decoration: none; display: inline-block; width: 100%; max-width: 300px; }
@@ -139,6 +232,9 @@
 </style>
 </head>
 <body>
+
+<!-- Слой для размытого фона -->
+<div id="catalog-bg-blur" class="bg-blur-layer"></div>
 
 <header>
   <div class="logo-area">
@@ -245,9 +341,9 @@
 
   <!-- КАТАЛОГ -->
   <section class="screen" id="screen-catalog">
-    <button class="back-btn" onclick="show('home')" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
+    <button class="back-btn" onclick="show('home')" style="background:rgba(18, 18, 26, 0.8); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px; backdrop-filter: blur(10px);">← Назад</button>
     <h1 class="catalog-title" style="font-size: 24px; margin-bottom: 15px;">Каталог игр</h1>
-    <div id="games-list"></div>
+    <div id="games-list" class="games-grid-container"></div>
   </section>
 
   <!-- ТОВАРЫ ИГРЫ -->
@@ -424,6 +520,10 @@
   }
 
   window.show = async (screen) => {
+    if (screen !== 'catalog') {
+        document.getElementById('catalog-bg-blur').classList.remove('active');
+    }
+
     if (currentUser && !isAdmin()) {
         const { data } = await supabase.from('profiles').select('is_blocked').eq('id', currentUser.id).single();
         if (data && data.is_blocked) {
@@ -651,20 +751,45 @@
   // --- КАТАЛОГ ---
   async function loadGames() {
     const list = document.getElementById('games-list');
+    const bgLayer = document.getElementById('catalog-bg-blur');
+    
     const { data } = await supabase.from('games').select('*');
     if(!data || data.length === 0) { list.innerHTML = '<p style="color:var(--text-muted);">Игр пока нет.</p>'; return; }
-    list.innerHTML = data.map(g => `
-      <div class="game-row" onclick="openGame('${esc(g.name).replace(/'/g, "\\'")}')">
-        <div style="display:flex; align-items:center; gap:15px;">
-          <div class="game-img">${g.img ? `<img src="${esc(g.img)}">` : '🎮'}</div>
-          <h3>${esc(g.name)}</h3>
+    
+    // Устанавливаем размытый фон (берем картинку первой игры)
+    if (data[0].img) {
+        bgLayer.style.backgroundImage = `url('${data[0].img}')`;
+        bgLayer.classList.add('active');
+    }
+
+    // Функция для проверки, является ли ссылка валидной картинкой (начинается с http или data:image)
+    const isValidImg = (url) => url && (url.startsWith('http') || url.startsWith('data:image'));
+
+    list.innerHTML = data.map(g => {
+      const hasValidImg = isValidImg(g.img);
+      
+      // Если картинки нет или она битая - не ставим фон, а рисуем заглушку
+      const bgStyle = hasValidImg ? `background-image: url('${esc(g.img)}');` : '';
+      const iconHtml = hasValidImg 
+        ? `<img src="${esc(g.img)}" class="game-card-icon">` 
+        : `<div class="game-card-icon-fallback">🎮</div>`;
+
+      return `
+      <div class="game-card" style="${bgStyle}" onclick="openGame('${esc(g.name).replace(/'/g, "\\'")}')">
+        <div class="game-card-content">
+          <div class="game-card-left">
+            ${iconHtml}
+            <div class="game-card-title">${esc(g.name)}</div>
+          </div>
+          <div class="game-card-arrow">→</div>
         </div>
-        <div style="color:var(--text-muted);">→</div>
       </div>
-    `).join('');
+    `}).join('');
   }
 
   window.openGame = async (gameName) => {
+    document.getElementById('catalog-bg-blur').classList.remove('active');
+    
     document.getElementById('products-title').textContent = gameName;
     const { data } = await supabase.from('products').select('*').eq('game', gameName);
     currentProducts = data || [];
@@ -871,7 +996,7 @@ window.openProductDetail = async (id) => {
     window.open(link, '_blank'); 
   }
 
-  // --- АДМИНКА: ИГРЫ (ИСПРАВЛЕНО СОХРАНЕНИЕ КАРТИНОК ЧЕРЕЗ STORAGE) ---
+  // --- АДМИНКА: ИГРЫ ---
   async function loadAdminGames(container) {
     const { data } = await supabase.from('games').select('*');
     container.innerHTML = `
@@ -886,7 +1011,7 @@ window.openProductDetail = async (id) => {
       ${(data || []).map(g => `
         <div style="background:var(--card); padding:15px; border-radius:10px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
           <div style="display:flex; align-items:center; gap:10px;">
-             ${g.img ? `<img src="${esc(g.img)}" style="width:40px; height:40px; border-radius:8px; object-fit:cover;">` : '🎮'}
+             ${g.img && (g.img.startsWith('http') || g.img.startsWith('data:image')) ? `<img src="${esc(g.img)}" style="width:40px; height:40px; border-radius:8px; object-fit:cover;">` : '🎮'}
              <span>${esc(g.name)}</span>
           </div>
           <button onclick="deleteGame(${g.id})" style="color:red; background:none; border:none; cursor:pointer;">Удалить</button>
@@ -903,7 +1028,6 @@ window.openProductDetail = async (id) => {
 
     let imgUrl = url; 
 
-    // Если выбран файл, грузим его в Supabase Storage (в папку game-images)
     if(file) {
         const fileExt = file.name.split('.').pop();
         const fileName = `${Date.now()}.${fileExt}`;
