@@ -15,18 +15,22 @@
   body { background-color: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 80px; background-image: radial-gradient(circle at 0% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%), radial-gradient(circle at 100% 80%, rgba(56, 189, 248, 0.05) 0%, transparent 40%); background-attachment: fixed; }
   
   /* ИСПРАВЛЕНО: Шапка теперь адаптивная и не вылезает за края */
-  header { background: rgba(9, 9, 16, 0.95); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); width: 100%; height: 65px; gap: 10px; }
+  header { background: rgba(9, 9, 16, 0.95); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; padding: 10px 15px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); width: 100%; min-height: 65px; gap: 10px; }
+  
+  /* Верхняя строка на телефоне: Лого + Меню */
+  .header-top { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 10px; }
+  
   .logo { font-size: 20px; font-weight: 900; display: flex; align-items: center; gap: 8px; cursor: pointer; flex-shrink: 0; }
   .logo-icon { width: 28px; height: 28px; background: linear-gradient(135deg, #8b5cf6, #3b82f6); transform: rotate(45deg); border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(139, 92, 246, 0.6); }
   .logo-icon span { transform: rotate(-45deg); color: #fff; font-size: 16px; font-weight: bold; }
   .logo-text { background: linear-gradient(90deg, #fff, #d8b4fe, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-  /* Основное меню */
-  .main-nav { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+  /* Меню (Главная, Каталог, Чаты) */
+  .main-nav { display: flex; gap: 12px; align-items: center; flex-shrink: 0; }
   .main-nav button { background: none; border: none; color: var(--text-muted); font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; padding: 5px 0; white-space: nowrap; }
   .main-nav button:hover, .main-nav button.active { color: #fff; }
 
-  /* Правая часть */
+  /* Правая часть (Авторизация / Профиль) */
   .auth-area { display: flex; gap: 8px; align-items: center; flex-shrink: 0; margin-left: auto; }
   .auth-btn { background: var(--card); border: 1px solid var(--border); color: #fff; padding: 6px 10px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; white-space: nowrap; }
   .auth-btn.primary { background: var(--primary); border-color: var(--primary); }
@@ -51,19 +55,24 @@
 
   .nav-badge { background: var(--accent); color: #fff; font-size: 10px; padding: 1px 4px; border-radius: 8px; margin-left: 3px; font-weight: bold; display: inline-block; vertical-align: middle; }
   
-  /* Адаптив для очень узких экранов */
-  @media (max-width: 400px) {
-    .logo-text { display: none; }
-    .main-nav button { font-size: 13px; }
-    .auth-btn { font-size: 12px; padding: 5px 8px; }
-    .profile-name { display: none; }
-    .profile-trigger { padding: 4px; }
+  /* Адаптив для телефонов */
+  @media (max-width: 600px) {
+    header { flex-direction: column; align-items: stretch; padding: 10px; gap: 15px; }
+    .header-top { width: 100%; }
+    .auth-area, .profile-dropdown { width: 100%; justify-content: flex-end; margin-left: 0; }
+    .auth-area { margin-top: 5px; }
+    .auth-btn { flex: 1; text-align: center; justify-content: center; padding: 10px; }
+    .profile-trigger { width: 100%; justify-content: center; }
+    .profile-name { display: block; } /* Показываем ник на телефоне под лого */
+    .dropdown-menu { width: 100%; top: 55px; }
   }
   
   main { max-width: 800px; margin: 0 auto; padding: 20px; position: relative; z-index: 10; }
   .screen { display: none; }
   .screen.active { display: block; animation: fadeIn 0.4s ease-in-out; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  
+  /* ГЛАВНАЯ */
   .hero-container { position: relative; border-radius: 24px; overflow: hidden; background: linear-gradient(135deg, #12121a, #1a1a26); border: 1px solid var(--border); margin-bottom: 25px; box-shadow: 0 10px 40px rgba(139, 92, 246, 0.15); }
   .hero-bg-glow { position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at center, rgba(139, 92, 246, 0.15) 0%, transparent 60%); animation: rotateGlow 20s linear infinite; z-index: 0; }
   @keyframes rotateGlow { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -82,36 +91,57 @@
   .btn-tg { background: #229ED9; color: #fff; padding: 14px 24px; border-radius: 12px; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; width: 100%; font-size: 16px; box-shadow: 0 4px 15px rgba(34, 158, 217, 0.3); }
   .btn-tg:hover { background: #1a7fb3; transform: translateY(-2px); }
   
-  /* ДИЗАЙН КАТАЛОГА */
-  .bg-blur-layer { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-size: cover; background-position: center; filter: blur(40px) brightness(0.3); z-index: -1; opacity: 0; transition: opacity 0.5s ease; pointer-events: none; }
+  /* ТОЧЬ-В-ТОЧЬ ДИЗАЙН КАТАЛОГА */
+  .bg-blur-layer { 
+    position: fixed; 
+    top: 0; left: 0; 
+    width: 100vw; height: 100vh; 
+    background-size: cover; 
+    background-position: center; 
+    z-index: -1; 
+    opacity: 0; 
+    transition: opacity 0.5s ease; 
+    pointer-events: none; 
+  }
   .bg-blur-layer.active { opacity: 1; }
+  
+  /* Затемнение сверху и снизу, чтобы убрать надписи с фона (S02) */
+  .bg-blur-layer::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(180deg, rgba(9,9,16,0.95) 0%, rgba(9,9,16,0.3) 30%, rgba(9,9,16,0.3) 70%, rgba(9,9,16,0.95) 100%);
+  }
 
   .games-grid-container { position: relative; z-index: 2; }
   
   .game-card {
     position: relative;
-    border-radius: 16px;
+    border-radius: 20px;
     overflow: hidden;
     margin-bottom: 12px;
     cursor: pointer;
     min-height: 85px; 
-    background-color: #1a1a26;
-    background-size: cover;
-    background-position: center;
-    border: 1px solid rgba(255,255,255,0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
+    background: rgba(30, 20, 50, 0.5); /* Полупрозрачный фиолетовый фон */
+    backdrop-filter: blur(15px); /* Эффект стекла */
+    border: 1.5px solid rgba(139, 92, 246, 0.4); /* Фиолетовая рамка */
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
     display: flex;
     align-items: center;
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
   }
-  .game-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4); border-color: rgba(139, 92, 246, 0.5); }
-  .game-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, rgba(9,9,16,0.95) 0%, rgba(9,9,16,0.6) 60%, rgba(9,9,16,0.1) 100%); z-index: 1; }
+  .game-card:hover { 
+    transform: translateY(-2px); 
+    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4); 
+    border-color: rgba(139, 92, 246, 0.8); 
+  }
+  
   .game-card-content { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 15px 20px; }
   .game-card-left { display: flex; align-items: center; gap: 15px; }
-  .game-card-icon { width: 50px; height: 50px; border-radius: 12px; background: #000; object-fit: cover; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.5); flex-shrink: 0; }
-  .game-card-icon-fallback { width: 50px; height: 50px; border-radius: 12px; background: rgba(139, 92, 246, 0.2); display: flex; align-items: center; justify-content: center; font-size: 24px; border: 1px solid rgba(139, 92, 246, 0.5); flex-shrink: 0; }
-  .game-card-title { font-weight: 800; font-size: 18px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-  .game-card-arrow { color: #fff; font-size: 20px; opacity: 0.7; }
+  .game-card-icon { width: 55px; height: 55px; border-radius: 12px; background: #000; object-fit: cover; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.5); flex-shrink: 0; }
+  .game-card-icon-fallback { width: 55px; height: 55px; border-radius: 12px; background: rgba(139, 92, 246, 0.2); display: flex; align-items: center; justify-content: center; font-size: 24px; border: 1px solid rgba(139, 92, 246, 0.5); flex-shrink: 0; }
+  .game-card-title { font-weight: 800; font-size: 19px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+  .game-card-arrow { color: #fff; font-size: 22px; opacity: 0.8; }
 
   .category-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; position: relative; z-index: 2; }
   .category-tab { background: rgba(18, 18, 26, 0.8); backdrop-filter: blur(10px); border: 1px solid var(--border); color: var(--text-muted); padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 15px; transition: all 0.2s; white-space: nowrap; }
@@ -206,15 +236,17 @@
 <div id="catalog-bg-blur" class="bg-blur-layer"></div>
 
 <header>
-  <div class="logo" onclick="show('home')">
-    <div class="logo-icon"><span>K</span></div> 
-    <span class="logo-text">KupiGame</span>
-  </div>
-  
-  <div class="main-nav">
-    <button onclick="show('home')" id="nav-home" class="active">Главная</button>
-    <button onclick="show('catalog')" id="nav-catalog">Каталог</button>
-    <button onclick="show('chats')" id="nav-chats" class="hidden">Чаты <span id="nav-chats-badge" class="nav-badge hidden">0</span></button>
+  <div class="header-top">
+    <div class="logo" onclick="show('home')">
+      <div class="logo-icon"><span>K</span></div> 
+      <span class="logo-text">KupiGame</span>
+    </div>
+    
+    <div class="main-nav">
+      <button onclick="show('home')" id="nav-home" class="active">Главная</button>
+      <button onclick="show('catalog')" id="nav-catalog">Каталог</button>
+      <button onclick="show('chats')" id="nav-chats" class="hidden">Чаты <span id="nav-chats-badge" class="nav-badge hidden">0</span></button>
+    </div>
   </div>
 
   <div class="auth-area" id="auth-links">
@@ -470,12 +502,10 @@
 
   const isAdmin = () => !!(currentUser && (currentUser.is_admin === true || currentUser.nickname === 'KupiGame'));
 
-  // Управление выпадающим меню профиля
   window.toggleProfileMenu = () => {
     document.getElementById('user-area').classList.toggle('active');
   }
 
-  // Закрытие меню при клике вне его
   window.onclick = function(event) {
     if (!event.target.closest('.profile-dropdown')) {
       document.getElementById('user-area').classList.remove('active');
@@ -612,7 +642,6 @@
     return false;
   }
 
-  // ИСПРАВЛЕНО: Обновление UI с выпадающим меню
   function updateAuthUI() {
     if(currentUser) {
       document.getElementById('auth-links').classList.add('hidden');
@@ -633,7 +662,7 @@
           document.getElementById('nav-admin').classList.add('hidden');
       }
 
-      document.getElementById('nav-chats').classList.remove('hidden'); // Показываем чаты для авторизованных
+      document.getElementById('nav-chats').classList.remove('hidden'); 
 
       checkBlock();
       checkBlockCounts();
@@ -706,7 +735,6 @@
     if(error) alert(error.message); else alert('Пароль обновлен!');
   }
 
-  // ИСПРАВЛЕНО: Загрузка аватарки без зависаний
   window.uploadAvatar = async (input) => {
     const file = input.files[0];
     if(!file) return;
@@ -737,13 +765,23 @@
     const { data } = await supabase.from('games').select('*');
     if(!data || data.length === 0) { list.innerHTML = '<p style="color:var(--text-muted);">Игр пока нет.</p>'; return; }
     
+    // Ищем картинку Standoff для фона (или первую попавшуюся горизонтальную)
     let bgImg = '';
     for (let g of data) {
-        if (g.img && (g.img.startsWith('http') || g.img.startsWith('data:image'))) {
+        if (g.name.toLowerCase().includes('standoff') && g.img) {
             bgImg = g.img;
             break;
         }
     }
+    if (!bgImg) {
+        for (let g of data) {
+            if (g.img && (g.img.startsWith('http') || g.img.startsWith('data:image'))) {
+                bgImg = g.img;
+                break;
+            }
+        }
+    }
+    
     if (bgImg) {
         bgLayer.style.backgroundImage = `url('${bgImg}')`;
         bgLayer.classList.add('active');
@@ -753,14 +791,12 @@
 
     list.innerHTML = data.map(g => {
       const hasValidImg = isValidImg(g.img);
-      
-      const bgStyle = hasValidImg ? `background-image: url('${esc(g.img)}');` : '';
       const iconHtml = hasValidImg 
         ? `<img src="${esc(g.img)}" class="game-card-icon">` 
         : `<div class="game-card-icon-fallback">🎮</div>`;
 
       return `
-      <div class="game-card" style="${bgStyle}" onclick="openGame('${esc(g.name).replace(/'/g, "\\'")}')">
+      <div class="game-card" onclick="openGame('${esc(g.name).replace(/'/g, "\\'")}')">
         <div class="game-card-content">
           <div class="game-card-left">
             ${iconHtml}
