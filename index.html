@@ -860,20 +860,24 @@
     }).join('');
   }
 
+  // ✅ ВОТ ЗДЕСЬ МЫ ПОФИКСИЛИ БАГ (возврат к .single() + проверка на ошибку)
 window.openProductDetail = async (id) => {
+    // 1. Запрашиваем товар
     const { data } = await supabase.from('products').select('*').eq('id', id).single();
+    
+    if (!data) {
+        alert('Товар не найден');
+        return;
+    }
+
     const content = document.getElementById('product-detail-content');
     
-    const images = data.images || []; 
-    const imagesHtml = images.length > 0 ? `
-      <div class="product-images">
-        ${images.map(img => `<img src="${esc(img)}" onclick="openModal(this.src)">`).join('')}
-      </div>
-    ` : '';
-
-    const titleColor = data.title_color || '#fff';
+    // 2. Принудительно делаем текст белым, чтобы он не сливался с фоном
+    // (даже если в базе стоит черный цвет)
+    const titleColor = '#ffffff'; 
     const priceDisplay = data.price > 0 ? data.price + ' ₽' : 'Цена не указана';
 
+    // 3. Собираем карточку (без сложных кавычек с картинками, чтобы ничего не сломалось)
     content.innerHTML = `
       <div class="seller-block" onclick="openSellerProfile('KupiGame')">
         <div class="seller-avatar" id="seller-avatar-img">K</div>
@@ -885,7 +889,7 @@ window.openProductDetail = async (id) => {
       </div>
       
       <div class="detail-product">
-        <div class="product-title-big" style="color:${esc(titleColor)}">${esc(data.title)}</div>
+        <div class="product-title-big" style="color:${titleColor};">${esc(data.title)}</div>
         
         <div class="desc-container">
           <div class="desc-label">Краткое описание</div>
@@ -897,28 +901,32 @@ window.openProductDetail = async (id) => {
           <div class="desc-text">${esc(data.description || 'Подробное описание отсутствует')}</div>
         </div>
         
-        ${imagesHtml}
-        
         <div class="action-block">
           <div class="price-display">${priceDisplay}</div>
-          <button class="btn-primary" onclick="attemptPurchase('${esc(data.paylink || '').replace(/'/g, "\\'")}')" style="width:100%;">Оплатить</button>
+          <button class="btn-primary" onclick="attemptPurchase('${esc(data.paylink || '')}')" style="width:100%;">Оплатить</button>
         </div>
       </div>
     `;
 
+    // 4. Грузим аватар админа (с защитой от вылета)
     const { data: adminProfile } = await supabase.from('profiles').select('avatar').eq('nickname', 'KupiGame').single();
     if(adminProfile && adminProfile.avatar) {
-        document.getElementById('seller-avatar-img').innerHTML = `<img src="${esc(adminProfile.avatar)}">`;
+        const avatarImg = document.getElementById('seller-avatar-img');
+        if (avatarImg) avatarImg.innerHTML = `<img src="${esc(adminProfile.avatar)}">`;
     }
 
+    // 5. Грузим отзывы (с защитой от вылета)
     const { data: reviews } = await supabase.from('reviews').select('rating');
     let avg = 0;
     if (reviews && reviews.length > 0) {
         const sum = reviews.reduce((a, b) => a + b.rating, 0);
         avg = (sum / reviews.length).toFixed(1);
     }
-    document.getElementById('detail-seller-stars').innerHTML = renderStars(avg);
+    
+    const starsEl = document.getElementById('detail-seller-stars');
+    if (starsEl) starsEl.innerHTML = renderStars(avg);
 
+    // 6. Показываем экран
     show('product-detail');
   }
 
