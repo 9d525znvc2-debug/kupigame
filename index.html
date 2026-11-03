@@ -1059,8 +1059,7 @@ window.openProductDetail = async (id) => {
   window.closeEditGameModal = () => {
     document.getElementById('edit-game-modal').style.display = 'none';
   }
-
-  window.saveGameImage = async () => {
+window.saveGameImage = async () => {
     try {
         const id = document.getElementById('edit-game-id').value;
         const url = document.getElementById('edit-game-url').value;
@@ -1081,7 +1080,17 @@ window.openProductDetail = async (id) => {
         const { error } = await supabase.from('games').update({ img: imgUrl }).eq('id', id);
         if(error) throw new Error('Ошибка базы данных: ' + error.message); 
         
-        alert('Фото обновлено!'); 
+        // --- АВТООЧИСТКА ФОНА КАТАЛОГА ---
+        // Очищаем фон в базе данных
+        await supabase.from('profiles').update({ catalog_bg: null }).eq('nickname', 'KupiGame');
+        // Очищаем переменную и убираем картинку с экрана
+        catalogBgUrl = '';
+        const bgLayer = document.getElementById('catalog-bg-blur');
+        bgLayer.style.backgroundImage = 'none';
+        bgLayer.classList.remove('active');
+        // ----------------------------------
+
+        alert('Фото обновлено, а фон каталога сброшен!'); 
         closeEditGameModal();
         switchAdminTab('games', document.querySelector('.admin-tab')); 
     } catch(err) {
@@ -1089,8 +1098,7 @@ window.openProductDetail = async (id) => {
         closeEditGameModal(); 
     }
   }
-
-  window.addGame = async () => {
+   window.addGame = async () => {
     const name = document.getElementById('new-game-name').value;
     const url = document.getElementById('new-game-url').value;
     const file = document.getElementById('game-img-upload').files[0];
