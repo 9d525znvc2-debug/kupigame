@@ -473,7 +473,7 @@
 </footer>
 
 <script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
 
   const supabaseUrl = 'https://nmowfdsawvrkqhrnlzth.supabase.co';
   const supabaseKey = 'sb_publishable_Wu1juOsDo5ckddxGnNqbQw_H6HRVjr2';
@@ -500,6 +500,22 @@
     if (!event.target.closest('.profile-dropdown')) {
       document.getElementById('user-area').classList.remove('active');
     }
+  }
+
+  function renderStars(rating) {
+    const r = parseFloat(rating);
+    let html = `<div class="stars-container">`;
+    for (let i = 1; i <= 5; i++) {
+        if (r >= i) {
+            html += `<span class="star-full">★</span>`;
+        } else if (r >= i - 0.5) {
+            html += `<span class="star-half">★</span>`;
+        } else {
+            html += `<span class="star-empty">★</span>`;
+        }
+    }
+    html += `</div>`;
+    return html;
   }
 
   window.openModal = (src) => {
@@ -638,12 +654,17 @@
       show('blocked');
       document.getElementById('nav-home').classList.add('hidden');
       document.getElementById('nav-catalog').classList.add('hidden');
+      document.getElementById('nav-profile').classList.add('hidden');
       document.getElementById('nav-chats').classList.add('hidden');
+      document.getElementById('nav-admin').classList.add('hidden');
+      document.getElementById('logout-btn').classList.add('hidden');
       return true;
     }
     document.getElementById('nav-home').classList.remove('hidden');
     document.getElementById('nav-catalog').classList.remove('hidden');
+    document.getElementById('nav-profile').classList.remove('hidden');
     document.getElementById('nav-chats').classList.remove('hidden');
+    document.getElementById('logout-btn').classList.remove('hidden');
     return false;
   }
 
@@ -667,13 +688,14 @@
           document.getElementById('nav-admin').classList.add('hidden');
       }
 
-      document.getElementById('nav-chats').classList.remove('hidden'); 
-
       checkBlock();
       checkBlockCounts();
     } else {
       document.getElementById('auth-links').classList.remove('hidden');
       document.getElementById('user-area').classList.add('hidden');
+      document.getElementById('logout-btn').classList.add('hidden');
+      document.getElementById('nav-admin').classList.add('hidden');
+      document.getElementById('nav-profile').classList.add('hidden');
       document.getElementById('nav-chats').classList.add('hidden');
       document.getElementById('nav-chats-badge').classList.add('hidden');
       document.getElementById('login-nick').value = '';
@@ -860,9 +882,7 @@
     }).join('');
   }
 
-  // ✅ ВОТ ЗДЕСЬ МЫ ПОФИКСИЛИ БАГ (возврат к .single() + проверка на ошибку)
-window.openProductDetail = async (id) => {
-    // 1. Запрашиваем товар
+  window.openProductDetail = async (id) => {
     const { data } = await supabase.from('products').select('*').eq('id', id).single();
     
     if (!data) {
@@ -872,12 +892,16 @@ window.openProductDetail = async (id) => {
 
     const content = document.getElementById('product-detail-content');
     
-    // 2. Принудительно делаем текст белым, чтобы он не сливался с фоном
-    // (даже если в базе стоит черный цвет)
-    const titleColor = '#ffffff'; 
+    const images = data.images || []; 
+    const imagesHtml = images.length > 0 ? `
+      <div class="product-images">
+        ${images.map(img => `<img src="${esc(img)}" onclick="openModal(this.src)">`).join('')}
+      </div>
+    ` : '';
+
+    const titleColor = data.title_color || '#fff';
     const priceDisplay = data.price > 0 ? data.price + ' ₽' : 'Цена не указана';
 
-    // 3. Собираем карточку (без сложных кавычек с картинками, чтобы ничего не сломалось)
     content.innerHTML = `
       <div class="seller-block" onclick="openSellerProfile('KupiGame')">
         <div class="seller-avatar" id="seller-avatar-img">K</div>
@@ -889,7 +913,7 @@ window.openProductDetail = async (id) => {
       </div>
       
       <div class="detail-product">
-        <div class="product-title-big" style="color:${titleColor};">${esc(data.title)}</div>
+        <div class="product-title-big" style="color:${esc(titleColor)}">${esc(data.title)}</div>
         
         <div class="desc-container">
           <div class="desc-label">Краткое описание</div>
@@ -901,32 +925,30 @@ window.openProductDetail = async (id) => {
           <div class="desc-text">${esc(data.description || 'Подробное описание отсутствует')}</div>
         </div>
         
+        ${imagesHtml}
+        
         <div class="action-block">
           <div class="price-display">${priceDisplay}</div>
-          <button class="btn-primary" onclick="attemptPurchase('${esc(data.paylink || '')}')" style="width:100%;">Оплатить</button>
+          <button class="btn-primary" onclick="attemptPurchase('${esc(data.paylink || '').replace(/'/g, "\\'")}')" style="width:100%;">Оплатить</button>
         </div>
       </div>
     `;
 
-    // 4. Грузим аватар админа (с защитой от вылета)
-    const { data: adminProfile } = await supabase.from('profiles').select('avatar').eq('nickname', 'KupiGame').single();
+    const { data: adminProfile } = await supabase.from('profiles').select('avatar').eq('nickname', 'KupiGame').maybeSingle();
     if(adminProfile && adminProfile.avatar) {
-        const avatarImg = document.getElementById('seller-avatar-img');
-        if (avatarImg) avatarImg.innerHTML = `<img src="${esc(adminProfile.avatar)}">`;
+        const imgEl = document.getElementById('seller-avatar-img');
+        if(imgEl) imgEl.innerHTML = `<img src="${esc(adminProfile.avatar)}">`;
     }
 
-    // 5. Грузим отзывы (с защитой от вылета)
     const { data: reviews } = await supabase.from('reviews').select('rating');
     let avg = 0;
     if (reviews && reviews.length > 0) {
         const sum = reviews.reduce((a, b) => a + b.rating, 0);
         avg = (sum / reviews.length).toFixed(1);
     }
-    
     const starsEl = document.getElementById('detail-seller-stars');
-    if (starsEl) starsEl.innerHTML = renderStars(avg);
+    if(starsEl) starsEl.innerHTML = renderStars(avg);
 
-    // 6. Показываем экран
     show('product-detail');
   }
 
@@ -1748,7 +1770,7 @@ window.goBackFromTicket = () => {
 
     const blockReason = document.getElementById('block-reason').textContent;
     
-    // ИСПРАВЛЕНО: Текст теперь ровно как ты просил
+    // Исправленный текст
     const message = `Ник: ${currentUser.nickname}\nПричина: ${blockReason}\nПочему не согласны с блокировкой: ${reason}`;
 
     const { error } = await supabase.from('orders').insert([{ 
@@ -2092,7 +2114,6 @@ window.goBackFromTicket = () => {
       }
     }
     
-    // Загружаем фон каталога при старте
     const { data: adminProfile } = await supabase.from('profiles').select('catalog_bg').eq('nickname', 'KupiGame').single();
     if (adminProfile && adminProfile.catalog_bg) {
         catalogBgUrl = adminProfile.catalog_bg;
