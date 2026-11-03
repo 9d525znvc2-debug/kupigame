@@ -14,28 +14,24 @@
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
   body { background-color: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 80px; background-image: radial-gradient(circle at 0% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%), radial-gradient(circle at 100% 80%, rgba(56, 189, 248, 0.05) 0%, transparent 40%); background-attachment: fixed; }
   
-  /* ИСПРАВЛЕНО: Шапка теперь адаптивная и не вылезает за края */
-  header { background: rgba(9, 9, 16, 0.95); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; padding: 10px 15px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); width: 100%; min-height: 65px; gap: 10px; }
+  /* Шапка */
+  header { background: rgba(9, 9, 16, 0.95); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; padding: 10px 15px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); width: 100%; min-height: 65px; gap: 10px; transition: transform 0.3s ease; }
+  header.hidden-header { transform: translateY(-100%); position: absolute; opacity: 0; pointer-events: none; }
   
-  /* Верхняя строка на телефоне: Лого + Меню */
   .header-top { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 10px; }
-  
   .logo { font-size: 20px; font-weight: 900; display: flex; align-items: center; gap: 8px; cursor: pointer; flex-shrink: 0; }
   .logo-icon { width: 28px; height: 28px; background: linear-gradient(135deg, #8b5cf6, #3b82f6); transform: rotate(45deg); border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(139, 92, 246, 0.6); }
   .logo-icon span { transform: rotate(-45deg); color: #fff; font-size: 16px; font-weight: bold; }
   .logo-text { background: linear-gradient(90deg, #fff, #d8b4fe, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-  /* Меню (Главная, Каталог, Чаты) */
-  .main-nav { display: flex; gap: 12px; align-items: center; flex-shrink: 0; }
+  .main-nav { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
   .main-nav button { background: none; border: none; color: var(--text-muted); font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; padding: 5px 0; white-space: nowrap; }
   .main-nav button:hover, .main-nav button.active { color: #fff; }
 
-  /* Правая часть (Авторизация / Профиль) */
   .auth-area { display: flex; gap: 8px; align-items: center; flex-shrink: 0; margin-left: auto; }
   .auth-btn { background: var(--card); border: 1px solid var(--border); color: #fff; padding: 6px 10px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; white-space: nowrap; }
   .auth-btn.primary { background: var(--primary); border-color: var(--primary); }
 
-  /* Выпадающее меню профиля */
   .profile-dropdown { position: relative; flex-shrink: 0; }
   .profile-trigger { display: flex; align-items: center; gap: 8px; background: var(--card); border: 1px solid var(--border); padding: 4px 8px 4px 4px; border-radius: 30px; cursor: pointer; transition: 0.2s; }
   .profile-trigger:hover { border-color: var(--primary); }
@@ -55,15 +51,15 @@
 
   .nav-badge { background: var(--accent); color: #fff; font-size: 10px; padding: 1px 4px; border-radius: 8px; margin-left: 3px; font-weight: bold; display: inline-block; vertical-align: middle; }
   
-  /* Адаптив для телефонов */
   @media (max-width: 600px) {
     header { flex-direction: column; align-items: stretch; padding: 10px; gap: 15px; }
     .header-top { width: 100%; }
-    .auth-area, .profile-dropdown { width: 100%; justify-content: flex-end; margin-left: 0; }
+    .auth-area, .profile-dropdown { width: 100%; justify-content: flex-end; margin-left: 0;
+}
     .auth-area { margin-top: 5px; }
     .auth-btn { flex: 1; text-align: center; justify-content: center; padding: 10px; }
     .profile-trigger { width: 100%; justify-content: center; }
-    .profile-name { display: block; } /* Показываем ник на телефоне под лого */
+    .profile-name { display: block; }
     .dropdown-menu { width: 100%; top: 55px; }
   }
   
@@ -91,8 +87,8 @@
   .btn-tg { background: #229ED9; color: #fff; padding: 14px 24px; border-radius: 12px; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; width: 100%; font-size: 16px; box-shadow: 0 4px 15px rgba(34, 158, 217, 0.3); }
   .btn-tg:hover { background: #1a7fb3; transform: translateY(-2px); }
   
-  /* ТОЧЬ-В-ТОЧЬ ДИЗАЙН КАТАЛОГА */
-  .bg-blur-layer { 
+  /* ФОН КАТАЛОГА (ИЗ АДМИНКИ) */
+  .bg-catalog-layer { 
     position: fixed; 
     top: 0; left: 0; 
     width: 100vw; height: 100vh; 
@@ -103,28 +99,27 @@
     transition: opacity 0.5s ease; 
     pointer-events: none; 
   }
-  .bg-blur-layer.active { opacity: 1; }
-  
-  /* Затемнение сверху и снизу, чтобы убрать надписи с фона (S02) */
-  .bg-blur-layer::after {
+  .bg-catalog-layer.active { opacity: 1; }
+  .bg-catalog-layer::after {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(180deg, rgba(9,9,16,0.95) 0%, rgba(9,9,16,0.3) 30%, rgba(9,9,16,0.3) 70%, rgba(9,9,16,0.95) 100%);
+    background: linear-gradient(180deg, rgba(9,9,16,0.95) 0%, rgba(9,9,16,0.4) 25%, rgba(9,9,16,0.2) 50%, rgba(9,9,16,0.4) 75%, rgba(9,9,16,0.95) 100%);
   }
 
   .games-grid-container { position: relative; z-index: 2; }
   
+  /* Карточки стали меньше по высоте */
   .game-card {
     position: relative;
-    border-radius: 20px;
+    border-radius: 12px;
     overflow: hidden;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     cursor: pointer;
-    min-height: 85px; 
-    background: rgba(30, 20, 50, 0.5); /* Полупрозрачный фиолетовый фон */
-    backdrop-filter: blur(15px); /* Эффект стекла */
-    border: 1.5px solid rgba(139, 92, 246, 0.4); /* Фиолетовая рамка */
+    min-height: 65px; 
+    background: rgba(30, 20, 50, 0.4); 
+    backdrop-filter: blur(10px); 
+    border: 1px solid rgba(139, 92, 246, 0.3); 
     transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
     display: flex;
     align-items: center;
@@ -136,12 +131,12 @@
     border-color: rgba(139, 92, 246, 0.8); 
   }
   
-  .game-card-content { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 15px 20px; }
-  .game-card-left { display: flex; align-items: center; gap: 15px; }
-  .game-card-icon { width: 55px; height: 55px; border-radius: 12px; background: #000; object-fit: cover; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.5); flex-shrink: 0; }
-  .game-card-icon-fallback { width: 55px; height: 55px; border-radius: 12px; background: rgba(139, 92, 246, 0.2); display: flex; align-items: center; justify-content: center; font-size: 24px; border: 1px solid rgba(139, 92, 246, 0.5); flex-shrink: 0; }
-  .game-card-title { font-weight: 800; font-size: 19px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-  .game-card-arrow { color: #fff; font-size: 22px; opacity: 0.8; }
+  .game-card-content { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 10px 15px; }
+  .game-card-left { display: flex; align-items: center; gap: 12px; }
+  .game-card-icon { width: 40px; height: 40px; border-radius: 10px; background: #000; object-fit: cover; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.5); flex-shrink: 0; }
+  .game-card-icon-fallback { width: 40px; height: 40px; border-radius: 10px; background: rgba(139, 92, 246, 0.2); display: flex; align-items: center; justify-content: center; font-size: 18px; border: 1px solid rgba(139, 92, 246, 0.5); flex-shrink: 0; }
+  .game-card-title { font-weight: 700; font-size: 16px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+  .game-card-arrow { color: #fff; font-size: 18px; opacity: 0.8; }
 
   .category-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; position: relative; z-index: 2; }
   .category-tab { background: rgba(18, 18, 26, 0.8); backdrop-filter: blur(10px); border: 1px solid var(--border); color: var(--text-muted); padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 15px; transition: all 0.2s; white-space: nowrap; }
@@ -233,9 +228,10 @@
 </head>
 <body>
 
-<div id="catalog-bg-blur" class="bg-blur-layer"></div>
+<!-- Слой для фона каталога -->
+<div id="catalog-bg-blur" class="bg-catalog-layer"></div>
 
-<header>
+<header id="main-header">
   <div class="header-top">
     <div class="logo" onclick="show('home')">
       <div class="logo-icon"><span>K</span></div> 
@@ -267,6 +263,11 @@
     </div>
   </div>
 </header>
+
+<!-- Кнопка Назад для каталога -->
+<div id="catalog-back-container" class="hidden" style="max-width: 800px; margin: 0 auto; padding: 15px 20px; position: relative; z-index: 50;">
+    <button onclick="show('home')" style="background:rgba(18, 18, 26, 0.8); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; backdrop-filter: blur(10px);">← Назад</button>
+</div>
 
 <div id="image-modal" class="modal" onclick="closeModal()">
   <span class="modal-close">&times;</span>
@@ -347,8 +348,7 @@
 
   <!-- КАТАЛОГ -->
   <section class="screen" id="screen-catalog">
-    <button class="back-btn" onclick="show('home')" style="background:rgba(18, 18, 26, 0.8); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px; backdrop-filter: blur(10px);">← Назад</button>
-    <h1 class="catalog-title" style="font-size: 24px; margin-bottom: 15px;">Каталог игр</h1>
+    <h1 class="catalog-title" style="font-size: 24px; margin-bottom: 15px; margin-top: 10px;">Каталог игр</h1>
     <div id="games-list" class="games-grid-container"></div>
   </section>
 
@@ -483,6 +483,7 @@
   <a onclick="goToSupport()">Поддержка</a>
   <p>© 2026 KupiGame. Все быстро, качественно и надежно.</p>
 </footer>
+
 <script type="module">
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
 
@@ -499,6 +500,7 @@
   let isAdminView = false;
   let currentProducts = [];
   let previousScreen = 'products'; 
+  let catalogBgUrl = '';
 
   const isAdmin = () => !!(currentUser && (currentUser.is_admin === true || currentUser.nickname === 'KupiGame'));
 
@@ -521,8 +523,21 @@
   }
 
   window.show = async (screen) => {
-    if (screen !== 'catalog') {
-        document.getElementById('catalog-bg-blur').classList.remove('active');
+    const header = document.getElementById('main-header');
+    const backContainer = document.getElementById('catalog-back-container');
+    const bgLayer = document.getElementById('catalog-bg-blur');
+
+    if (screen === 'catalog') {
+        header.classList.add('hidden-header');
+        backContainer.classList.remove('hidden');
+        if (catalogBgUrl) {
+            bgLayer.style.backgroundImage = `url('${catalogBgUrl}')`;
+            bgLayer.classList.add('active');
+        }
+    } else {
+        header.classList.remove('hidden-header');
+        backContainer.classList.add('hidden');
+        bgLayer.classList.remove('active');
     }
 
     if (currentUser && !isAdmin()) {
@@ -562,6 +577,7 @@
     tabsContainer.innerHTML = `
       <button class="admin-tab active" onclick="switchAdminTab('games', this)">Игры</button>
       <button class="admin-tab" onclick="switchAdminTab('products', this)">Товары</button>
+      <button class="admin-tab" onclick="switchAdminTab('catalog-bg', this)">Фон каталога</button>
       <button class="admin-tab" onclick="switchAdminTab('people', this)">Люди</button>
       <button class="admin-tab" onclick="switchAdminTab('blocked', this)">Заблокированные (<span id="blocked-count">0</span>)</button>
       <button class="admin-tab" onclick="switchAdminTab('unblock-requests', this)">Разблокировка (<span id="unblock-count">0</span>)</button>
@@ -587,6 +603,7 @@
     try {
         if(tab === 'games') await loadAdminGames(content);
         else if(tab === 'products') await loadAdminProducts(content);
+        else if(tab === 'catalog-bg') await loadAdminCatalogBg(content);
         else if(tab === 'themes') await loadAdminThemes(content);
         else if(tab === 'people') await loadAdminPeople(content);
         else if(tab === 'tickets') await loadAdminTickets(content); 
@@ -760,32 +777,9 @@
   // --- КАТАЛОГ ---
   async function loadGames() {
     const list = document.getElementById('games-list');
-    const bgLayer = document.getElementById('catalog-bg-blur');
     
     const { data } = await supabase.from('games').select('*');
     if(!data || data.length === 0) { list.innerHTML = '<p style="color:var(--text-muted);">Игр пока нет.</p>'; return; }
-    
-    // Ищем картинку Standoff для фона (или первую попавшуюся горизонтальную)
-    let bgImg = '';
-    for (let g of data) {
-        if (g.name.toLowerCase().includes('standoff') && g.img) {
-            bgImg = g.img;
-            break;
-        }
-    }
-    if (!bgImg) {
-        for (let g of data) {
-            if (g.img && (g.img.startsWith('http') || g.img.startsWith('data:image'))) {
-                bgImg = g.img;
-                break;
-            }
-        }
-    }
-    
-    if (bgImg) {
-        bgLayer.style.backgroundImage = `url('${bgImg}')`;
-        bgLayer.classList.add('active');
-    }
 
     const isValidImg = (url) => url && (url.startsWith('http') || url.startsWith('data:image'));
 
@@ -1130,7 +1124,50 @@ window.openProductDetail = async (id) => {
     if(error) alert('Ошибка: ' + error.message); else switchAdminTab('games', document.querySelector('.admin-tab'));
   }
   
-// --- АДМИНКА: ТОВАРЫ ---
+  // --- АДМИНКА: ФОН КАТАЛОГА ---
+  async function loadAdminCatalogBg(container) {
+    const { data } = await supabase.from('profiles').select('catalog_bg').eq('nickname', 'KupiGame').single();
+    
+    container.innerHTML = `
+      <div class="admin-block">
+        <h3 style="margin-bottom:15px;">Фон страницы Каталог</h3>
+        <p style="color:var(--text-muted); font-size:14px; margin-bottom:15px;">Загрузите картинку, которая будет отображаться на заднем фоне при входе в каталог.</p>
+        <input type="text" id="catalog-bg-url" placeholder="Ссылка (URL)" value="${esc(data?.catalog_bg || '')}">
+        <input type="file" id="catalog-bg-file" accept="image/*">
+        <button class="btn-primary" onclick="saveCatalogBg()" style="width:100%; margin-top:10px;">Сохранить фон</button>
+      </div>
+    `;
+  }
+
+  window.saveCatalogBg = async () => {
+    try {
+        const url = document.getElementById('catalog-bg-url').value;
+        const file = document.getElementById('catalog-bg-file').files[0];
+        if(!url && !file) return alert('Вставьте ссылку или выберите файл');
+
+        let imgUrl = url; 
+
+        if(file) {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `catalog_bg_${Date.now()}.${fileExt}`;
+            const { data: uploadData, error: uploadError } = await supabase.storage.from('game-images').upload(fileName, file);
+            if(uploadError) throw new Error('Ошибка загрузки файла: ' + uploadError.message);
+            const { data: publicUrlData } = supabase.storage.from('game-images').getPublicUrl(fileName);
+            imgUrl = publicUrlData.publicUrl;
+        }
+
+        const { error } = await supabase.from('profiles').update({ catalog_bg: imgUrl }).eq('nickname', 'KupiGame');
+        if(error) throw new Error('Ошибка базы данных: ' + error.message); 
+        
+        catalogBgUrl = imgUrl;
+        alert('Фон каталога обновлен!'); 
+        switchAdminTab('catalog-bg', document.querySelectorAll('.admin-tab')[2]); 
+    } catch(err) {
+        alert('ОШИБКА: ' + err.message);
+    }
+  }
+
+  // --- АДМИНКА: ТОВАРЫ ---
   async function loadAdminProducts(container) {
     const { data: games } = await supabase.from('games').select('*');
     const { data: products } = await supabase.from('products').select('*');
@@ -2057,6 +2094,13 @@ window.goBackFromTicket = () => {
         updateAuthUI(); 
       }
     }
+    
+    // Загружаем фон каталога при старте
+    const { data: adminProfile } = await supabase.from('profiles').select('catalog_bg').eq('nickname', 'KupiGame').single();
+    if (adminProfile && adminProfile.catalog_bg) {
+        catalogBgUrl = adminProfile.catalog_bg;
+    }
+
     await applyHero();
   }
   
