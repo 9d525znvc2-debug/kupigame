@@ -13,20 +13,23 @@
   :root { --primary: #8b5cf6; --primary-hover: #7c3aed; --bg: #090910; --card: #12121a; --text: #e8e8f0; --text-muted: #9898b0; --border: #2a2a3a; --accent: #38bdf8; --green: #10b981; --orange: #f97316; --star-gold: #fbbf24; --gray-status: #6b7280; }
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
   body { background-color: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 80px; background-image: radial-gradient(circle at 0% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%), radial-gradient(circle at 100% 80%, rgba(56, 189, 248, 0.05) 0%, transparent 40%); background-attachment: fixed; }
-  header { background: rgba(9, 9, 16, 0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; padding: 15px 20px; display: flex; align-items: flex-start; justify-content: space-between; border-bottom: 1px solid var(--border); width: 100%; }
+  
+  /* ИСПРАВЛЕНО: Шапка больше не растягивается и не перекрывает контент */
+  header { background: rgba(9, 9, 16, 0.95); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); width: 100%; height: 70px; }
   .logo { font-size: 22px; font-weight: 900; display: flex; align-items: center; gap: 10px; cursor: pointer; }
   .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #8b5cf6, #3b82f6); transform: rotate(45deg); border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(139, 92, 246, 0.6); }
   .logo-icon span { transform: rotate(-45deg); color: #fff; font-size: 18px; font-weight: bold; }
   .logo-text { background: linear-gradient(90deg, #fff, #d8b4fe, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  .user-pill { background: var(--card); border: 1px solid var(--border); border-radius: 30px; padding: 5px 15px 5px 5px; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; }
-  .btn-logout { background: var(--card); border: 1px solid var(--border); color: #fff; padding: 8px 15px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; width: 100%; }
-  .nav-menu { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; font-size: 15px; font-weight: 600; }
-  .nav-menu button { background: none; border: 1px solid transparent; color: var(--text-muted); cursor: pointer; font-size: 15px; font-weight: 600; padding: 6px 15px; border-radius: 8px; width: 100%; text-align: right; position: relative; }
-  .nav-menu button:hover { color: #fff; }
-  .nav-menu button.active { color: #fff; background: var(--card); border-color: var(--border); }
-  .nav-menu button.admin { color: #fbbf24; }
-  #logout-btn { margin-top: 0; width: 100%; text-align: center; }
+  
+  /* Меню навигации */
+  .nav-menu { display: flex; align-items: center; gap: 8px; }
+  .nav-menu button { background: var(--card); border: 1px solid var(--border); color: var(--text-muted); cursor: pointer; font-size: 14px; font-weight: 600; padding: 8px 12px; border-radius: 8px; white-space: nowrap; transition: 0.2s; }
+  .nav-menu button:hover, .nav-menu button.active { color: #fff; border-color: var(--primary); }
+  .nav-menu button.admin { color: #fbbf24; border-color: #fbbf24; }
+  .user-pill { background: var(--card); border: 1px solid var(--border); border-radius: 30px; padding: 5px 15px 5px 5px; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .btn-logout { background: #ff4d4d; border: none; color: #fff; padding: 8px 15px; border-radius: 8px; font-weight: 600; cursor: pointer; }
   .nav-badge { background: var(--accent); color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 10px; margin-left: 5px; font-weight: bold; display: inline-block; vertical-align: middle; }
+  
   main { max-width: 800px; margin: 0 auto; padding: 20px; position: relative; z-index: 10; }
   .screen { display: none; }
   .screen.active { display: block; animation: fadeIn 0.4s ease-in-out; }
@@ -49,18 +52,8 @@
   .btn-tg { background: #229ED9; color: #fff; padding: 14px 24px; border-radius: 12px; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; width: 100%; font-size: 16px; box-shadow: 0 4px 15px rgba(34, 158, 217, 0.3); }
   .btn-tg:hover { background: #1a7fb3; transform: translateY(-2px); }
   
-  /* ДИЗАЙН КАТАЛОГА (КАК НА 2 СКРИНЕ) */
-  .bg-blur-layer {
-    position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100vh;
-    background-size: cover;
-    background-position: center;
-    filter: blur(40px) brightness(0.3);
-    z-index: -1;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-    pointer-events: none;
-  }
+  /* ДИЗАЙН КАТАЛОГА */
+  .bg-blur-layer { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-size: cover; background-position: center; filter: blur(40px) brightness(0.3); z-index: -1; opacity: 0; transition: opacity 0.5s ease; pointer-events: none; }
   .bg-blur-layer.active { opacity: 1; }
 
   .games-grid-container { position: relative; z-index: 2; }
@@ -81,65 +74,14 @@
     align-items: center;
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
   }
-  .game-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
-    border-color: rgba(139, 92, 246, 0.5);
-  }
-  .game-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(90deg, rgba(9,9,16,0.95) 0%, rgba(9,9,16,0.6) 60%, rgba(9,9,16,0.1) 100%);
-    z-index: 1;
-  }
-  .game-card-content {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding: 15px 20px;
-  }
-  .game-card-left {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-  }
-  .game-card-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 12px;
-    background: #000;
-    object-fit: cover;
-    border: 1px solid rgba(255,255,255,0.2);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    flex-shrink: 0;
-  }
-  .game-card-icon-fallback {
-    width: 50px;
-    height: 50px;
-    border-radius: 12px;
-    background: rgba(139, 92, 246, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    border: 1px solid rgba(139, 92, 246, 0.5);
-    flex-shrink: 0;
-  }
-  .game-card-title {
-    font-weight: 800;
-    font-size: 18px;
-    color: #fff;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-  }
-  .game-card-arrow {
-    color: #fff;
-    font-size: 20px;
-    opacity: 0.7;
-  }
+  .game-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4); border-color: rgba(139, 92, 246, 0.5); }
+  .game-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, rgba(9,9,16,0.95) 0%, rgba(9,9,16,0.6) 60%, rgba(9,9,16,0.1) 100%); z-index: 1; }
+  .game-card-content { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 15px 20px; }
+  .game-card-left { display: flex; align-items: center; gap: 15px; }
+  .game-card-icon { width: 50px; height: 50px; border-radius: 12px; background: #000; object-fit: cover; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.5); flex-shrink: 0; }
+  .game-card-icon-fallback { width: 50px; height: 50px; border-radius: 12px; background: rgba(139, 92, 246, 0.2); display: flex; align-items: center; justify-content: center; font-size: 24px; border: 1px solid rgba(139, 92, 246, 0.5); flex-shrink: 0; }
+  .game-card-title { font-weight: 800; font-size: 18px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+  .game-card-arrow { color: #fff; font-size: 20px; opacity: 0.7; }
 
   .category-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; position: relative; z-index: 2; }
   .category-tab { background: rgba(18, 18, 26, 0.8); backdrop-filter: blur(10px); border: 1px solid var(--border); color: var(--text-muted); padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 15px; transition: all 0.2s; white-space: nowrap; }
@@ -234,28 +176,27 @@
 <div id="catalog-bg-blur" class="bg-blur-layer"></div>
 
 <header>
-  <div class="logo-area">
-    <div class="logo" onclick="show('home')"><div class="logo-icon"><span>K</span></div> <span class="logo-text">KupiGame</span></div>
-    <div id="user-area" class="hidden">
-      <div class="user-pill">
-        <div id="user-avatar" style="width:30px; height:30px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; font-weight:bold; overflow:hidden;">U</div>
-        <span id="user-nick">User</span>
-      </div>
-    </div>
+  <div class="logo" onclick="show('home')">
+    <div class="logo-icon"><span>K</span></div> 
+    <span class="logo-text">KupiGame</span>
   </div>
   
-  <div class="nav-menu">
+  <div class="nav-menu" id="nav-menu-container">
     <button onclick="show('home')" id="nav-home" class="active">Главная</button>
     <button onclick="show('catalog')" id="nav-catalog">Каталог</button>
     <button onclick="show('chats')" id="nav-chats" class="hidden">Чаты <span id="nav-chats-badge" class="nav-badge hidden">0</span></button>
     <button onclick="show('profile')" id="nav-profile" class="hidden">Профиль</button>
     <button onclick="show('admin')" id="nav-admin" class="admin hidden">Админ</button>
     <button id="logout-btn" onclick="logout()" class="btn-logout hidden">Выйти</button>
-    <div id="auth-links" style="display:flex; flex-direction:column; gap:10px; align-items:flex-end; margin-top:10px; width:100%;">
-      <button onclick="show('login')" style="color:var(--accent); width:100%; text-align:right;">Войти</button>
-      <button onclick="show('register')" style="background:var(--card); padding:6px 15px; border-radius:8px; border:1px solid var(--border); width:100%; text-align:right;">Регистрация</button>
-    </div>
   </div>
+
+  <div id="auth-links" style="display:flex; gap:8px;">
+    <button onclick="show('login')" class="btn-small primary">Войти</button>
+    <button onclick="show('register')" class="btn-small">Регистрация</button>
+  </div>
+
+  <!-- Мобильное меню (три полоски) -->
+  <button id="mobile-menu-btn" onclick="toggleMobileMenu()" style="display:none; background:none; border:none; color:#fff; font-size:24px;">☰</button>
 </header>
 
 <div id="image-modal" class="modal" onclick="closeModal()">
@@ -355,7 +296,8 @@
     <button class="back-btn" onclick="goBackFromProduct()" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
     <div id="product-detail-content"></div>
   </section>
-<!-- ПРОФИЛЬ ПРОДАВЦА -->
+  
+  <!-- ПРОФИЛЬ ПРОДАВЦА -->
   <section class="screen" id="screen-seller">
     <button class="back-btn" onclick="goBackFromSeller()" style="background:var(--card); border:1px solid var(--border); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; margin-bottom:15px;">← Назад</button>
     <div id="seller-profile-content"></div>
@@ -491,20 +433,10 @@
 
   const isAdmin = () => !!(currentUser && (currentUser.is_admin === true || currentUser.nickname === 'KupiGame'));
 
-  function renderStars(rating) {
-    const r = parseFloat(rating);
-    let html = `<div class="stars-container">`;
-    for (let i = 1; i <= 5; i++) {
-        if (r >= i) {
-            html += `<span class="star-full">★</span>`;
-        } else if (r >= i - 0.5) {
-            html += `<span class="star-half">★</span>`;
-        } else {
-            html += `<span class="star-empty">★</span>`;
-        }
-    }
-    html += `</div>`;
-    return html;
+  // ИСПРАВЛЕНО: Мобильное меню
+  window.toggleMobileMenu = () => {
+    document.getElementById('nav-menu-container').classList.toggle('mobile-active');
+    document.getElementById('auth-links').classList.toggle('mobile-active');
   }
 
   window.openModal = (src) => {
@@ -544,6 +476,10 @@
         renderAdminTabs();
     }
     
+    // Закрываем мобильное меню при переходе
+    document.getElementById('nav-menu-container').classList.remove('mobile-active');
+    document.getElementById('auth-links').classList.remove('mobile-active');
+
     window.scrollTo(0, 0);
   }
 
@@ -643,10 +579,11 @@
     return false;
   }
 
+  // ИСПРАВЛЕНО: Мобильное меню и аватарки
   function updateAuthUI() {
     if(currentUser) {
       document.getElementById('auth-links').classList.add('hidden');
-      document.getElementById('user-area').classList.remove('hidden');
+      document.getElementById('nav-menu-container').classList.remove('hidden');
       document.getElementById('user-nick').textContent = currentUser.nickname;
       
       const avatarHtml = currentUser.avatar 
@@ -667,7 +604,7 @@
       checkBlockCounts();
     } else {
       document.getElementById('auth-links').classList.remove('hidden');
-      document.getElementById('user-area').classList.add('hidden');
+      document.getElementById('nav-menu-container').classList.add('hidden');
       document.getElementById('logout-btn').classList.add('hidden');
       document.getElementById('nav-admin').classList.add('hidden');
       document.getElementById('nav-profile').classList.add('hidden');
@@ -731,17 +668,23 @@
     if(error) alert(error.message); else alert('Пароль обновлен!');
   }
 
+  // ИСПРАВЛЕНО: Загрузка аватарки
   window.uploadAvatar = async (input) => {
-    const file = input.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const base64 = e.target.result;
-      await supabase.from('profiles').update({ avatar: base64 }).eq('id', currentUser.id);
-      currentUser.avatar = base64;
-      updateAuthUI();
-    };
-    reader.readAsDataURL(file);
+    try {
+        const file = input.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          const base64 = e.target.result;
+          await supabase.from('profiles').update({ avatar: base64 }).eq('id', currentUser.id);
+          currentUser.avatar = base64;
+          updateAuthUI();
+          alert('Аватар обновлен!');
+        };
+        reader.readAsDataURL(file);
+    } catch(err) {
+        alert('Ошибка загрузки: ' + err.message);
+    }
   }
 
   // --- КАТАЛОГ ---
@@ -857,6 +800,7 @@
       `;
     }).join('');
   }
+
 window.openProductDetail = async (id) => {
     const { data } = await supabase.from('products').select('*').eq('id', id).single();
     const content = document.getElementById('product-detail-content');
@@ -1044,28 +988,35 @@ window.openProductDetail = async (id) => {
     document.getElementById('edit-game-modal').style.display = 'none';
   }
 
+  // ИСПРАВЛЕНО: Сохранение картинки с обработкой ошибок
   window.saveGameImage = async () => {
-    const id = document.getElementById('edit-game-id').value;
-    const url = document.getElementById('edit-game-url').value;
-    const file = document.getElementById('edit-game-file').files[0];
-    if(!url && !file) return alert('Вставьте ссылку или выберите файл');
+    try {
+        const id = document.getElementById('edit-game-id').value;
+        const url = document.getElementById('edit-game-url').value;
+        const file = document.getElementById('edit-game-file').files[0];
+        if(!url && !file) return alert('Вставьте ссылку или выберите файл');
 
-    let imgUrl = url; 
+        let imgUrl = url; 
 
-    if(file) {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Date.now()}.${fileExt}`;
-        const { data: uploadData, error: uploadError } = await supabase.storage.from('game-images').upload(fileName, file);
-        if(uploadError) return alert('Ошибка загрузки: ' + uploadError.message);
-        const { data: publicUrlData } = supabase.storage.from('game-images').getPublicUrl(fileName);
-        imgUrl = publicUrlData.publicUrl;
-    }
+        if(file) {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Date.now()}.${fileExt}`;
+            const { data: uploadData, error: uploadError } = await supabase.storage.from('game-images').upload(fileName, file);
+            if(uploadError) throw new Error('Ошибка загрузки файла: ' + uploadError.message);
+            const { data: publicUrlData } = supabase.storage.from('game-images').getPublicUrl(fileName);
+            imgUrl = publicUrlData.publicUrl;
+        }
 
-    const { error } = await supabase.from('games').update({ img: imgUrl }).eq('id', id);
-    if(error) alert('Ошибка базы: ' + error.message); else { 
+        const { error } = await supabase.from('games').update({ img: imgUrl }).eq('id', id);
+        if(error) throw new Error('Ошибка базы данных: ' + error.message); 
+        
         alert('Фото обновлено!'); 
         closeEditGameModal();
         switchAdminTab('games', document.querySelector('.admin-tab')); 
+    } catch(err) {
+        alert('ОШИБКА: ' + err.message);
+        // Закрываем окно в любом случае, чтобы не висело
+        closeEditGameModal(); 
     }
   }
 
@@ -1102,6 +1053,7 @@ window.openProductDetail = async (id) => {
     const { error } = await supabase.from('games').delete().eq('id', id); 
     if(error) alert('Ошибка: ' + error.message); else switchAdminTab('games', document.querySelector('.admin-tab'));
   }
+  
 // --- АДМИНКА: ТОВАРЫ ---
   async function loadAdminProducts(container) {
     const { data: games } = await supabase.from('games').select('*');
