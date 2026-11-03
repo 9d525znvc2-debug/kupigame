@@ -49,7 +49,7 @@
   .btn-tg { background: #229ED9; color: #fff; padding: 14px 24px; border-radius: 12px; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; width: 100%; font-size: 16px; box-shadow: 0 4px 15px rgba(34, 158, 217, 0.3); }
   .btn-tg:hover { background: #1a7fb3; transform: translateY(-2px); }
   
-  /* НОВЫЙ ДИЗАЙН КАТАЛОГА ИГР */
+  /* ДИЗАЙН КАТАЛОГА (КАК НА 2 СКРИНЕ) */
   .bg-blur-layer {
     position: fixed;
     top: 0; left: 0; width: 100vw; height: 100vh;
@@ -65,14 +65,13 @@
 
   .games-grid-container { position: relative; z-index: 2; }
   
-  /* Карточка игры */
   .game-card {
     position: relative;
     border-radius: 16px;
     overflow: hidden;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
     cursor: pointer;
-    min-height: 100px; /* Сделал чуть выше для квадратных картинок */
+    min-height: 85px; 
     background-color: #1a1a26;
     background-size: cover;
     background-position: center;
@@ -87,12 +86,11 @@
     box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
     border-color: rgba(139, 92, 246, 0.5);
   }
-  /* Затемнение теперь идет по всей ширине, но слева сильнее */
   .game-card::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(90deg, rgba(9,9,16,0.95) 0%, rgba(9,9,16,0.8) 40%, rgba(9,9,16,0.3) 100%);
+    background: linear-gradient(90deg, rgba(9,9,16,0.95) 0%, rgba(9,9,16,0.6) 60%, rgba(9,9,16,0.1) 100%);
     z-index: 1;
   }
   .game-card-content {
@@ -102,7 +100,7 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding: 20px;
+    padding: 15px 20px;
   }
   .game-card-left {
     display: flex;
@@ -110,8 +108,8 @@
     gap: 15px;
   }
   .game-card-icon {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     border-radius: 12px;
     background: #000;
     object-fit: cover;
@@ -120,14 +118,14 @@
     flex-shrink: 0;
   }
   .game-card-icon-fallback {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     border-radius: 12px;
     background: rgba(139, 92, 246, 0.2);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 28px;
+    font-size: 24px;
     border: 1px solid rgba(139, 92, 246, 0.5);
     flex-shrink: 0;
   }
@@ -233,7 +231,6 @@
 </head>
 <body>
 
-<!-- Слой для размытого фона -->
 <div id="catalog-bg-blur" class="bg-blur-layer"></div>
 
 <header>
@@ -261,7 +258,6 @@
   </div>
 </header>
 
-<!-- Модальное окно для картинок -->
 <div id="image-modal" class="modal" onclick="closeModal()">
   <span class="modal-close">&times;</span>
   <img id="modal-img" src="">
@@ -756,19 +752,23 @@
     const { data } = await supabase.from('games').select('*');
     if(!data || data.length === 0) { list.innerHTML = '<p style="color:var(--text-muted);">Игр пока нет.</p>'; return; }
     
-    // Устанавливаем размытый фон (берем картинку первой игры)
-    if (data[0].img) {
-        bgLayer.style.backgroundImage = `url('${data[0].img}')`;
+    let bgImg = '';
+    for (let g of data) {
+        if (g.img && (g.img.startsWith('http') || g.img.startsWith('data:image'))) {
+            bgImg = g.img;
+            break;
+        }
+    }
+    if (bgImg) {
+        bgLayer.style.backgroundImage = `url('${bgImg}')`;
         bgLayer.classList.add('active');
     }
 
-    // Функция для проверки, является ли ссылка валидной картинкой (начинается с http или data:image)
     const isValidImg = (url) => url && (url.startsWith('http') || url.startsWith('data:image'));
 
     list.innerHTML = data.map(g => {
       const hasValidImg = isValidImg(g.img);
       
-      // Если картинки нет или она битая - не ставим фон, а рисуем заглушку
       const bgStyle = hasValidImg ? `background-image: url('${esc(g.img)}');` : '';
       const iconHtml = hasValidImg 
         ? `<img src="${esc(g.img)}" class="game-card-icon">` 
@@ -1014,10 +1014,59 @@ window.openProductDetail = async (id) => {
              ${g.img && (g.img.startsWith('http') || g.img.startsWith('data:image')) ? `<img src="${esc(g.img)}" style="width:40px; height:40px; border-radius:8px; object-fit:cover;">` : '🎮'}
              <span>${esc(g.name)}</span>
           </div>
-          <button onclick="deleteGame(${g.id})" style="color:red; background:none; border:none; cursor:pointer;">Удалить</button>
+          <div style="display:flex; gap:5px;">
+            <button onclick="openEditGameImage(${g.id})" style="color:var(--accent); background:none; border:none; cursor:pointer; font-weight:bold;">Сменить фото</button>
+            <button onclick="deleteGame(${g.id})" style="color:red; background:none; border:none; cursor:pointer;">Удалить</button>
+          </div>
         </div>
       `).join('')}
+      <div id="edit-game-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:2000; align-items:center; justify-content:center;">
+        <div style="background:var(--card); padding:20px; border-radius:16px; width:90%; max-width:400px; border:1px solid var(--border);">
+            <h3 style="margin-bottom:15px;">Сменить фото игры</h3>
+            <input type="hidden" id="edit-game-id">
+            <input type="text" id="edit-game-url" placeholder="Ссылка (URL)">
+            <input type="file" id="edit-game-file" accept="image/*">
+            <button class="btn-primary" onclick="saveGameImage()" style="width:100%;">Сохранить</button>
+            <button class="btn-red" onclick="closeEditGameModal()" style="margin-top:10px;">Отмена</button>
+        </div>
+      </div>
     `;
+  }
+
+  window.openEditGameImage = (id) => {
+    document.getElementById('edit-game-id').value = id;
+    document.getElementById('edit-game-url').value = '';
+    document.getElementById('edit-game-file').value = '';
+    document.getElementById('edit-game-modal').style.display = 'flex';
+  }
+
+  window.closeEditGameModal = () => {
+    document.getElementById('edit-game-modal').style.display = 'none';
+  }
+
+  window.saveGameImage = async () => {
+    const id = document.getElementById('edit-game-id').value;
+    const url = document.getElementById('edit-game-url').value;
+    const file = document.getElementById('edit-game-file').files[0];
+    if(!url && !file) return alert('Вставьте ссылку или выберите файл');
+
+    let imgUrl = url; 
+
+    if(file) {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}.${fileExt}`;
+        const { data: uploadData, error: uploadError } = await supabase.storage.from('game-images').upload(fileName, file);
+        if(uploadError) return alert('Ошибка загрузки: ' + uploadError.message);
+        const { data: publicUrlData } = supabase.storage.from('game-images').getPublicUrl(fileName);
+        imgUrl = publicUrlData.publicUrl;
+    }
+
+    const { error } = await supabase.from('games').update({ img: imgUrl }).eq('id', id);
+    if(error) alert('Ошибка базы: ' + error.message); else { 
+        alert('Фото обновлено!'); 
+        closeEditGameModal();
+        switchAdminTab('games', document.querySelector('.admin-tab')); 
+    }
   }
 
   window.addGame = async () => {
@@ -1031,27 +1080,16 @@ window.openProductDetail = async (id) => {
     if(file) {
         const fileExt = file.name.split('.').pop();
         const fileName = `${Date.now()}.${fileExt}`;
-        
-        const { data: uploadData, error: uploadError } = await supabase.storage
-            .from('game-images')
-            .upload(fileName, file);
-
-        if(uploadError) {
-            return alert('Ошибка загрузки картинки: ' + uploadError.message + '\n\nУбедитесь, что вы создали публичный бакет "game-images" в Supabase Storage.');
-        }
-
-        const { data: publicUrlData } = supabase.storage
-            .from('game-images')
-            .getPublicUrl(fileName);
-            
+        const { data: uploadData, error: uploadError } = await supabase.storage.from('game-images').upload(fileName, file);
+        if(uploadError) return alert('Ошибка загрузки картинки: ' + uploadError.message);
+        const { data: publicUrlData } = supabase.storage.from('game-images').getPublicUrl(fileName);
         imgUrl = publicUrlData.publicUrl;
     }
 
     const { error } = await supabase.from('games').insert([{ name, img: imgUrl }]);
-    if(error) {
-        alert('Ошибка базы данных: ' + error.message); 
-    } else { 
-        alert('Игра успешно добавлена!'); 
+    if(error) alert('Ошибка: ' + error.message); 
+    else { 
+        alert('Игра добавлена!'); 
         document.getElementById('new-game-name').value = '';
         document.getElementById('new-game-url').value = '';
         document.getElementById('game-img-upload').value = '';
