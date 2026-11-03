@@ -14,20 +14,41 @@
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
   body { background-color: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 80px; background-image: radial-gradient(circle at 0% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%), radial-gradient(circle at 100% 80%, rgba(56, 189, 248, 0.05) 0%, transparent 40%); background-attachment: fixed; }
   
-  /* ИСПРАВЛЕНО: Шапка больше не растягивается и не перекрывает контент */
-  header { background: rgba(9, 9, 16, 0.95); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); width: 100%; height: 70px; }
+  /* ШАПКА КАК В FUNPAY */
+  header { background: rgba(9, 9, 16, 0.95); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); width: 100%; height: 65px; }
   .logo { font-size: 22px; font-weight: 900; display: flex; align-items: center; gap: 10px; cursor: pointer; }
   .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #8b5cf6, #3b82f6); transform: rotate(45deg); border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(139, 92, 246, 0.6); }
   .logo-icon span { transform: rotate(-45deg); color: #fff; font-size: 18px; font-weight: bold; }
   .logo-text { background: linear-gradient(90deg, #fff, #d8b4fe, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  
-  /* Меню навигации */
-  .nav-menu { display: flex; align-items: center; gap: 8px; }
-  .nav-menu button { background: var(--card); border: 1px solid var(--border); color: var(--text-muted); cursor: pointer; font-size: 14px; font-weight: 600; padding: 8px 12px; border-radius: 8px; white-space: nowrap; transition: 0.2s; }
-  .nav-menu button:hover, .nav-menu button.active { color: #fff; border-color: var(--primary); }
-  .nav-menu button.admin { color: #fbbf24; border-color: #fbbf24; }
-  .user-pill { background: var(--card); border: 1px solid var(--border); border-radius: 30px; padding: 5px 15px 5px 5px; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
-  .btn-logout { background: #ff4d4d; border: none; color: #fff; padding: 8px 15px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+
+  /* Основное меню (Главная, Каталог, Чаты) */
+  .main-nav { display: flex; gap: 15px; align-items: center; margin-left: 20px; flex: 1; }
+  .main-nav button { background: none; border: none; color: var(--text-muted); font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.2s; padding: 5px; }
+  .main-nav button:hover, .main-nav button.active { color: #fff; }
+
+  /* Правая часть (Авторизация / Профиль) */
+  .auth-area { display: flex; gap: 10px; align-items: center; margin-left: auto; }
+  .auth-btn { background: var(--card); border: 1px solid var(--border); color: #fff; padding: 8px 15px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px; }
+  .auth-btn.primary { background: var(--primary); border-color: var(--primary); }
+
+  /* Выпадающее меню профиля */
+  .profile-dropdown { position: relative; }
+  .profile-trigger { display: flex; align-items: center; gap: 10px; background: var(--card); border: 1px solid var(--border); padding: 5px 10px 5px 5px; border-radius: 30px; cursor: pointer; transition: 0.2s; }
+  .profile-trigger:hover { border-color: var(--primary); }
+  .profile-avatar-small { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: bold; overflow: hidden; font-size: 14px; }
+  .profile-avatar-small img { width: 100%; height: 100%; object-fit: cover; }
+  .profile-name { font-size: 14px; font-weight: 600; color: #fff; }
+  .arrow-icon { font-size: 10px; color: var(--text-muted); transition: 0.3s; }
+  .profile-dropdown.active .arrow-icon { transform: rotate(180deg); }
+
+  .dropdown-menu { display: none; position: absolute; top: 50px; right: 0; background: var(--card); border: 1px solid var(--border); border-radius: 12px; min-width: 200px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); flex-direction: column; overflow: hidden; z-index: 101; }
+  .profile-dropdown.active .dropdown-menu { display: flex; }
+  .dropdown-menu button { background: none; border: none; border-bottom: 1px solid var(--border); color: var(--text-muted); padding: 12px 15px; text-align: left; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+  .dropdown-menu button:last-child { border-bottom: none; }
+  .dropdown-menu button:hover { background: rgba(255,255,255,0.05); color: #fff; }
+  .dropdown-menu button.admin { color: #fbbf24; }
+  .dropdown-menu button.logout { color: #ff4d4d; }
+
   .nav-badge { background: var(--accent); color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 10px; margin-left: 5px; font-weight: bold; display: inline-block; vertical-align: middle; }
   
   main { max-width: 800px; margin: 0 auto; padding: 20px; position: relative; z-index: 10; }
@@ -181,22 +202,29 @@
     <span class="logo-text">KupiGame</span>
   </div>
   
-  <div class="nav-menu" id="nav-menu-container">
+  <div class="main-nav">
     <button onclick="show('home')" id="nav-home" class="active">Главная</button>
     <button onclick="show('catalog')" id="nav-catalog">Каталог</button>
     <button onclick="show('chats')" id="nav-chats" class="hidden">Чаты <span id="nav-chats-badge" class="nav-badge hidden">0</span></button>
-    <button onclick="show('profile')" id="nav-profile" class="hidden">Профиль</button>
-    <button onclick="show('admin')" id="nav-admin" class="admin hidden">Админ</button>
-    <button id="logout-btn" onclick="logout()" class="btn-logout hidden">Выйти</button>
   </div>
 
-  <div id="auth-links" style="display:flex; gap:8px;">
-    <button onclick="show('login')" class="btn-small primary">Войти</button>
-    <button onclick="show('register')" class="btn-small">Регистрация</button>
+  <div class="auth-area" id="auth-links">
+    <button onclick="show('login')" class="auth-btn">Войти</button>
+    <button onclick="show('register')" class="auth-btn primary">Регистрация</button>
   </div>
 
-  <!-- Мобильное меню (три полоски) -->
-  <button id="mobile-menu-btn" onclick="toggleMobileMenu()" style="display:none; background:none; border:none; color:#fff; font-size:24px;">☰</button>
+  <div class="profile-dropdown hidden" id="user-area">
+    <div class="profile-trigger" onclick="toggleProfileMenu()">
+      <div class="profile-avatar-small" id="user-avatar">U</div>
+      <span class="profile-name" id="user-nick">User</span>
+      <span class="arrow-icon">▼</span>
+    </div>
+    <div class="dropdown-menu">
+      <button onclick="show('profile')">Мой профиль</button>
+      <button onclick="show('admin')" id="nav-admin" class="admin hidden">Админ-панель 👑</button>
+      <button onclick="logout()" class="logout">Выйти</button>
+    </div>
+  </div>
 </header>
 
 <div id="image-modal" class="modal" onclick="closeModal()">
@@ -213,7 +241,7 @@
       <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px;">Обратитесь к владельцу магазина.</p>
       <button class="btn-primary" onclick="show('unblock-form')" style="max-width:100%; margin-bottom:10px;">Написать в поддержку</button>
       <button class="btn-primary" onclick="openBlockedTickets()" style="max-width:100%; margin-bottom:10px; background:var(--card); border:1px solid var(--border); color:#fff;">Мои заявки</button>
-      <button class="btn-logout" onclick="logout()" style="background:transparent; border:1px solid var(--border);">Выйти</button>
+      <button class="btn-logout" onclick="logout()" style="background:transparent; border:1px solid var(--border); color:#fff;">Выйти</button>
     </div>
   </section>
 
@@ -433,10 +461,16 @@
 
   const isAdmin = () => !!(currentUser && (currentUser.is_admin === true || currentUser.nickname === 'KupiGame'));
 
-  // ИСПРАВЛЕНО: Мобильное меню
-  window.toggleMobileMenu = () => {
-    document.getElementById('nav-menu-container').classList.toggle('mobile-active');
-    document.getElementById('auth-links').classList.toggle('mobile-active');
+  // Управление выпадающим меню профиля
+  window.toggleProfileMenu = () => {
+    document.getElementById('user-area').classList.toggle('active');
+  }
+
+  // Закрытие меню при клике вне его
+  window.onclick = function(event) {
+    if (!event.target.closest('.profile-dropdown')) {
+      document.getElementById('user-area').classList.remove('active');
+    }
   }
 
   window.openModal = (src) => {
@@ -465,21 +499,16 @@
     const target = document.getElementById('screen-' + screen);
     if(target) target.classList.add('active');
     
-    document.querySelectorAll('.nav-menu > button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.main-nav button').forEach(b => b.classList.remove('active'));
     if(screen === 'home') document.getElementById('nav-home').classList.add('active');
     if(screen === 'catalog') { document.getElementById('nav-catalog').classList.add('active'); loadGames(); }
     if(screen === 'chats') { document.getElementById('nav-chats').classList.add('active'); loadChats(); }
-    if(screen === 'profile') document.getElementById('nav-profile').classList.add('active');
     
     if(screen === 'admin') { 
-        document.getElementById('nav-admin').classList.add('active'); 
         renderAdminTabs();
     }
     
-    // Закрываем мобильное меню при переходе
-    document.getElementById('nav-menu-container').classList.remove('mobile-active');
-    document.getElementById('auth-links').classList.remove('mobile-active');
-
+    document.getElementById('user-area').classList.remove('active');
     window.scrollTo(0, 0);
   }
 
@@ -565,25 +594,20 @@
       show('blocked');
       document.getElementById('nav-home').classList.add('hidden');
       document.getElementById('nav-catalog').classList.add('hidden');
-      document.getElementById('nav-profile').classList.add('hidden');
       document.getElementById('nav-chats').classList.add('hidden');
-      document.getElementById('nav-admin').classList.add('hidden');
-      document.getElementById('logout-btn').classList.add('hidden');
       return true;
     }
     document.getElementById('nav-home').classList.remove('hidden');
     document.getElementById('nav-catalog').classList.remove('hidden');
-    document.getElementById('nav-profile').classList.remove('hidden');
     document.getElementById('nav-chats').classList.remove('hidden');
-    document.getElementById('logout-btn').classList.remove('hidden');
     return false;
   }
 
-  // ИСПРАВЛЕНО: Мобильное меню и аватарки
+  // ИСПРАВЛЕНО: Обновление UI с выпадающим меню
   function updateAuthUI() {
     if(currentUser) {
       document.getElementById('auth-links').classList.add('hidden');
-      document.getElementById('nav-menu-container').classList.remove('hidden');
+      document.getElementById('user-area').classList.remove('hidden');
       document.getElementById('user-nick').textContent = currentUser.nickname;
       
       const avatarHtml = currentUser.avatar 
@@ -600,14 +624,13 @@
           document.getElementById('nav-admin').classList.add('hidden');
       }
 
+      document.getElementById('nav-chats').classList.remove('hidden'); // Показываем чаты для авторизованных
+
       checkBlock();
       checkBlockCounts();
     } else {
       document.getElementById('auth-links').classList.remove('hidden');
-      document.getElementById('nav-menu-container').classList.add('hidden');
-      document.getElementById('logout-btn').classList.add('hidden');
-      document.getElementById('nav-admin').classList.add('hidden');
-      document.getElementById('nav-profile').classList.add('hidden');
+      document.getElementById('user-area').classList.add('hidden');
       document.getElementById('nav-chats').classList.add('hidden');
       document.getElementById('nav-chats-badge').classList.add('hidden');
       document.getElementById('login-nick').value = '';
@@ -659,7 +682,13 @@
     }
   }
 
-  window.logout = async () => { await supabase.auth.signOut(); currentUser = null; updateAuthUI(); show('home'); }
+  window.logout = async () => { 
+    document.getElementById('user-area').classList.remove('active');
+    await supabase.auth.signOut(); 
+    currentUser = null; 
+    updateAuthUI(); 
+    show('home'); 
+  }
 
   window.changePassword = async () => {
     const newPass = document.getElementById('new-password').value;
@@ -668,22 +697,26 @@
     if(error) alert(error.message); else alert('Пароль обновлен!');
   }
 
-  // ИСПРАВЛЕНО: Загрузка аватарки
+  // ИСПРАВЛЕНО: Загрузка аватарки без зависаний
   window.uploadAvatar = async (input) => {
+    const file = input.files[0];
+    if(!file) return;
+    
     try {
-        const file = input.files[0];
-        if(!file) return;
         const reader = new FileReader();
         reader.onload = async (e) => {
           const base64 = e.target.result;
-          await supabase.from('profiles').update({ avatar: base64 }).eq('id', currentUser.id);
+          const { error } = await supabase.from('profiles').update({ avatar: base64 }).eq('id', currentUser.id);
+          if(error) {
+              alert('Ошибка базы: ' + error.message);
+              return;
+          }
           currentUser.avatar = base64;
           updateAuthUI();
-          alert('Аватар обновлен!');
         };
         reader.readAsDataURL(file);
     } catch(err) {
-        alert('Ошибка загрузки: ' + err.message);
+        alert('Ошибка загрузки файла: ' + err.message);
     }
   }
 
@@ -988,7 +1021,6 @@ window.openProductDetail = async (id) => {
     document.getElementById('edit-game-modal').style.display = 'none';
   }
 
-  // ИСПРАВЛЕНО: Сохранение картинки с обработкой ошибок
   window.saveGameImage = async () => {
     try {
         const id = document.getElementById('edit-game-id').value;
@@ -1015,7 +1047,6 @@ window.openProductDetail = async (id) => {
         switchAdminTab('games', document.querySelector('.admin-tab')); 
     } catch(err) {
         alert('ОШИБКА: ' + err.message);
-        // Закрываем окно в любом случае, чтобы не висело
         closeEditGameModal(); 
     }
   }
