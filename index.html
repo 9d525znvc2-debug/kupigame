@@ -109,14 +109,14 @@
 
   .games-grid-container { position: relative; z-index: 2; }
   
-  /* Карточки стали меньше по высоте */
+  /* Карточки стали выше под большие иконки */
   .game-card {
     position: relative;
     border-radius: 12px;
     overflow: hidden;
     margin-bottom: 10px;
     cursor: pointer;
-    min-height: 65px; 
+    min-height: 85px; 
     background: rgba(30, 20, 50, 0.4); 
     backdrop-filter: blur(10px); 
     border: 1px solid rgba(139, 92, 246, 0.3); 
@@ -132,20 +132,28 @@
   }
   
   .game-card-content { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 10px 15px; }
-  .game-card-left { display: flex; align-items: center; gap: 12px; }
-.game-card-icon { 
-    width: 40px; 
-    height: 40px; 
-    border-radius: 10px; 
-    background: transparent; 
+  .game-card-left { display: flex; align-items: center; gap: 15px; }
+  
+  /* Увеличенные иконки с единой рамкой для всех */
+  .game-card-icon { 
+    width: 60px; 
+    height: 60px; 
+    border-radius: 12px; 
+    background: #1a1a26; /* Темная подложка, чтобы белые фоны картинок смотрелись органично */
     object-fit: cover; 
-    border: none; /* Убрал рамку полностью */
-    box-shadow: none; /* Убрал тень */
+    border: 1.5px solid rgba(139, 92, 246, 0.5); /* Фиолетовая рамка для всех */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5); 
     flex-shrink: 0; 
   }
-  .game-card-icon-fallback { width: 40px; height: 40px; border-radius: 10px; background: rgba(139, 92, 246, 0.2); display: flex; align-items: center; justify-content: center; font-size: 18px; border: 1px solid rgba(139, 92, 246, 0.5); flex-shrink: 0; }
+  .game-card-icon-fallback { width: 60px; height: 60px; border-radius: 12px; background: rgba(139, 92, 246, 0.2); display: flex; align-items: center; justify-content: center; font-size: 24px; border: 1.5px solid rgba(139, 92, 246, 0.5); flex-shrink: 0; }
+  
   .game-card-title { font-weight: 700; font-size: 16px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
   .game-card-arrow { color: #fff; font-size: 18px; opacity: 0.8; }
+
+  /* Сдвиг каталога вниз, чтобы фон был виден сверху */
+  #screen-catalog {
+    padding-top: 60px;
+  }
 
   .category-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; position: relative; z-index: 2; }
   .category-tab { background: rgba(18, 18, 26, 0.8); backdrop-filter: blur(10px); border: 1px solid var(--border); color: var(--text-muted); padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 15px; transition: all 0.2s; white-space: nowrap; }
@@ -357,7 +365,7 @@
 
   <!-- КАТАЛОГ -->
   <section class="screen" id="screen-catalog">
-    <h1 class="catalog-title" style="font-size: 24px; margin-bottom: 15px; margin-top: 10px;">Каталог игр</h1>
+    <h1 class="catalog-title" style="font-size: 24px; margin-bottom: 15px;">Каталог игр</h1>
     <div id="games-list" class="games-grid-container"></div>
   </section>
 
