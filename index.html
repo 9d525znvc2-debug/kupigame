@@ -175,11 +175,31 @@
   .unread-badge { background: var(--accent); color: #fff; font-size: 13px; font-weight: bold; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .unread-badge.orange { background: var(--orange); }
   .chat-box { background: var(--bg); border-radius: 12px; padding: 15px; margin-bottom: 15px; max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-  .chat-msg { max-width: 85%; padding: 12px 15px; border-radius: 12px; font-size: 14px; line-height: 1.5; white-space: pre-wrap; text-align: left; word-break: break-word; }
+  
+  /* ИСПРАВЛЕНО: Чат и Ник */
+  .chat-msg { 
+    max-width: 85%; 
+    padding: 12px 15px; 
+    border-radius: 12px; 
+    font-size: 14px; 
+    line-height: 1.5; 
+    word-break: break-word; 
+    display: flex; 
+    flex-direction: column; 
+  }
   .chat-msg.my-msg { background: var(--primary); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
   .chat-msg.their-msg { background: #1a1a26; border: 1px solid var(--border); align-self: flex-start; border-bottom-left-radius: 2px; }
-  .msg-sender { font-size: 11px; margin-bottom: 6px; font-weight: bold; opacity: 0.9; display: flex; align-items: center; gap: 5px; color: #c8c8d8; text-align: left; }
+  
+  .msg-sender { 
+    font-size: 11px; 
+    margin-bottom: 6px; 
+    font-weight: bold; 
+    opacity: 0.9; 
+    color: #c8c8d8; 
+    align-self: flex-start; 
+  }
   .msg-sender.my-msg-text { color: #e8e8f0; }
+  
   .admin-tag { background: var(--green); color: #fff; font-size: 9px; padding: 1px 4px; border-radius: 3px; font-weight: bold; }
   .btn-small { padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: bold; border: none; cursor: pointer; }
   .btn-small.red { background: #ff4d4d; color: #fff; }
@@ -265,7 +285,7 @@
     <div class="auth-box">
       <h2 style="margin-bottom:15px; text-align:center;">Заявка на разблокировку</h2>
       <input type="text" id="unblock-nick" placeholder="Ваш ник" readonly>
-      <textarea id="unblock-reason" placeholder="Почему вы не согласны с блокировкой?" style="height:100px;"></textarea>
+      <textarea id="unblock-reason" placeholder="Почему не согласны с блокировкой" style="height:100px;"></textarea>
       <button class="btn-primary" onclick="sendUnblock()" style="max-width:100%;">Отправить заявку</button>
       <button class="btn-red" onclick="show('blocked')" style="margin-top:10px;">Назад</button>
     </div>
@@ -1527,7 +1547,7 @@ window.saveGameImage = async () => {
     const chatBox = document.getElementById('ticket-chat-box');
     let chatHtml = `<div class="chat-msg their-msg">
       <div class="msg-sender">${esc(buyer ? buyer.nickname : 'Покупатель')}</div>
-      ${esc(ticket.message)}
+      <div style="white-space: pre-wrap;">${esc(ticket.message)}</div>
     </div>`;
 
     if(msgs) msgs.forEach(m => {
@@ -1536,7 +1556,7 @@ window.saveGameImage = async () => {
       
       chatHtml += `<div class="chat-msg ${isMsgAdmin ? 'my-msg' : 'their-msg'}">
         <div class="msg-sender ${isMsgAdmin ? 'my-msg-text' : ''}">${senderName}</div>
-        ${esc(m.message)}
+        <div style="white-space: pre-wrap;">${esc(m.message)}</div>
       </div>`;
     });
     
@@ -1623,7 +1643,7 @@ window.saveGameImage = async () => {
     const chatBox = document.getElementById('ticket-chat-box');
     let chatHtml = `<div class="chat-msg their-msg">
       <div class="msg-sender">${esc(currentUser.nickname)}</div>
-      ${esc(ticket.message)}
+      <div style="white-space: pre-wrap;">${esc(ticket.message)}</div>
     </div>`;
       
     if(msgs) {
@@ -1633,7 +1653,7 @@ window.saveGameImage = async () => {
         
         chatHtml += `<div class="chat-msg ${isAdminMsg ? 'their-msg' : 'my-msg'}">
           <div class="msg-sender ${!isAdminMsg ? 'my-msg-text' : ''}">${senderName}</div>
-          ${esc(m.message)}
+          <div style="white-space: pre-wrap;">${esc(m.message)}</div>
         </div>`;
       });
     }
@@ -1720,8 +1740,8 @@ window.goBackFromTicket = () => {
 
     const blockReason = document.getElementById('block-reason').textContent;
     
-    // ИСПРАВЛЕНО: Добавлены переносы строк \n для каждого пункта
-    const message = `Ник: ${currentUser.nickname}\nПричина: ${blockReason}\nПочему не согласен: ${reason}`;
+    // ИСПРАВЛЕНО: Текст теперь ровно как ты просил
+    const message = `Ник: ${currentUser.nickname}\nПричина: ${blockReason}\nПочему не согласны с блокировкой: ${reason}`;
 
     const { error } = await supabase.from('orders').insert([{ 
       buyer_id: currentUser.id, 
