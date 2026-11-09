@@ -176,7 +176,6 @@
   .unread-badge.orange { background: var(--orange); }
   .chat-box { background: var(--bg); border-radius: 12px; padding: 15px; margin-bottom: 15px; max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
   
-  /* ИСПРАВЛЕНО: Чат и Ник */
   .chat-msg { 
     max-width: 85%; 
     padding: 12px 15px; 
@@ -444,6 +443,11 @@
       <p style="color:var(--text-muted); margin-bottom:20px; font-size:14px;">Отвечаем до 48 часов.</p>
       <textarea id="support-text" placeholder="Опишите проблему..." style="height:100px;"></textarea>
       <button class="btn-primary" onclick="sendTicket()" style="width:100%;">Отправить</button>
+      
+      <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border); text-align: center;">
+        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 10px;">Нужна срочная помощь?</p>
+        <a href="https://t.me/kupigame_support_bot" target="_blank" class="btn-secondary" style="display: inline-block; width: 100%; text-decoration: none; box-sizing: border-box;">Написать в поддержку в Telegram</a>
+      </div>
     </div>
   </section>
 
@@ -468,7 +472,8 @@
 <footer>
   <a onclick="showDoc('privacy')">Политика конфиденциальности</a>
   <a onclick="showDoc('terms')">Пользовательское соглашение</a>
-  <a onclick="goToSupport()">Поддержка</a>
+  <a onclick="goToSupport()">Поддержка на сайте</a>
+  <a href="https://t.me/kupigame_support_bot" target="_blank" style="color: #38bdf8; font-weight: bold; text-decoration: none;">Служба поддержки в Telegram</a>
   <p>© 2026 KupiGame. Все быстро, качественно и надежно.</p>
 </footer>
 
@@ -1770,7 +1775,6 @@ window.goBackFromTicket = () => {
 
     const blockReason = document.getElementById('block-reason').textContent;
     
-    // Исправленный текст
     const message = `Ник: ${currentUser.nickname}\nПричина: ${blockReason}\nПочему не согласны с блокировкой: ${reason}`;
 
     const { error } = await supabase.from('orders').insert([{ 
